@@ -1,0 +1,2659 @@
+/* 2025-07-23 
+   Notes:
+   - Mobile = default (0–480px)
+   - Tablet overrides (481–768px) grouped after base
+   - Desktop overrides (>=769px) grouped after tablet
+   - Orientation / coarse pointer special cases at the end
+*/
+
+/* --------------------------------------------------
+   0. Base / Mobile-first styles (ALL default rules)
+   -------------------------------------------------- */
+
+/* ==========================================================================
+   1. CSS Reset & Base Styles
+   ========================================================================== */
+
+html {
+  scrollbar-width: none;
+  /* Hide scrollbar in Firefox */
+}
+
+input:focus,
+textarea:focus,
+[contenteditable]:focus {
+  caret-color: transparent !important;
+  outline: none;            /* also remove the default focus outline if you want */
+}
+
+*:focus {
+  caret-color: transparent !important;
+  outline: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+  /* Hide scrollbar in WebKit-based browsers */
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --focus-color: #007bff;
+  --dark-mode-focus-color: #77c49a;
+  -webkit-font-smoothing: antialiased;
+  /* From original Framer code */
+  -moz-osx-font-smoothing: grayscale;
+  /* From o
+  riginal Framer code */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  height: 100%;
+  font-size: 16px;
+  font-family: -apple-system, system-ui, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #333333;
+  overscroll-behavior-y: none;
+}
+
+body {
+  -ms-overflow-style: none;
+  /* Hide scrollbar in IE/Edge */
+  padding: 12px;
+  /* Space for the site frame */
+  min-height: calc(100vh - 24px);
+  overflow: auto;
+}
+
+
+/* Hide page content until preloader finishes */
+.pageContent {
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove tap highlight on touch devices for interactive icons */
+.animatable-theme-icon,
+.navMenu-icon {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.component-footer {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in;
+}
+
+/* --- Link Color Reset --- */
+a,
+a:link,
+a:visited {
+  color: inherit;
+  /* This makes the link adopt the color of its parent text */
+  text-decoration: none;
+  /* This removes the default underline from links */
+}
+
+::selection {
+  background-color: #77c49a;
+  /* Your site's main highlight color */
+  color: #ffffff;
+  /* A contrasting text color for readability */
+}
+
+/*
+==========================================================================
+   Anti-Flicker Snippet for Dark Mode
+==========================================================================
+*/
+/* This ensures a dark background is applied instantly on page load if dark mode is active */
+html.dark-mode body,
+html.dark-mode .siteCard {
+  background-color: #080808; /* Dark mode content background */
+  background-image: none;
+}
+
+/* This new part handles the outer frames to prevent them from flashing white */
+html.dark-mode #site-frame {
+  border-color: #0c0c0c; /* Dark mode border color */
+}
+html.dark-mode #top-frame,
+html.dark-mode #bottom-frame,
+html.dark-mode #left-frame,
+html.dark-mode #right-frame {
+  background-color: #0c0c0c; /* Dark mode border color */
+}
+
+/* ==========================================================================
+     2. Floating “Card” Frame
+     ========================================================================== */
+
+#site-frame {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 21000;
+  border: 12px solid #ffffff;
+  /* Light mode */
+  border-radius: 16px;
+  background: transparent;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease-out;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+#top-frame,
+#bottom-frame {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 12px;
+  background-color: #ffffff;
+  /* Light mode */
+  pointer-events: none;
+  z-index: 20999;
+  transition: background-color 0.3s ease-out;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+#top-frame {
+  top: 0;
+}
+
+#bottom-frame {
+  bottom: 0;
+}
+
+#left-frame,
+#right-frame {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background-color: #ffffff;
+  /* Light mode */
+  pointer-events: none;
+  z-index: 20999;
+  transition: background-color 0.3s ease-out;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+#left-frame {
+  left: 0;
+}
+
+#right-frame {
+  right: 0;
+}
+
+/* ==========================================================================
+     3. Typography & Text Styles
+     ========================================================================== */
+
+/* Font Declarations (Albra Book) */
+@font-face {
+  font-family: 'Albra Book';
+  src: url('fonts/Albra-Book-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Albra Book';
+  src: url('fonts/Albra-Book-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Albra Book';
+  src: url('fonts/Albra-Book-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Albra Book';
+  src: url('fonts/Albra-Book-Semi.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Albra Book';
+  src: url('fonts/Albra-Book-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Albra Book';
+  src: url('fonts/Albra-Book-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Font Weight Helper Classes */
+.light {
+  font-weight: 100;
+}
+
+.thin {
+  font-weight: 200;
+}
+
+.regular {
+  font-weight: 300;
+}
+
+.regularPlus {
+  font-weight: 500;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.extraBold {
+  font-weight: 800;
+}
+
+/* Highlighted Gradient Text */
+.highlight {
+  display: inline-block;
+  position: relative;
+  color: #77c49a;
+  background: linear-gradient(110deg,
+      #77c49a 0%,
+      #77c4a3 25%,
+      #77c4b9 75%,
+      #7fd1b8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: highlightGradient 9s ease infinite;
+}
+
+.soft {
+  opacity: 0.8;
+}
+
+/* Text Animation Helpers for JS */
+.word-container,
+.word-container-tall,
+.animation-container {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.2rem;
+}
+
+.word {
+  display: inline-block;
+  transform: translateY(80px);
+}
+
+/* General Paragraph Spacing */
+.paragraph-section {
+  margin-bottom: 2rem;
+}
+
+/* ==========================================================================
+     4. Preloader
+     ========================================================================== */
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: hsla(180, 1%, 97%, 1);
+  background-image:
+    radial-gradient(at 81% 65%, hsla(218, 98%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, hsla(39, 95%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(245, 228, 238) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, hsla(197, 87%, 94%, 1) 0px, transparent 50%);
+  background-size: 500% 500%;
+  animation: gradientLight 9s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.7s ease-out;
+}
+
+.loading--out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading__mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  z-index: 1;
+}
+
+/* ==========================================================================
+     5. Layout & Grid System (Base)
+     ========================================================================== */
+
+.siteCard {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: hsla(180, 1%, 97%, 1);
+  /* Light-mode background */
+  background-image:
+    radial-gradient(at 81% 65%, hsla(218, 98%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, hsla(39, 95%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(245, 228, 238) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, hsla(197, 87%, 94%, 1) 0px, transparent 50%);
+  background-size: 500% 500%;
+  animation: gradientLight 9s ease infinite;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.columns {
+  display: block;
+  /* Mobile-first: single column flow */
+}
+
+.lineSeparator {
+  width: 100%;
+  height: 1px;
+  background-color: #333333;
+  margin-bottom: .5rem;
+  border: none;
+  transition: background-color 0.3s ease-out,
+    color 0.3s ease-out,
+    border-color 0.3s ease-out;
+}
+
+.vertical-text {
+  display: none;
+  /* Displayed on desktop via media query */
+}
+
+/* ==========================================================================
+     6. Color Schemes & Themes
+     ========================================================================== */
+
+/* Dark Mode Overrides */
+body.dark-mode #site-frame {
+  border-color: #0c0c0c;
+}
+
+body.dark-mode #top-frame,
+body.dark-mode #bottom-frame,
+body.dark-mode #left-frame,
+body.dark-mode #right-frame {
+  background-color: #0c0c0c;
+}
+
+body.dark-mode .siteCard {
+  background-color: #080808;
+  background-image:
+    radial-gradient(at 81% 65%, rgb(22, 24, 27) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, rgb(22, 21, 22) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(19, 21, 22) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, rgb(17, 18, 18) 0px, transparent 50%);
+  background-size: 400% 400%;
+  animation: gradientDark 18s ease infinite;
+  color: #f2f2f2;
+}
+
+body.dark-mode .navMobile {
+  background: rgba(26, 26, 26, 0);
+}
+
+body.dark-mode .lineSeparator {
+  background-color: #555555;
+}
+
+body.dark-mode .thumbnailImage,
+body.dark-mode .featureImage {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .pill {
+  border-color: #555555;
+}
+
+body.dark-mode .pillText {
+  color: #f2f2f2;
+}
+
+body.dark-mode .highlight {
+  color: #77c49a;
+}
+
+html.dark-mode {
+  background-color: #0c0c0c;
+}
+
+/* Theme Change Transition Helpers */
+body.dark-mode-transition,
+body.light-mode-transition {
+  animation: none !important;
+  background-image: none !important;
+}
+
+body.light-mode-transition .siteCard,
+body.dark-mode-transition .siteCard {
+  transition: background-color 0.3s ease-out,
+    color 0.3s ease-out;
+}
+
+/* Base Transitions for Theming */
+body,
+.siteCard,
+.navMobile,
+.lineSeparator,
+.thumbnailImage,
+.featureImage,
+.pill,
+.downloadButton {
+  transition: background-color 0.3s ease-out,
+    color 0.3s ease-out,
+    border-color 0.3s ease-out,
+    fill 0.3s ease-out;
+}
+
+/* navMobile sticky positioning */
+.navMobile {
+  position: sticky;
+  top: 12px;
+  z-index: 20000;
+  overflow: visible;
+}
+
+/* Pill hover state */
+.pill:hover {
+  border-color: transparent;
+  background-color: #77c49a;
+}
+
+.pill:hover .pillText {
+  color: #ffffff;
+}
+
+.pill:hover .highlight {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-fill-color: #ffffff !important;
+}
+
+/* Dark Mode Pill Hover State Fix */
+body.dark-mode .pill:hover {
+  background-color: #77c49a;
+  border-color: #77c49a;
+}
+
+body.dark-mode .pill:hover .pillText {
+  color: #ffffff;
+}
+
+body.dark-mode .pill:hover .highlight {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-fill-color: #ffffff !important;
+}
+
+/* ==========================================================================
+     7. Animations & Transitions (Keyframes & Base Transitions)
+     ========================================================================== */
+
+/* Background Gradient Animations */
+@keyframes gradientLight {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradientDark {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  25% {
+    background-position: 70% 30%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
+
+  75% {
+    background-position: 30% 70%;
+  }
+
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* Text Highlight Gradient Animation */
+@keyframes highlightGradient {
+  0% {
+    background-position: 0% center;
+  }
+
+  50% {
+    background-position: 100% center;
+  }
+
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* SVG Gradient Stop Animations */
+@keyframes darkModeGradientAnim {
+  0% {
+    stop-color: #77c49a;
+  }
+
+  25% {
+    stop-color: #77c4a3;
+  }
+
+  50% {
+    stop-color: #77c4b9;
+  }
+
+  75% {
+    stop-color: #7fd1b8;
+  }
+
+  100% {
+    stop-color: #77c49a;
+  }
+}
+
+@keyframes chatGradientAnim {
+  0% {
+    stop-color: #77c49a;
+  }
+
+  25% {
+    stop-color: #77c4a3;
+  }
+
+  50% {
+    stop-color: #77c4b9;
+  }
+
+  75% {
+    stop-color: #7fd1b8;
+  }
+
+  100% {
+    stop-color: #77c49a;
+  }
+}
+
+/* Apply SVG Gradient Stop Animations */
+#darkModeGradient stop,
+#chatGradient stop {
+  animation: darkModeGradientAnim 9s ease infinite;
+}
+
+/* Download Button Gradient Animation */
+@keyframes downloadButtonGradient {
+  0% {
+    background-position: 0% center;
+  }
+
+  50% {
+    background-position: 100% center;
+  }
+
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* Experience Item Carat Color Animation */
+@keyframes caratColorChange {
+  0% {
+    color: #77c49a;
+  }
+
+  25% {
+    color: #77c4a3;
+  }
+
+  50% {
+    color: #77c4b9;
+  }
+
+  75% {
+    color: #7fd1b8;
+  }
+
+  100% {
+    color: #77c49a;
+  }
+}
+
+.experienceItem-carat .caratRight {
+  animation: caratColorChange 9s ease infinite;
+}
+
+/* Hidden-init Utility for JS-Animated Elements */
+.hidden-init {
+  opacity: 0;
+  transform: translateY(80px);
+}
+
+
+/* ==========================================================================
+     8. Image Styles & Effects (Includes Banner Fade-In Fix)
+     ========================================================================== */
+
+/* Banner Image Initial Fade-In */
+.bannerImage.start-hidden {
+  opacity: 0;
+  transform: translateY(80px);
+}
+
+.bannerImage-container-for-zoom {
+  overflow: hidden;
+  display: block;
+  border-radius: 12px;
+  
+}
+
+.bannerImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  /* Inherits from container */
+  background-color: transparent;
+  transition:
+    opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
+    transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.bannerImage-container-for-zoom:hover .bannerImage {
+  transform: scale(1.03);
+}
+
+/* Project Thumbnail Container */
+.thumbnailImage-container-for-zoom {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: 375px;
+  border-radius: 12px;
+  background-color: transparent;
+}
+
+/* Project Thumbnail Image */
+.thumbnailImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: #333333;
+  transition: transform 0.3s ease-in-out;
+  border-radius: 12px;
+}
+
+.projectThumbnail:hover .thumbnailImage {
+  transform: scale(1.03);
+}
+
+/* Feature Image Container */
+.featureImage-container-for-zoom {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  height: 375px;
+  background-color: #333333;
+}
+
+/* Feature Image */
+.featureImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.featureImage-container-for-zoom:hover .featureImage {
+  transform: scale(1.03);
+}
+
+/* ==========================================================================
+     9. Component Styles (Base Mobile-First Styles)
+     ========================================================================== */
+
+/* Hamburger Icon */
+#hamburgerIcon .line {
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: transform 0.3s ease-in-out,
+    opacity 0.2s ease-in-out;
+  transform-origin: center;
+}
+
+#hamburgerIcon.is-active .top-line {
+  transform: translateY(5px) rotate(45deg);
+}
+
+#hamburgerIcon.is-active .middle-line {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+#hamburgerIcon.is-active .bottom-line {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+/* Navigation Mobile */
+.navMobile {
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  border-radius: 8px 8px 0 0;
+}
+
+.navMobile.nav-on-top {
+  z-index: 20501;
+}
+
+.navMobile .navLeft,
+.navMobile .navRight {
+  flex: 1;
+}
+
+.navMobile .navRight {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Icon Dimensions & Interaction */
+.navMobile .navRight img,
+.darkMode-icon,
+.navMenu-icon {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: auto;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  position: relative;
+}
+
+/* Dark Mode Toggle Icon */
+.animatable-theme-icon .icon-main-disc {
+  transition: fill 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+}
+
+.animatable-theme-icon .mask-eater {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center;
+}
+
+.animatable-theme-icon:not(.is-moon) .icon-main-disc {
+  fill: #77c49a;
+  /* Light mode icon */
+}
+
+body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
+  fill: #f2f2f2;
+  /* Dark mode icon */
+}
+
+.animatable-theme-icon:not(.is-moon) .mask-eater {
+  transform: translate(20px, -20px);
+}
+
+.animatable-theme-icon.is-moon .icon-main-disc {
+  fill: url(#darkModeGradient);
+}
+
+.animatable-theme-icon.is-moon .mask-eater {
+  transform: translate(4.5px, -4.5px);
+}
+
+.animatable-theme-icon:focus {
+  outline: none;
+}
+
+.animatable-theme-icon:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+}
+
+.navMenu-icon:focus {
+  outline: none;
+}
+
+.navMenu-icon:focus-visible {
+  outline: 2px solid var(--focus-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Component: Header */
+.component-header {
+  width: 100%;
+  padding: 1rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  text-align: left;
+  align-items: flex-start;
+}
+
+.sub-header-text {
+  font-size: 1.75rem;
+  /* Adjust size as needed */
+  font-weight: 300;
+  letter-spacing: -.1px;
+  /* A lighter font weight */
+  color: inherit;
+
+  /* Centers the text, similar to the main header */
+  text-align: left;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.introText {
+  font-size: 3rem;
+  line-height: 3.4rem;
+  font-weight: 200;
+  max-width: 380px;
+  z-index: 10;
+  display: inline-block;
+  caret-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Component: Banner */
+.component-banner {
+  width: 100%;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2rem 1rem 0 1rem;
+  /* Mobile-first height */
+  max-height: 624px;
+}
+
+.project-page .component-banner {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.project-page .bannerImage-container-for-zoom {
+  border-radius: 0;
+}
+
+/* Component: Description */
+.component-description {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+}
+
+.component-description .lineSeparator,
+.component-description .paragraph-section {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.descriptionText-1 {
+  max-width: 400px;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 300;
+}
+
+/* Paragraphs fade-in helper */
+.paragraph-section.hidden-init {
+  opacity: 0;
+  transform: translateY(40px);
+  will-change: opacity, transform;
+}
+
+/* Component: Pills */
+.component-pills {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+}
+
+.component-pills .columns {
+  display: block;
+}
+
+.component-pills .rightColumnContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  overflow: hidden;
+}
+
+.pill {
+  display: inline-flex;
+  border: 2px solid #333333;
+  border-radius: 24px;
+  padding: 8px 12px;
+  align-items: center;
+  justify-content: center;
+  transition:
+    opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
+    transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+}
+
+.pillText {
+  font-size: 1rem;
+  color: #333333;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Component: Section Title */
+.component-sectionTitle {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+}
+
+.sectionTitle {
+  padding-bottom: 1rem;
+}
+
+.sectionTitleText {
+  font-size: 2.5rem;
+  line-height: 3rem;
+  margin: 0;
+}
+
+/* Component: Project Grid */
+.component-projectGrid {
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.projectThumbnail {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 2rem 0 0 0;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(80px);
+  transition: transform 0.3s ease-out,
+    opacity 0.3s ease-out;
+  will-change: transform, opacity;
+}
+
+.projectThumbnail.fadeIn-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.projectThumbnail-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.projectThumbnail-Title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.projectTitle {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.projectSubTitle {
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0;
+}
+
+/* Component: Text Section */
+.component-textSection {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.component-textSection .sectionTitle {
+  padding-bottom: 8px;
+  padding-top: 8px;
+}
+
+.component-textSection .lineSeparator {
+  margin-bottom: 0;
+}
+
+.sectionBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sectionBody > * + * {
+  margin-top: 2rem; 
+}
+
+.sectionBodyText {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 300;
+  margin: 0;
+  max-width: 400px;
+}
+
+.component-about .sectionBodyText {  
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quoteSection {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  padding-block: 2rem;
+  padding-inline: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.quoteText {
+  width: 100%;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+  margin: 0;
+  text-align: left;
+  font-family: 'Albra Book', sans-serif;
+}
+
+/* Component: Experience */
+.component-experience {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.component-experience .lineSeparator {
+  margin-bottom: 0;
+}
+
+.experienceTitle {
+  width: 100%;
+}
+
+.experienceTitleText {
+  font-size: 1rem;
+  line-height: 2rem;
+  font-weight: 300;
+  margin: 0;
+  opacity: 0;
+}
+
+.experienceItem {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.experienceItem-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  padding-bottom: 0.4rem;
+}
+
+.experienceItem-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.experienceItem-text p {
+  font-size: 1.4rem;
+  line-height: 1.8rem;
+  margin: 0;
+}
+
+.experienceItem-company {
+  font-weight: 600;
+}
+
+.experienceItem-job {
+  font-weight: 300;
+}
+
+.experienceItem-carat {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 10;
+  user-select: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.caratRight {
+  width: 16px !important;
+  height: 16px !important;
+  padding-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  transition: transform 0.3s ease-in-out;
+}
+
+.experienceItem-container .caratRight svg {
+  transition: transform 0.3s ease-in-out;
+  transform: rotate(0deg);
+  width: 100%;
+  height: 100%;
+}
+
+.experienceItem-container[aria-expanded="true"] .caratRight svg {
+  transform: rotate(90deg);
+}
+
+.experienceItem-bodyText {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition:
+    max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.3s ease-out 0.1s,
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) 0.05s,
+    padding-top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    padding-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.experienceItem-bodyText p {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin: 0;
+}
+
+.experienceItem.is-expanded .experienceItem-bodyText {
+  opacity: 1;
+  transform: translateY(0);
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
+  max-height: 1000px;
+  /* Arbitrary large to allow expansion */
+}
+
+/* Component: CTA */
+.component-cta {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.downloadButton {
+  display: inline-flex;
+  gap: 8px;
+  padding: 12px;
+  background-color: #77c49a;
+  background-image: linear-gradient(110deg,
+      #77c49a 0%,
+      #77c4a3 25%,
+      #77c4b9 75%,
+      #7fd1b8 100%);
+  background-size: 200% auto;
+  animation: downloadButtonGradient 9s ease infinite;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2rem;
+}
+
+.downloadText {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 400;
+}
+
+/* Component: Feature Image */
+.component-featureImage {
+  width: 100%;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.imageDescription {
+  width: 100%;
+  padding: 0 32px;
+  text-align: center;
+}
+
+.imageDescription .descriptionText {
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* Component: Footer */
+.component-footer {
+  width: 100%;
+  padding: 2rem 1rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.component-footer .footerLinkText {
+  color: var(--text-soft);
+  text-decoration: none;
+  transition: color .2s;
+}
+.component-footer .footerLinkText:hover,
+.component-footer .footerLinkText:focus-visible {
+  color: var(--accentColor);
+}
+
+.component-footer .lineSeparator {
+  margin-bottom: 1rem;
+}
+
+.footerCTA {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-bottom: 0.6rem;
+}
+
+.footerCTAText {
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 32px;
+  text-align: left;
+  margin: 0;
+}
+
+.chatIcon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1rem;
+  padding-bottom: 0.2rem;
+}
+
+.footerEmail {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.footerEmailText {
+  font-size: 1rem;
+  line-height: 24px;
+  font-weight: 400;
+  margin: 0;
+  text-align: left;
+}
+
+.footerEmailText.strong {
+  font-weight: 600;
+}
+
+.footerLinks {
+  width: 100%;
+  padding: 0 2rem 0 0;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.footerLinks-column {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px 12px 0;
+  align-items: flex-start;
+}
+
+.footerLinkText {
+  font-size: 1rem;
+  line-height: 2rem;
+  font-weight: 300;
+  margin: 0;
+}
+
+.footerDisclaimer {
+  width: 100%;
+  padding: 0 1rem 1rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.footerDisclaimerText {
+  font-size: 12px;
+  line-height: 24px;
+  text-align: center;
+  margin: 0;
+}
+
+/* Component: Mobile Menu Overlay */
+#mobileMenuOverlay {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background-color: hsla(180, 1%, 97%, 0.95);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 20500;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out,
+    visibility 0s linear 0.4s;
+}
+
+#mobileMenuOverlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.4s ease-in-out,
+    visibility 0s linear 0s;
+}
+
+body.dark-mode #mobileMenuOverlay {
+  background-color: rgba(8, 8, 8, 0.95) !important;
+}
+
+
+.mobile-menu-nav {
+  text-align: center;
+}
+
+.mobile-menu-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu-nav li {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(1) {
+  transition-delay: 0.20s;
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(2) {
+  transition-delay: 0.28s;
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(3) {
+  transition-delay: 0.36s;
+}
+
+.mobile-menu-nav a {
+  display: block;
+  padding: 1rem 0;
+  font-size: 1.8rem;
+  font-family: 'Albra Book', sans-serif;
+  font-weight: 500;
+  color: #333333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  caret-color: transparent;
+}
+
+body.dark-mode .mobile-menu-nav a {
+  color: #f2f2f2;
+}
+
+.mobile-menu-nav a:hover,
+.mobile-menu-nav a:focus-visible {
+  color: #77c49a;
+}
+
+body.dark-mode .mobile-menu-nav a:hover,
+body.dark-mode .mobile-menu-nav a:focus-visible {
+  color: #77c49a;
+}
+
+body.mobile-menu-active {
+  overflow: hidden;
+}
+
+.projectThumbnail + .columns {
+  padding-top: 4rem;
+}
+
+/* ==========================================================================
+     10. Utility Classes
+     ========================================================================== */
+
+#custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 22000;
+  left: 0;
+  top: 0;
+
+  /* The cursor now starts as a tiny, completely scaled-down dot */
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  transform: translateY(-50%) scale(0);
+  /* Starts scaled to zero on both axes */
+  transform-origin: center;
+
+  /* The animated gradient background */
+  background-image: linear-gradient(110deg,
+      #77c49a 0%,
+      #77c4a3 25%,
+      #77c4b9 75%,
+      #7fd1b8 100%);
+  background-size: 200% auto;
+  animation: highlightGradient 9s ease infinite;
+
+  /* The transition that creates the smooth bloom and shrink effect */
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    height 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* On vertical text hover, we scale the Y-axis */
+#custom-cursor.large-text-hover,
+#custom-cursor.small-text-hover {
+  opacity: 1;
+  transform: translateY(-50%) scaleY(1);
+  /* Scale it up vertically */
+  border-radius: 3px;
+}
+
+#custom-cursor.large-text-hover {
+  height: 80px;
+}
+
+#custom-cursor.small-text-hover {
+  height: 40px;
+}
+
+/* On horizontal text hover, we scale the X-axis */
+#custom-cursor.horizontal-text-hover {
+  opacity: 1;
+  width: 40px;
+  /* Set final width */
+  height: 2px;
+  /* Set final height */
+  border-radius: 3px;
+  transform: translate(-50%, -50%) scaleX(1);
+  /* Scale it up horizontally */
+}
+
+/* Initial opacity for specific JS-animated elements */
+.component-textSection .rightColumnContainer>.sectionBody,
+.component-textSection .rightColumnContainer>.quoteSection {
+  opacity: 0;
+}
+
+
+/* ==========================================================================
+   NEW: Project Details List (for project pages)
+   ========================================================================== */
+
+.project-details-list {
+  display: flex;
+  flex-direction: column;
+  padding-top: 4rem;
+}
+
+.project-detail-item {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.project-details-list .project-detail-item:first-child {
+  padding-top: 0;
+}
+
+.project-details-list .project-detail-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.project-detail-title {
+  font-size: 0.9rem;
+  font-weight: 300;
+  color: inherit;
+  opacity: 0.7;
+  margin: 0 0 0.1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.project-detail-value {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+  color: inherit;
+}
+
+/* Container for the moved pills */
+.pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding-top: 3rem;
+}
+
+/* ==========================================================================
+   11. Image Carousel Styles (Corrected)
+   ========================================================================== */
+
+
+.project-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 600px;
+  overflow: visible;
+  border-radius: 12px;
+  background-color: #F0F0F0;
+}
+
+.carousel-nav-container {
+  position: absolute;
+  bottom: -6rem; /* This pushes it 2rem below the parent's bottom edge */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  z-index: 1000;
+}
+
+body.dark-mode .project-image-container {
+  background-color: #1C1C1C; /* Off-black for dark mode */
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+}
+
+/* FIX for Image Height: This rule is specific enough to override other styles */
+.image-carousel .thumbnailImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Navigation Buttons */
+.carousel-nav {
+  position: static;
+  transform: none;
+  background-color: rgba(128, 128, 128, 0.15);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  border: none;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0; /* Prevents buttons from shrinking */
+}
+
+.carousel-nav:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-nav.prev {
+  left: 50%;
+  transform: translateX(-125%); /* Shift left from the center point */
+}
+
+.carousel-nav.next {
+  right: 50%;
+  transform: translateX(125%); /* Shift right from the center point */
+}
+
+.carousel-nav svg {
+  width: 12px;
+  height: 12px;
+  fill: #ffffff;
+}
+
+/* FIX for Stacked Captions */
+.carousel-captions-container {
+  position: relative;
+  min-height: 40px;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: 400;
+  color: inherit;
+  /* Inactive captions are now fully transparent */
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+
+.carousel-caption.active {
+  /* The active caption becomes visible and takes up space */
+  position: relative;
+  opacity: 0.8;
+  /* This was the 'soft' style you wanted */
+}
+
+/* ==========================================================================
+     11. Consolidated Media Queries
+     ========================================================================== */
+
+/* Small tablets and large phones (481px - 768px) */
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  .projectPepsico-page .bannerImage {
+    max-width: 560px; /* Adjust this value as needed */
+    margin: 0 auto;   /* This keeps the image centered */
+    width: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+
+/* Mobile and Tablet adjustments (up to 768px) */
+
+
+/* Desktop Styles (>= 769px) */
+
+
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: hsla(180, 1%, 97%, 1);
+  background-image:
+    radial-gradient(at 81% 65%, hsla(218, 98%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, hsla(39, 95%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(245, 228, 238) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, hsla(197, 87%, 94%, 1) 0px, transparent 50%);
+  background-size: 500% 500%;
+  animation: gradientLight 9s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.7s ease-out;
+}
+
+.loading--out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading__mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  z-index: 1;
+}
+
+.loader {
+  position: relative;
+  z-index: 2;
+}
+
+/* --- Word Hover Effect Styles (with fade transition) --- */
+
+.interactive-word {
+  display: inline-block;
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  transition: color 1.3s ease, -webkit-text-fill-color 0.3s ease;
+}
+
+/* This is the style that gets applied to the hovered word. */
+.word-is-hovered {
+  /* Instantly place the gradient behind the word. */
+  background: linear-gradient(110deg,
+      #77c49a 0%,
+      #77c4a3 25%,
+      #77c4b9 75%,
+      #7fd1b8 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: highlightGradient 9s ease infinite;
+
+  /* The transition will now smoothly animate the solid color to transparent, revealing the gradient. */
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* Targets mobile phones specifically in landscape orientation */
+
+
+
+
+/* Prevents the blue focus outline on anchor link navigation */
+#about-section:focus,
+#selected-work-title:focus {
+  outline: none;
+}
+
+
+/* ==========================================================================
+   12. Page-Specific Overrides
+   ========================================================================== */
+
+/* PepsiCo Project Page Banner Styles */
+.projectPepsico-page .bannerImage-container-for-zoom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.projectPepsico-page .bannerImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;  /* or 'contain' if you prefer no crop */
+}
+
+.carousel-slide.slide-fit-contain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Styling for the new navigation button container */
+.carousel-nav-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+}
+
+/* Base style for carousel navigation buttons (Mobile First) */
+.carousel-nav {
+  position: static; /* Remove absolute positioning for mobile */
+  transform: none;
+  background-color: rgba(128, 128, 128, 0.15);
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s ease;
+}
+
+.carousel-nav svg {
+  fill: currentColor;
+}
+
+.projectThumbnail-inner + .imageDescription {
+  padding-top: 0.6rem; /* Matches the gap used in other thumbnails */
+}
+
+/* Re-apply absolute positioning for desktop view */
+
+
+
+
+/*
+==========================================================================
+   13. Digital Noise Background Effect
+==========================================================================
+*/
+
+.siteCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  /* Apply the SVG filter defined in the HTML */
+  filter: url(#noiseFilter);
+
+  /* Adjust the opacity to make the noise subtle */
+  opacity: 0.06;
+
+  /* Ensure the noise layer doesn't interfere with mouse clicks */
+  pointer-events: none;
+
+  /* Places the noise layer behind the site's content but over the background */
+  z-index: 0; 
+}
+
+
+
+/* 1) Hide the blinking caret on any focused element that isn't a real text input */
+:focus:not(input):not(textarea):not([contenteditable]) {
+  outline: none;               /* you probably already have this */
+  caret-color: transparent !important;
+}
+
+/* 2) (Optional) Prevent any text selection in your header/banner altogether */
+.component-header,
+.component-banner {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+/* Mobile-specific override for PepsiCo logos */
+.project-detail-logos img{
+  width:104px;
+  max-width:104px;
+  height:auto;
+  object-fit:contain;
+}
+
+.project-detail-logos {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Adjust this value for your desired mobile spacing */
+  flex-wrap: wrap;
+}
+
+
+/* --------------------------------------------------
+   1. Tablet (481px–768px)
+   -------------------------------------------------- */
+
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  .component-header {
+    padding: 3rem 1rem 0 1rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .component-banner {
+    max-height: 450px;
+    padding: 2rem 1rem 0 1rem;
+  }
+
+  .bannerImage-container-for-zoom {
+    border-radius: 12px;
+    /* Maintains width/height from parent */
+  }
+
+  .projectThumbnail .thumbnailImage-container-for-zoom {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .component-projectGrid .columns {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .component-projectGrid .leftColumnContainer,
+  .component-projectGrid .rightColumnContainer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .component-description {
+    padding-top: 2rem;
+  }
+
+  .component-description .lineSeparator {
+    opacity: 0;
+    transform: translateY(40px);
+    will-change: opacity, transform;
+  }
+
+  .component-description .columns {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .component-description .leftColumnContainer {
+    order: 2;
+    /* Details appear AFTER main text on mobile */
+    margin-right: 0;
+  }
+
+  .component-description .rightColumnContainer {
+    order: 1;
+    /* Main text appears FIRST on mobile */
+  }
+
+  .project-details-list {
+    padding-top: 3rem;
+  }
+}
+
+@media only screen and (min-width: 481px) {
+  .darkMode-icon,
+  .navMenu-icon {
+    /* smooth transition for both hover in and out */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .darkMode-icon:hover,
+  .navMenu-icon:hover {
+    /* lift up 5px on hover */
+    transform: translateY(-2px);
+  }
+}
+/* Desktop override for PepsiCo logos */
+@media only screen and (min-width: 769px) {
+  .projectPepsico-page .project-detail-logos img {
+    width: 120px;
+    max-width: 120px;
+  }
+}
+
+/* --------------------------------------------------
+   2. Desktop (>=769px)
+   -------------------------------------------------- */
+
+@media only screen and (min-width: 769px) {
+  .maxWidthContainer {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+   .project-detail-logos img {
+    width: 160px; 
+    max-width: none; 
+  }
+
+    /* Restore carousel styles for desktop */
+  .project-image-container {
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+  .carousel-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    margin-top: 0;
+  }
+
+  .carousel-nav.prev {
+    left: 1rem;
+    transform: none;
+  }
+
+  .carousel-nav.next {
+    right: 1rem;
+    transform: none;
+    left: auto; /* Reset left property from mobile */
+  }
+
+  .project-page .component-header {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .projectPepsico-page .bannerImage {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+
+  body:not(.projectPepsico-page) .component-projectGrid>.project-link:first-child .thumbnailImage-container-for-zoom {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+  }
+
+  body:not(.projectPepsico-page) .component-projectGrid>.project-link:first-child .thumbnailImage {
+    height: auto;
+    max-height: 400px;
+  }
+
+  .component-header {
+    padding: 2rem 4rem 0 4rem;
+  }
+
+  .sub-header-text {
+    /* padding: 0 4rem; */
+  }
+
+  .introText {
+    max-width: 800px;
+    font-size: 4.5rem;
+    line-height: 5rem;
+  }
+
+  .vertical-text {
+    display: flex;
+    position: fixed;
+    bottom: 3rem;
+    left: 3rem;
+    transform: rotate(-90deg);
+    transform-origin: left bottom;
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0.4;
+    z-index: 10;
+    align-items: center;
+  }
+
+  .vertical-text .dash {
+    margin-right: 1rem;
+    font-weight: 300;
+    transform: scaleX(1.5);
+  }
+
+  .component-banner {
+    padding: 2rem 4rem 0 4rem;
+    max-height: 624px;
+  }
+
+  .bannerImage-container-for-zoom {
+    border-radius: 12px;
+  }
+
+  .columns {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .leftColumnContainer {
+    margin-right: 2rem;
+  }
+
+  .component-description {
+    padding: 1rem 4rem 0 4rem;
+  }
+
+  .descriptionText-1.hidden-init {
+    padding-top: 4rem;
+  }
+
+  .descriptionText-1 {
+    max-width: 700px;
+    padding-top: .5rem;
+    pointer-events: none;
+  }
+
+  .descriptionText-1>.paragraph-section {
+    pointer-events: auto;
+  }
+
+  .rightColumnContainer .descriptionText-1 {
+    text-align: left;
+  }
+
+  .component-pills .columns {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .component-pills.hidden-init {
+    padding-bottom: 4rem;
+  }
+
+  .component-sectionTitle {
+    padding: 2rem 4rem 0 4rem;
+  }
+
+  .component-projectGrid {
+    padding: 0 4rem 4rem 4rem;
+  }
+
+  .component-projectGrid>.projectThumbnail:first-of-type .projectThumbnail-inner {
+    width: 100%;
+  }
+
+  .component-projectGrid>.projectThumbnail:first-of-type .thumbnailImage-container-for-zoom {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+  }
+
+  .component-projectGrid>.projectThumbnail:first-of-type .thumbnailImage {
+    height: auto;
+  }
+
+  .component-projectGrid .columns .projectThumbnail .projectThumbnail-inner {
+    width: 100%;
+  }
+
+  .component-projectGrid .columns .projectThumbnail .thumbnailImage-container-for-zoom {
+    max-width: none;
+    width: 100%;
+    height: 325px;
+  }
+
+  .component-textSection {
+    padding: 2rem 4rem 2rem 4rem;
+  }
+
+  .component-textSection .leftColumnContainer {
+    margin-right: 2rem;
+  }
+
+  .component-textSection .rightColumnContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: .5rem;
+  }
+
+  .component-textSection .quoteSection {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .quoteText {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  .sectionBodyText {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 300;
+    margin: 0;
+  }
+
+  .component-experience {
+    padding-right: 4rem;
+  }
+
+  .component-experience .leftColumnContainer {
+    margin-right: 2rem;
+  }
+
+  .component-cta {
+    padding: 2rem 4rem 0 4rem;
+  }
+
+  .component-cta .columns {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .component-cta .leftColumnContainer {
+    margin-right: 2rem;
+  }
+
+  .component-cta .rightColumnContainer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .component-featureImage {
+    padding-right: 4rem;
+  }
+
+  .featureImage-container-for-zoom {
+    border-radius: 12px;
+  }
+
+  .component-footer {
+    padding: 2rem 4rem 0 4rem;
+  }
+
+  .leftColumnContainer,
+  .rightColumnContainer {
+    flex: 1;
+  }
+
+  .projectThumbnail + .columns {
+  padding-top: 2rem;
+}
+
+}
+
+@media only screen and (min-width: 769px) {
+  .carousel-nav-container {
+  position: absolute;
+  top: 0;
+  bottom: auto; /* Add this to override the mobile 'bottom' style */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.carousel-nav {
+  position: absolute;
+  top: 47.5%;
+  background-color: rgba(0, 0, 0, 0.3);
+  pointer-events: auto; /* This makes the buttons clickable again */
+}
+
+.carousel-nav svg {
+  fill: #ffffff;
+}
+
+.carousel-nav.prev {
+  left: 1rem;
+}
+
+.carousel-nav.next {
+  right: 1rem;
+}
+
+.project-detail-logos {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem; 
+}
+
+.project-detail-logos img {
+  width: 45%;      
+  max-width: 110px; 
+  height: auto;      
+  object-fit: contain;
+}
+
+}
+/* --------------------------------------------------
+   3. Special Cases
+   -------------------------------------------------- */
+
+@media (orientation: landscape) and (pointer: coarse) and (max-height: 550px) {
+  #site-frame {
+    border-radius: 56px;
+    border-width: 24px;
+  }
+
+  #top-frame,
+  #bottom-frame {
+    height: 24px;
+  }
+
+  #left-frame,
+  #right-frame {
+    width: 24px;
+  }
+
+  #top-frame,
+  #bottom-frame,
+  #left-frame,
+  #right-frame {
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  body.dark-mode #top-frame,
+  body.dark-mode #bottom-frame,
+  body.dark-mode #left-frame,
+  body.dark-mode #right-frame {
+    background-color: #0c0c0c;
+  }
+
+  .navMobile .navRight {
+    padding-right: 2rem;
+    /* Creates space on the right */
+    padding-top: .5rem;
+  }
+
+  .vertical-text {
+    display: none;
+    /* Makes the element visible in this view */
+
+    /* Set the desired final position */
+    top: 50%;
+    left: .5rem;
+
+    /* --- Explicitly RESET the conflicting desktop styles to their defaults --- */
+    bottom: initial;
+    transform-origin: initial;
+
+    /* Now, apply the transform for centering and rotation on a clean slate */
+    transform: translateY(-50%) rotate(-90deg);
+  }
+}
+
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(25deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.chatIcon svg.is-wiggling {
+  animation: wiggle 0.5s ease-in-out
+  ;
+}
+
+
+/* --- Preloader Logo Animation (Final Corrected Version) --- */
+
+/* This tells the browser how to smoothly animate our custom variable */
+@property --stroke-draw-progress {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
+/* 1. Correctly styles the SVG container */
+#preloader svg {
+  width: 150px;
+  height: auto;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}
+
+/* Base style for the letters (dark gray) */
+#letter-b path,
+#letter-i-body path,
+#letter-i-topDot path,
+#letter-g-body path,
+#letter-g-bottomSwoop path {
+  fill: #232323;
+  transition: fill 0.3s ease;
+}
+
+/* Style for the letters during the preloader animation (green) */
+#preloader.loading--in #letter-b,
+#preloader.loading--in #letter-i-body,
+#preloader.loading--in #letter-i-topDot,
+#preloader.loading--in #letter-g-body,
+#preloader.loading--in #letter-g-bottomSwoop {
+  opacity: 0;
+  transform-box: fill-box;
+}
+
+/* 3. Prepares the VISIBLE filled signature to be masked */
+#signature-fill {
+  mask: url(#signature-draw-mask);
+}
+
+/* 4. Prepares the INVISIBLE stroke that will be animated to create the mask */
+#signature-stroke-path {
+  fill: none;
+  stroke: white;
+  stroke-width: 80px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 6153.1962890625;
+  stroke-dashoffset: calc(6153.1962890625 * var(--stroke-draw-progress));
+  
+}
+
+/* 5. Defines the Keyframe Animations */
+@keyframes fade-in-diagonal-bounce {
+  from {
+    opacity: 0;
+    transform: translate(-40px, -40px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+/* This new keyframe animates our custom variable from 1 down to 0 */
+@keyframes draw-progress {
+  to {
+    --stroke-draw-progress: 0;
+  }
+}
+
+/* 6. Applies the animations in the correct sequence */
+#preloader.loading--in #letter-b {
+  animation: fade-in-diagonal-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+}
+#preloader.loading--in #letter-i-topDot {
+  animation: fade-in-diagonal-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards;
+}
+#preloader.loading--in #letter-i-body {
+  animation: fade-in-diagonal-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
+}
+#preloader.loading--in #letter-g-body {
+  animation: swoop-exaggerated-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s forwards;
+}
+#preloader.loading--in #letter-g-bottomSwoop {
+  animation: swoop-exaggerated-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
+}
+
+/* This now applies the new 'draw-progress' animation over the 4-second duration */
+#preloader.loading--in #signature-stroke-path {
+  animation: draw-progress 1s cubic-bezier(0.855, 0.13, 0.815, 1.955) .6s forwards;
+}
+
+
+
+@keyframes swoop-exaggerated-bounce {
+  0% {
+    opacity: 0;
+    transform: translate(-40px, -40px);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(10px, 10px); /* Overshoots the final position */
+  }
+  80% {
+    transform: translate(-5px, -5px); /* Bounces back */
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0); /* Settles in final position */
+  }
+}
+
+/*
+==========================================================================
+   NEW: Navigation Logo Styles
+==========================================================================
+*/
+
+#nav-logo-link {
+  display: block;
+  height: 48px;
+}
+
+#nav-logo {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+/* Light Mode Colors */
+.nav-logo-letter {
+  fill: #333333;
+  /* Apply the bouncy transition to the transform, and a standard one to the fill */
+  transition: transform 0.4s cubic-bezier(0.855, 0.13, 0.815, 1.955),
+              fill 0.3s ease-out;
+}
+
+.nav-logo-signature {
+  fill: #77c49a;
+  stroke: #5a9e7c; /* A darker green for the stroke color */
+  stroke-width: 16;   /* Controls the thickness of the stroke */
+  transform-origin: center;
+  transition: transform 0.4s cubic-bezier(0.855, 0.13, 0.13, 1.955),
+              fill 0.3s ease-out,
+              stroke 0.3s ease-out;
+}
+
+/* Dark Mode Colors */
+body.dark-mode .nav-logo-letter {
+  fill: #f2f2f2;
+}
+
+body.dark-mode .nav-logo-signature {
+  fill: #77c49a;
+}
+
+/* --- The Hover Animations (Unchanged) --- */
+
+/* Move the first letter path ("b") to the left */
+#nav-logo-link:hover .nav-logo-letter:nth-of-type(1) {
+  transform: translateX(-8px);
+}
+
+/* Move the fourth and fifth letter paths ("g") to the right */
+#nav-logo-link:hover .nav-logo-letter:nth-of-type(4),
+#nav-logo-link:hover .nav-logo-letter:nth-of-type(5) {
+  transform: translateX(8px);
+}
+
+/* Scale the signature up slightly */
+#nav-logo-link:hover .nav-logo-signature {
+  transform: scale(1);
+}
+
+
+
+
+
