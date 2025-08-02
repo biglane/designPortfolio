@@ -23,7 +23,7 @@ input:focus,
 textarea:focus,
 [contenteditable]:focus {
   caret-color: transparent !important;
-  outline: none;            /* also remove the default focus outline if you want */
+  outline: none;            
 }
 
 *:focus {
@@ -102,16 +102,13 @@ a,
 a:link,
 a:visited {
   color: inherit;
-  /* This makes the link adopt the color of its parent text */
   text-decoration: none;
-  /* This removes the default underline from links */
 }
 
 ::selection {
   background-color: #77c49a;
-  /* Your site's main highlight color */
   color: #ffffff;
-  /* A contrasting text color for readability */
+
 }
 
 /*
@@ -119,14 +116,12 @@ a:visited {
    Anti-Flicker Snippet for Dark Mode
 ==========================================================================
 */
-/* This ensures a dark background is applied instantly on page load if dark mode is active */
 html.dark-mode body,
 html.dark-mode .siteCard {
   background-color: #080808; /* Dark mode content background */
   background-image: none;
 }
 
-/* This new part handles the outer frames to prevent them from flashing white */
 html.dark-mode #site-frame {
   border-color: #0c0c0c; /* Dark mode border color */
 }
@@ -1315,7 +1310,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 
 .imageDescription {
   width: 100%;
-  padding: 0 32px;
+  padding-top: 0.6rem;
   text-align: center;
 }
 
@@ -1547,15 +1542,12 @@ body.mobile-menu-active {
   left: 0;
   top: 0;
 
-  /* The cursor now starts as a tiny, completely scaled-down dot */
   width: 3px;
   height: 3px;
   border-radius: 50%;
   transform: translateY(-50%) scale(0);
-  /* Starts scaled to zero on both axes */
   transform-origin: center;
 
-  /* The animated gradient background */
   background-image: linear-gradient(110deg,
       #77c49a 0%,
       #77c4a3 25%,
@@ -1564,7 +1556,6 @@ body.mobile-menu-active {
   background-size: 200% auto;
   animation: highlightGradient 9s ease infinite;
 
-  /* The transition that creates the smooth bloom and shrink effect */
   transition:
     opacity 0.2s ease-out,
     transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
@@ -1572,12 +1563,10 @@ body.mobile-menu-active {
     width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* On vertical text hover, we scale the Y-axis */
 #custom-cursor.large-text-hover,
 #custom-cursor.small-text-hover {
   opacity: 1;
   transform: translateY(-50%) scaleY(1);
-  /* Scale it up vertically */
   border-radius: 3px;
 }
 
@@ -1589,19 +1578,14 @@ body.mobile-menu-active {
   height: 40px;
 }
 
-/* On horizontal text hover, we scale the X-axis */
 #custom-cursor.horizontal-text-hover {
   opacity: 1;
   width: 40px;
-  /* Set final width */
   height: 2px;
-  /* Set final height */
   border-radius: 3px;
   transform: translate(-50%, -50%) scaleX(1);
-  /* Scale it up horizontally */
 }
 
-/* Initial opacity for specific JS-animated elements */
 .component-textSection .rightColumnContainer>.sectionBody,
 .component-textSection .rightColumnContainer>.quoteSection {
   opacity: 0;
@@ -1957,28 +1941,22 @@ body.dark-mode .project-image-container {
   width: 100%;
   height: 100%;
   
-  /* Apply the SVG filter defined in the HTML */
   filter: url(#noiseFilter);
 
-  /* Adjust the opacity to make the noise subtle */
   opacity: 0.06;
 
-  /* Ensure the noise layer doesn't interfere with mouse clicks */
   pointer-events: none;
 
-  /* Places the noise layer behind the site's content but over the background */
   z-index: 0; 
 }
 
 
 
-/* 1) Hide the blinking caret on any focused element that isn't a real text input */
 :focus:not(input):not(textarea):not([contenteditable]) {
   outline: none;               /* you probably already have this */
   caret-color: transparent !important;
 }
 
-/* 2) (Optional) Prevent any text selection in your header/banner altogether */
 .component-header,
 .component-banner {
   user-select: none;
@@ -1986,7 +1964,6 @@ body.dark-mode .project-image-container {
   -moz-user-select: none;
   -ms-user-select: none;
 }
-/* Mobile-specific override for PepsiCo logos */
 .project-detail-logos img{
   width:104px;
   max-width:104px;
@@ -2566,7 +2543,6 @@ body.dark-mode .project-image-container {
   animation: swoop-exaggerated-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
 }
 
-/* This now applies the new 'draw-progress' animation over the 4-second duration */
 #preloader.loading--in #signature-stroke-path {
   animation: draw-progress 1s cubic-bezier(0.855, 0.13, 0.815, 1.955) .6s forwards;
 }
