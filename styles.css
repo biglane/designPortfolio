@@ -2454,13 +2454,6 @@ body.dark-mode .project-image-container {
 
 /* --- Preloader Logo Animation (Final Corrected Version) --- */
 
-/* This tells the browser how to smoothly animate our custom variable */
-@property --stroke-draw-progress {
-  syntax: '<number>';
-  inherits: false;
-  initial-value: 1;
-}
-
 /* 1. Correctly styles the SVG container */
 #preloader svg {
   width: 150px;
@@ -2503,8 +2496,7 @@ body.dark-mode .project-image-container {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 6153.1962890625;
-  stroke-dashoffset: calc(6153.1962890625 * var(--stroke-draw-progress));
-  
+  stroke-dashoffset: 6153.1962890625; /* Set the starting offset directly */
 }
 
 /* 5. Defines the Keyframe Animations */
@@ -2522,7 +2514,7 @@ body.dark-mode .project-image-container {
 /* This new keyframe animates our custom variable from 1 down to 0 */
 @keyframes draw-progress {
   to {
-    --stroke-draw-progress: 0;
+    stroke-dashoffset: 0; /* Animate the property directly */
   }
 }
 
