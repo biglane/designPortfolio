@@ -386,7 +386,6 @@ html.dark-mode #preloader {
     radial-gradient(at 48% 26%, rgb(245, 228, 238) 0px, transparent 50%),
     radial-gradient(at 75% 26%, hsla(197, 87%, 94%, 1) 0px, transparent 50%);
   background-size: 500% 500%;
-  animation: gradientLight 9s ease infinite;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
@@ -435,8 +434,15 @@ body.dark-mode .siteCard {
     radial-gradient(at 48% 26%, rgb(19, 21, 22) 0px, transparent 50%),
     radial-gradient(at 75% 26%, rgb(17, 18, 18) 0px, transparent 50%);
   background-size: 400% 400%;
-  animation: gradientDark 18s ease infinite;
   color: #f2f2f2;
+}
+
+body:not(.preloading) .siteCard {
+  animation: gradientLight 9s ease infinite;
+}
+
+body:not(.preloading).dark-mode .siteCard {
+  animation: gradientDark 18s ease infinite;
 }
 
 body.dark-mode .navMobile {

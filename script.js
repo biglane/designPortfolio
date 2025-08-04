@@ -1344,6 +1344,7 @@ function handleInitialHashScroll() {
 // ───────────────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add('preloading');
   ThemeManager.applyInitialThemeAndIcon();
 });
 
@@ -1356,6 +1357,7 @@ window.addEventListener('load', () => {
   }
 
   function onPreloaderFinishedAndModulesReady() {
+    document.body.classList.remove('preloading');
     if (preloader) {
       preloader.style.display = 'none';
     }
