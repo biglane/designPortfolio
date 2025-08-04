@@ -1421,7 +1421,7 @@ window.addEventListener('load', () => {
       
       // --- Define your animation files here ---
       const lightModePath = 'assets/logo-lightMode_big-lottie_pngs.json';
-      const darkModePath = 'assets/darkmodeTest.json';
+      const darkModePath = 'assets/darkmodeTest2.json';
 
       // Check the <html> element for the dark-mode class to prevent flashing
       const isDarkMode = document.documentElement.classList.contains('dark-mode');
