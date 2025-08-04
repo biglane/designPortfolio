@@ -282,18 +282,23 @@ html.dark-mode #right-frame {
 .highlight {
   display: inline-block;
   position: relative;
-  color: #77c49a;
+  color: #4ad4a7;
   background: linear-gradient(110deg,
-      #77c49a 0%,
-      #77c4a3 25%,
-      #77c4b9 75%,
-      #7fd1b8 100%);
+      #4ad4a7 0%,
+      #4ac0b7 25%,
+      #4ad4c7 75%,
+      #4aded7 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   text-fill-color: transparent;
   animation: highlightGradient 9s ease infinite;
+}
+
+.highlight.interactive-word {
+  -webkit-text-fill-color: transparent;
+  transition: none;
 }
 
 .soft {
@@ -342,6 +347,17 @@ html.dark-mode #right-frame {
   justify-content: center;
   z-index: 99999;
   transition: opacity 0.7s ease-out;
+}
+
+html.dark-mode #preloader {
+  background-color: #080808;
+  background-image:
+    radial-gradient(at 81% 65%, rgb(22, 24, 27) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, rgb(22, 21, 22) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(19, 21, 22) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, rgb(17, 18, 18) 0px, transparent 50%);
+  background-size: 400% 400%;
+  animation: gradientDark 18s ease infinite;
 }
 
 .loading--out {
@@ -453,7 +469,7 @@ body.dark-mode .pillText {
 }
 
 body.dark-mode .highlight {
-  color: #77c49a;
+  color: #4ad4a7;
 }
 
 html.dark-mode {
@@ -499,7 +515,7 @@ body,
 /* Pill hover state */
 .pill:hover {
   border-color: transparent;
-  background-color: #77c49a;
+  background-color: #4ad4a7;
 }
 
 .pill:hover .pillText {
@@ -593,7 +609,7 @@ body.dark-mode .pill:hover .highlight {
 /* SVG Gradient Stop Animations */
 @keyframes darkModeGradientAnim {
   0% {
-    stop-color: #77c49a;
+    stop-color: #4ad4a7;
   }
 
   25% {
@@ -601,21 +617,21 @@ body.dark-mode .pill:hover .highlight {
   }
 
   50% {
-    stop-color: #77c4b9;
+    stop-color: #4ad4c7;
   }
 
   75% {
-    stop-color: #7fd1b8;
+    stop-color: #4aded7;
   }
 
   100% {
-    stop-color: #77c49a;
+    stop-color: #4ad4a7;
   }
 }
 
 @keyframes chatGradientAnim {
-  0% {
-    stop-color: #77c49a;
+   0% {
+    stop-color: #4ad4a7;
   }
 
   25% {
@@ -623,15 +639,15 @@ body.dark-mode .pill:hover .highlight {
   }
 
   50% {
-    stop-color: #77c4b9;
+    stop-color: #4ad4c7;
   }
 
   75% {
-    stop-color: #7fd1b8;
+    stop-color: #4aded7;
   }
 
   100% {
-    stop-color: #77c49a;
+    stop-color: #4ad4a7;
   }
 }
 
@@ -658,24 +674,24 @@ body.dark-mode .pill:hover .highlight {
 
 /* Experience Item Carat Color Animation */
 @keyframes caratColorChange {
-  0% {
-    color: #77c49a;
+   0% {
+    stop-color: #4ad4a7;
   }
 
   25% {
-    color: #77c4a3;
+    stop-color: #77c4a3;
   }
 
   50% {
-    color: #77c4b9;
+    stop-color: #4ad4c7;
   }
 
   75% {
-    color: #7fd1b8;
+    stop-color: #4aded7;
   }
 
   100% {
-    color: #77c49a;
+    stop-color: #4ad4a7;
   }
 }
 
@@ -856,7 +872,7 @@ body.dark-mode .pill:hover .highlight {
 }
 
 .animatable-theme-icon:not(.is-moon) .icon-main-disc {
-  fill: #77c49a;
+  fill: #4ad4a7;
   /* Light mode icon */
 }
 
@@ -1281,12 +1297,12 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   display: inline-flex;
   gap: 8px;
   padding: 12px;
-  background-color: #77c49a;
+  background-color: #4ad4a7;
   background-image: linear-gradient(110deg,
-      #77c49a 0%,
-      #77c4a3 25%,
-      #77c4b9 75%,
-      #7fd1b8 100%);
+      #4ad4a7 0%,
+      #4ac0b7 25%,
+      #4ad4c7 75%,
+      #4aded7 100%);
   background-size: 200% auto;
   animation: downloadButtonGradient 9s ease infinite;
   align-items: center;
@@ -2454,109 +2470,11 @@ body.dark-mode .project-image-container {
 
 /* --- Preloader Logo Animation (Final Corrected Version) --- */
 
-/* 1. Correctly styles the SVG container */
-#preloader svg {
-  width: 150px;
-  height: auto;
-  overflow: visible;
-  position: relative;
-  z-index: 2;
-}
-
-/* Base style for the letters (dark gray) */
-#letter-b path,
-#letter-i-body path,
-#letter-i-topDot path,
-#letter-g-body path,
-#letter-g-bottomSwoop path {
-  fill: #232323;
-  transition: fill 0.3s ease;
-}
-
-/* Style for the letters during the preloader animation (green) */
-#preloader.loading--in #letter-b,
-#preloader.loading--in #letter-i-body,
-#preloader.loading--in #letter-i-topDot,
-#preloader.loading--in #letter-g-body,
-#preloader.loading--in #letter-g-bottomSwoop {
-  opacity: 0;
-  transform-box: fill-box;
-}
-
-/* 3. Prepares the VISIBLE filled signature to be masked */
-#signature-fill {
-  mask: url(#signature-draw-mask);
-}
-
-/* 4. Prepares the INVISIBLE stroke that will be animated to create the mask */
-#signature-stroke-path {
-  fill: none;
-  stroke: white;
-  stroke-width: 80px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 6153.1962890625;
-  stroke-dashoffset: 6153.1962890625; /* Set the starting offset directly */
-}
-
-/* 5. Defines the Keyframe Animations */
-@keyframes fade-in-diagonal-bounce {
-  from {
-    opacity: 0;
-    transform: translate(-40px, -40px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, 0);
-  }
-}
-
-/* This new keyframe animates our custom variable from 1 down to 0 */
-@keyframes draw-progress {
-  to {
-    stroke-dashoffset: 0; /* Animate the property directly */
-  }
-}
-
-/* 6. Applies the animations in the correct sequence */
-#preloader.loading--in #letter-b {
-  animation: fade-in-diagonal-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
-}
-#preloader.loading--in #letter-i-topDot {
-  animation: fade-in-diagonal-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards;
-}
-#preloader.loading--in #letter-i-body {
-  animation: fade-in-diagonal-bounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
-}
-#preloader.loading--in #letter-g-body {
-  animation: swoop-exaggerated-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s forwards;
-}
-#preloader.loading--in #letter-g-bottomSwoop {
-  animation: swoop-exaggerated-bounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s forwards;
-}
-
-#preloader.loading--in #signature-stroke-path {
-  animation: draw-progress 1s cubic-bezier(0.855, 0.13, 0.815, 1.955) .6s forwards;
-}
-
-
-
-@keyframes swoop-exaggerated-bounce {
-  0% {
-    opacity: 0;
-    transform: translate(-40px, -40px);
-  }
-  60% {
-    opacity: 1;
-    transform: translate(10px, 10px); /* Overshoots the final position */
-  }
-  80% {
-    transform: translate(-5px, -5px); /* Bounces back */
-  }
-  100% {
-    opacity: 1;
-    transform: translate(0, 0); /* Settles in final position */
-  }
+#lottie-container {
+  width: 12rem;  /* You can adjust the size as needed */
+  height: 12rem;
+  margin: 0 auto;
+  z-index: 2;    /* Add this line to bring it to the front */
 }
 
 /*
@@ -2565,60 +2483,16 @@ body.dark-mode .project-image-container {
 ==========================================================================
 */
 
-#nav-logo-link {
-  display: block;
-  height: 48px;
+#lottie-logo-container {
+  width: 4rem;
+  height: 4rem;
+  cursor: pointer;
+  opacity: 0; /* Start invisible */
+  transition: opacity 0.5s ease-out; /* Define the fade animation */
 }
 
-#nav-logo {
-  height: 100%;
-  width: auto;
-  display: block;
-}
-
-/* Light Mode Colors */
-.nav-logo-letter {
-  fill: #333333;
-  /* Apply the bouncy transition to the transform, and a standard one to the fill */
-  transition: transform 0.4s cubic-bezier(0.855, 0.13, 0.815, 1.955),
-              fill 0.3s ease-out;
-}
-
-.nav-logo-signature {
-  fill: #77c49a;
-  stroke: #5a9e7c; /* A darker green for the stroke color */
-  stroke-width: 16;   /* Controls the thickness of the stroke */
-  transform-origin: center;
-  transition: transform 0.4s cubic-bezier(0.855, 0.13, 0.13, 1.955),
-              fill 0.3s ease-out,
-              stroke 0.3s ease-out;
-}
-
-/* Dark Mode Colors */
-body.dark-mode .nav-logo-letter {
-  fill: #f2f2f2;
-}
-
-body.dark-mode .nav-logo-signature {
-  fill: #77c49a;
-}
-
-/* --- The Hover Animations (Unchanged) --- */
-
-/* Move the first letter path ("b") to the left */
-#nav-logo-link:hover .nav-logo-letter:nth-of-type(1) {
-  transform: translateX(-8px);
-}
-
-/* Move the fourth and fifth letter paths ("g") to the right */
-#nav-logo-link:hover .nav-logo-letter:nth-of-type(4),
-#nav-logo-link:hover .nav-logo-letter:nth-of-type(5) {
-  transform: translateX(8px);
-}
-
-/* Scale the signature up slightly */
-#nav-logo-link:hover .nav-logo-signature {
-  transform: scale(1);
+#lottie-logo-container.is-visible {
+  opacity: 1;
 }
 
 

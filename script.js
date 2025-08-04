@@ -183,6 +183,8 @@ const ThemeManager = (function () {
       darkModeIconElement.setAttribute('aria-label', 'Activate dark mode');
     }
 
+    LottieLogoManager.onThemeChange();
+
     setTimeout(() => {
       document.body.classList.remove('light-mode-transition');
       document.body.classList.remove('dark-mode-transition');
@@ -1148,6 +1150,69 @@ const WordHoverManager = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
+// 11b. LOTTIE LOGO MANAGER
+// ───────────────────────────────────────────────────────────────────────────────
+const LottieLogoManager = (function () {
+  let logoAnimation = null;
+  let lottieLogoContainer = null;
+  let isPlaying = false; // Our new flag to track the animation state
+  const lightModePath = 'assets/nav-logo-light_big-lottie.json';
+  const darkModePath = 'assets/nav-logo-dark_big-lottie.json';
+
+  function loadAnimationByTheme() {
+    // This was moved from outside the function to inside it
+    const isDarkMode = document.documentElement.classList.contains('dark-mode');
+
+    if (logoAnimation) {
+      logoAnimation.destroy();
+    }
+    
+    isPlaying = false; // Reset the flag whenever we load a new animation
+
+    logoAnimation = lottie.loadAnimation({
+      container: lottieLogoContainer,
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      path: isDarkMode ? darkModePath : lightModePath
+    });
+    
+    // Add a listener to reset the flag once the animation completes
+    logoAnimation.addEventListener('complete', () => {
+      isPlaying = false;
+    });
+  }
+
+  function initialize() {
+    lottieLogoContainer = document.getElementById('lottie-logo-container');
+
+    if (!lottieLogoContainer || typeof lottie === 'undefined') {
+      return;
+    }
+    setTimeout(() => lottieLogoContainer.classList.add('is-visible'), 100);
+    loadAnimationByTheme();
+
+    lottieLogoContainer.addEventListener('mouseenter', () => {
+      // Only play the animation if it's not already playing
+      if (isPlaying) {
+        return; 
+      }
+      isPlaying = true; // Set the lock
+      logoAnimation.goToAndPlay(0, true);
+    });
+  }
+
+  function onThemeChange() {
+    loadAnimationByTheme();
+  }
+
+  return { 
+    initialize,
+    onThemeChange 
+  };
+})();
+
+// ───────────────────────────────────────────────────────────────────────────────
 // 12. IMAGE CAROUSEL MANAGER
 // ───────────────────────────────────────────────────────────────────────────────
 const ImageCarouselManager = (function () {
@@ -1285,14 +1350,15 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('load', () => {
   const preloader = document.getElementById('preloader');
   const pageContent = document.querySelector('.pageContent');
-  const signaturePath = document.getElementById('signature-stroke-path');
 
   if (preloader && pageContent) {
     pageContent.style.opacity = '0';
   }
 
   function onPreloaderFinishedAndModulesReady() {
-    if (preloader) preloader.style.display = 'none';
+    if (preloader) {
+      preloader.style.display = 'none';
+    }
 
     ThemeManager.setupEventListeners();
     LayoutManager.initialize();
@@ -1304,6 +1370,7 @@ window.addEventListener('load', () => {
     ExperienceManager.initialize();
     MobileMenuManager.initialize();
     WordHoverManager.initialize();
+    LottieLogoManager.initialize(); 
     ImageCarouselManager.initialize();
     CaretSuppressor.initialize();
     ChatIconAnimator.initialize();
@@ -1339,17 +1406,44 @@ window.addEventListener('load', () => {
       }
     }
     preloader.addEventListener('transitionend', onEnd);
+    // Fallback timer for the fade-out transition
     setTimeout(() => {
-      if (!ended) onPreloaderFinishedAndModulesReady();
+      if (!ended) {
+        onPreloaderFinishedAndModulesReady();
+      }
     }, 750);
   }
 
-  if (preloader && signaturePath) {
-    // This is the correct logic that listens for the animation to end
-    signaturePath.addEventListener('animationend', hidePreloader);
+  // --- NEW Lottie-based preloader logic ---
+  if (preloader) {
+    const lottieContainer = document.getElementById('lottie-container');
+    if (lottieContainer && typeof lottie !== 'undefined') {
+      
+      // --- Define your animation files here ---
+      const lightModePath = 'assets/logo-light_big-lottie.json';
+      const darkModePath = 'assets/logo-dark_big-lottie.json';
+
+      // Check the <html> element for the dark-mode class to prevent flashing
+      const isDarkMode = document.documentElement.classList.contains('dark-mode');
+
+      const lottieAnimation = lottie.loadAnimation({
+        container: lottieContainer,
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
+        path: isDarkMode ? darkModePath : lightModePath // Choose path based on theme
+      });
+
+      // When the Lottie animation is complete, start hiding the preloader
+      lottieAnimation.addEventListener('complete', hidePreloader);
+
+    } else {
+      // Fallback if Lottie isn't loaded or the container is missing
+      setTimeout(hidePreloader, 500);
+    }
   } else {
-    // Fallback if the signature isn't found
-    setTimeout(hidePreloader, 500);
+    // If there's no preloader on the page, initialize modules immediately
+    onPreloaderFinishedAndModulesReady();
   }
 });
 
