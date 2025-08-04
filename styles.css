@@ -1790,6 +1790,15 @@ body.dark-mode .project-image-container {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+
+    .navMobile {
+    padding: 1.5rem 2rem; /* This sets 2rem horizontal padding */
+  }
+
+  .navMobile .navLeft,
+  .navMobile .navRight {
+    padding: 0; /* This resets the specific mobile padding */
+  }
 }
 
 
@@ -1812,6 +1821,16 @@ body.dark-mode .project-image-container {
   background: inherit;
   z-index: 1;
 }
+
+  .navMobile {
+    padding: 1.5rem 2rem; /* This sets 2rem horizontal padding */
+  }
+
+  .navMobile .navLeft,
+  .navMobile .navRight {
+    padding: 0; /* This resets the specific mobile padding */
+  }
+
 
 .loader {
   position: relative;
