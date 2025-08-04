@@ -1386,6 +1386,11 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   color: #4ad4a7;
 }
 
+.chatIcon svg {
+  width: 100%;
+  height: 100%;
+}
+
 .footerEmail {
   width: 100%;
   display: flex;
