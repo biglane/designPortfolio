@@ -2471,8 +2471,8 @@ body.dark-mode .project-image-container {
 /* --- Preloader Logo Animation (Final Corrected Version) --- */
 
 #lottie-container {
-  width: 12rem;  /* You can adjust the size as needed */
-  height: 12rem;
+  width: 56rem;  /* You can adjust the size as needed */
+  height: 56rem;
   margin: 0 auto;
   z-index: 2;    /* Add this line to bring it to the front */
 }
