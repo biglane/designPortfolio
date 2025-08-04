@@ -2448,7 +2448,6 @@ body.dark-mode .project-image-container {
 #lottie-container {
   width: 150px;
   height: 150px;
-  margin: auto;       /* centers inside the overlay */
   position: relative;
   z-index: 2;
 }
