@@ -1171,7 +1171,7 @@ const LottieLogoManager = (function () {
 
     logoAnimation = lottie.loadAnimation({
       container: lottieLogoContainer,
-      renderer: 'svg',
+      renderer: 'canvas',
       loop: false,
       autoplay: false,
       path: isDarkMode ? darkModePath : lightModePath
@@ -1428,7 +1428,7 @@ window.addEventListener('load', () => {
 
       const lottieAnimation = lottie.loadAnimation({
         container: lottieContainer,
-        renderer: 'svg',
+        renderer: 'canvas',
         loop: false,
         autoplay: true,
         path: isDarkMode ? darkModePath : lightModePath // Choose path based on theme
