@@ -1806,8 +1806,8 @@ body.dark-mode .project-image-container {
 
 
 /* Desktop Styles (>= 769px) */
-
-.loading--out {
+@media only screen and (min-width: 769px) {
+  .loading--out {
   opacity: 0;
   pointer-events: none;
 }
@@ -1822,20 +1822,21 @@ body.dark-mode .project-image-container {
   z-index: 1;
 }
 
-  .navMobile {
-    padding: 1.5rem 2rem; /* This sets 2rem horizontal padding */
-  }
-
-  .navMobile .navLeft,
-  .navMobile .navRight {
-    padding: 0; /* This resets the specific mobile padding */
-  }
-
 
 .loader {
   position: relative;
   z-index: 2;
 }
+
+  .navMobile {
+    padding: 1.5rem 2rem;
+  }
+
+  .navMobile .navLeft,
+  .navMobile .navRight {
+    padding: 0;
+  }
+  }
 
 /* --- Word Hover Effect Styles (with fade transition) --- */
 
