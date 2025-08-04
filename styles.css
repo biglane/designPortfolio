@@ -2440,11 +2440,20 @@ body.dark-mode .project-image-container {
 /* --- Preloader Logo Animation (Final Corrected Version) --- */
 
 #lottie-container {
-  width: 56rem;  /* You can adjust the size as needed */
-  height: 56rem;
-  margin: 0 auto;
-  z-index: 2;    /* Add this line to bring it to the front */
+  width: 150px;
+  height: 150px;
+  margin: auto;       /* centers inside the overlay */
+  position: relative;
+  z-index: 2;
 }
+
+#lottie-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  will-change: transform;   /* promote to its own layer */
+}
+
 
 /*
 ==========================================================================
