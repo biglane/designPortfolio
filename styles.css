@@ -23,7 +23,7 @@ input:focus,
 textarea:focus,
 [contenteditable]:focus {
   caret-color: transparent !important;
-  outline: none;            
+  outline: none;
 }
 
 *:focus {
@@ -118,18 +118,22 @@ a:visited {
 */
 html.dark-mode body,
 html.dark-mode .siteCard {
-  background-color: #080808; /* Dark mode content background */
+  background-color: #080808;
+  /* Dark mode content background */
   background-image: none;
 }
 
 html.dark-mode #site-frame {
-  border-color: #0c0c0c; /* Dark mode border color */
+  border-color: #0c0c0c;
+  /* Dark mode border color */
 }
+
 html.dark-mode #top-frame,
 html.dark-mode #bottom-frame,
 html.dark-mode #left-frame,
 html.dark-mode #right-frame {
-  background-color: #0c0c0c; /* Dark mode border color */
+  background-color: #0c0c0c;
+  /* Dark mode border color */
 }
 
 /* ==========================================================================
@@ -512,7 +516,7 @@ body,
   overflow: visible;
   display: flex;
   align-items: center;
-  padding: 1.5rem 0; 
+  padding: 1.5rem 0;
   border-radius: 8px 8px 0 0;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -644,7 +648,7 @@ body.dark-mode .pill:hover .highlight {
 }
 
 @keyframes chatGradientAnim {
-   0% {
+  0% {
     stop-color: #4ad4a7;
   }
 
@@ -688,7 +692,7 @@ body.dark-mode .pill:hover .highlight {
 
 /* Experience Item Carat Color Animation */
 @keyframes caratColorChange {
-   0% {
+  0% {
     stop-color: #4ad4a7;
   }
 
@@ -734,7 +738,7 @@ body.dark-mode .pill:hover .highlight {
   overflow: hidden;
   display: block;
   border-radius: 12px;
-  
+
 }
 
 .bannerImage {
@@ -1122,8 +1126,8 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   gap: 0;
 }
 
-.sectionBody > * + * {
-  margin-top: 2rem; 
+.sectionBody>*+* {
+  margin-top: 2rem;
 }
 
 .sectionBodyText {
@@ -1134,7 +1138,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   max-width: 400px;
 }
 
-.component-about .sectionBodyText {  
+.component-about .sectionBodyText {
   margin-left: auto;
   margin-right: auto;
 }
@@ -1350,6 +1354,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   text-decoration: none;
   transition: color .2s;
 }
+
 .component-footer .footerLinkText:hover,
 .component-footer .footerLinkText:focus-visible {
   color: var(--accentColor);
@@ -1548,7 +1553,7 @@ body.mobile-menu-active {
   overflow: hidden;
 }
 
-.projectThumbnail + .columns {
+.projectThumbnail+.columns {
   padding-top: 4rem;
 }
 
@@ -1681,7 +1686,8 @@ body.mobile-menu-active {
 
 .carousel-nav-container {
   position: absolute;
-  bottom: -6rem; /* This pushes it 2rem below the parent's bottom edge */
+  bottom: -6rem;
+  /* This pushes it 2rem below the parent's bottom edge */
   left: 0;
   right: 0;
   display: flex;
@@ -1691,7 +1697,8 @@ body.mobile-menu-active {
 }
 
 body.dark-mode .project-image-container {
-  background-color: #1C1C1C; /* Off-black for dark mode */
+  background-color: #1C1C1C;
+  /* Off-black for dark mode */
 }
 
 .carousel-slide {
@@ -1731,7 +1738,8 @@ body.dark-mode .project-image-container {
   margin: 0;
   border: none;
   transition: background-color 0.2s ease;
-  flex-shrink: 0; /* Prevents buttons from shrinking */
+  flex-shrink: 0;
+  /* Prevents buttons from shrinking */
 }
 
 .carousel-nav:hover {
@@ -1740,12 +1748,14 @@ body.dark-mode .project-image-container {
 
 .carousel-nav.prev {
   left: 50%;
-  transform: translateX(-125%); /* Shift left from the center point */
+  transform: translateX(-125%);
+  /* Shift left from the center point */
 }
 
 .carousel-nav.next {
   right: 50%;
-  transform: translateX(125%); /* Shift right from the center point */
+  transform: translateX(125%);
+  /* Shift right from the center point */
 }
 
 .carousel-nav svg {
@@ -1790,59 +1800,26 @@ body.dark-mode .project-image-container {
 
 @media only screen and (min-width: 481px) and (max-width: 768px) {
   .projectPepsico-page .bannerImage {
-    max-width: 560px; /* Adjust this value as needed */
-    margin: 0 auto;   /* This keeps the image centered */
+    max-width: 560px;
+    /* Adjust this value as needed */
+    margin: 0 auto;
+    /* This keeps the image centered */
     width: auto;
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
-    .navMobile {
-    padding: 1.5rem 2rem; /* This sets 2rem horizontal padding */
-  }
-
-  .navMobile .navLeft,
-  .navMobile .navRight {
-    padding: 0; /* This resets the specific mobile padding */
-  }
-}
-
-
-/* Mobile and Tablet adjustments (up to 768px) */
-
-
-/* Desktop Styles (>= 769px) */
-@media only screen and (min-width: 769px) {
-  .loading--out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loading__mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  z-index: 1;
-}
-
-
-.loader {
-  position: relative;
-  z-index: 2;
-}
-
   .navMobile {
     padding: 1.5rem 2rem;
+    /* This sets 2rem horizontal padding */
   }
 
   .navMobile .navLeft,
   .navMobile .navRight {
     padding: 0;
+    /* This resets the specific mobile padding */
   }
-  }
+}
 
 /* --- Word Hover Effect Styles (with fade transition) --- */
 
@@ -1901,7 +1878,8 @@ body.dark-mode .project-image-container {
 .projectPepsico-page .bannerImage {
   width: 100%;
   height: auto;
-  object-fit: cover;  /* or 'contain' if you prefer no crop */
+  object-fit: cover;
+  /* or 'contain' if you prefer no crop */
 }
 
 .carousel-slide.slide-fit-contain {
@@ -1919,7 +1897,8 @@ body.dark-mode .project-image-container {
 
 /* Base style for carousel navigation buttons (Mobile First) */
 .carousel-nav {
-  position: static; /* Remove absolute positioning for mobile */
+  position: static;
+  /* Remove absolute positioning for mobile */
   transform: none;
   background-color: rgba(128, 128, 128, 0.15);
   border-radius: 50%;
@@ -1937,8 +1916,9 @@ body.dark-mode .project-image-container {
   fill: currentColor;
 }
 
-.projectThumbnail-inner + .imageDescription {
-  padding-top: 0.6rem; /* Matches the gap used in other thumbnails */
+.projectThumbnail-inner+.imageDescription {
+  padding-top: 0.6rem;
+  /* Matches the gap used in other thumbnails */
 }
 
 /* Re-apply absolute positioning for desktop view */
@@ -1962,13 +1942,14 @@ body.dark-mode .project-image-container {
   /* filter: url(#noiseFilter); */
   opacity: 0.06;
   pointer-events: none;
-  z-index: 0; 
+  z-index: 0;
 }
 
 
 
 :focus:not(input):not(textarea):not([contenteditable]) {
-  outline: none;               /* you probably already have this */
+  outline: none;
+  /* you probably already have this */
   caret-color: transparent !important;
 }
 
@@ -1979,17 +1960,19 @@ body.dark-mode .project-image-container {
   -moz-user-select: none;
   -ms-user-select: none;
 }
-.project-detail-logos img{
-  width:104px;
-  max-width:104px;
-  height:auto;
-  object-fit:contain;
+
+.project-detail-logos img {
+  width: 104px;
+  max-width: 104px;
+  height: auto;
+  object-fit: contain;
 }
 
 .project-detail-logos {
   display: flex;
   align-items: center;
-  gap: 2rem; /* Adjust this value for your desired mobile spacing */
+  gap: 2rem;
+  /* Adjust this value for your desired mobile spacing */
   flex-wrap: wrap;
 }
 
@@ -2069,6 +2052,7 @@ body.dark-mode .project-image-container {
 }
 
 @media only screen and (min-width: 481px) {
+
   .darkMode-icon,
   .navMenu-icon {
     /* smooth transition for both hover in and out */
@@ -2081,6 +2065,7 @@ body.dark-mode .project-image-container {
     transform: translateY(-2px);
   }
 }
+
 /* Desktop override for PepsiCo logos */
 @media only screen and (min-width: 769px) {
   .projectPepsico-page .project-detail-logos img {
@@ -2099,12 +2084,12 @@ body.dark-mode .project-image-container {
     margin: 0 auto;
   }
 
-   .project-detail-logos img {
-    width: 160px; 
-    max-width: none; 
+  .project-detail-logos img {
+    width: 160px;
+    max-width: none;
   }
 
-    /* Restore carousel styles for desktop */
+  /* Restore carousel styles for desktop */
   .project-image-container {
     overflow: hidden;
     margin-bottom: 0;
@@ -2116,6 +2101,15 @@ body.dark-mode .project-image-container {
     margin-top: 0;
   }
 
+  .navMobile {
+    padding: 1.5rem 2rem;
+  }
+
+  .navMobile .navLeft,
+  .navMobile .navRight {
+    padding: 0;
+  }
+
   .carousel-nav.prev {
     left: 1rem;
     transform: none;
@@ -2124,7 +2118,8 @@ body.dark-mode .project-image-container {
   .carousel-nav.next {
     right: 1rem;
     transform: none;
-    left: auto; /* Reset left property from mobile */
+    left: auto;
+    /* Reset left property from mobile */
   }
 
   .project-page .component-header {
@@ -2345,56 +2340,59 @@ body.dark-mode .project-image-container {
     flex: 1;
   }
 
-  .projectThumbnail + .columns {
-  padding-top: 2rem;
-}
+  .projectThumbnail+.columns {
+    padding-top: 2rem;
+  }
 
 }
 
 @media only screen and (min-width: 769px) {
   .carousel-nav-container {
-  position: absolute;
-  top: 0;
-  bottom: auto; /* Add this to override the mobile 'bottom' style */
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: auto;
+    /* Add this to override the mobile 'bottom' style */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .carousel-nav {
+    position: absolute;
+    top: 47.5%;
+    background-color: rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+    /* This makes the buttons clickable again */
+  }
+
+  .carousel-nav svg {
+    fill: #ffffff;
+  }
+
+  .carousel-nav.prev {
+    left: 1rem;
+  }
+
+  .carousel-nav.next {
+    right: 1rem;
+  }
+
+  .project-detail-logos {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .project-detail-logos img {
+    width: 45%;
+    max-width: 110px;
+    height: auto;
+    object-fit: contain;
+  }
+
 }
 
-.carousel-nav {
-  position: absolute;
-  top: 47.5%;
-  background-color: rgba(0, 0, 0, 0.3);
-  pointer-events: auto; /* This makes the buttons clickable again */
-}
-
-.carousel-nav svg {
-  fill: #ffffff;
-}
-
-.carousel-nav.prev {
-  left: 1rem;
-}
-
-.carousel-nav.next {
-  right: 1rem;
-}
-
-.project-detail-logos {
-  display: flex;
-  align-items: center;
-  gap: 2.5rem; 
-}
-
-.project-detail-logos img {
-  width: 45%;      
-  max-width: 110px; 
-  height: auto;      
-  object-fit: contain;
-}
-
-}
 /* --------------------------------------------------
    3. Special Cases
    -------------------------------------------------- */
@@ -2454,16 +2452,29 @@ body.dark-mode .project-image-container {
 }
 
 @keyframes wiggle {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(25deg); }
-  50% { transform: rotate(-10deg); }
-  75% { transform: rotate(5deg); }
-  100% { transform: rotate(0deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(25deg);
+  }
+
+  50% {
+    transform: rotate(-10deg);
+  }
+
+  75% {
+    transform: rotate(5deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 .chatIcon svg.is-wiggling {
-  animation: wiggle 0.5s ease-in-out
-  ;
+  animation: wiggle 0.5s ease-in-out;
 }
 
 
@@ -2480,7 +2491,8 @@ body.dark-mode .project-image-container {
   width: 100%;
   height: 100%;
   display: block;
-  will-change: transform;   /* promote to its own layer */
+  will-change: transform;
+  /* promote to its own layer */
 }
 
 
@@ -2494,15 +2506,12 @@ body.dark-mode .project-image-container {
   width: 4rem;
   height: 4rem;
   cursor: pointer;
-  opacity: 0; /* Start invisible */
-  transition: opacity 0.5s ease-out; /* Define the fade animation */
+  opacity: 0;
+  /* Start invisible */
+  transition: opacity 0.5s ease-out;
+  /* Define the fade animation */
 }
 
 #lottie-logo-container.is-visible {
   opacity: 1;
 }
-
-
-
-
-
