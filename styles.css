@@ -1383,6 +1383,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   justify-content: center;
   padding-left: 1rem;
   padding-bottom: 0.2rem;
+  color: #4ad4a7;
 }
 
 .footerEmail {
