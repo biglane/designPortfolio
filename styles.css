@@ -334,7 +334,13 @@ html.dark-mode #right-frame {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #f7f9f9; /* Static light gray background */
+  background-image:
+    radial-gradient(at 81% 65%, hsla(218, 98%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, hsla(39, 95%, 94%, 1) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(245, 228, 238) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, hsla(197, 87%, 94%, 1) 0px, transparent 50%);
+  background-size: 500% 500%;
+  animation: gradientLight 9s ease infinite;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,7 +355,13 @@ html.dark-mode #right-frame {
 }
 
 html.dark-mode #preloader {
-  background: #080808; /* Static near-black background */
+  background-image:
+    radial-gradient(at 81% 65%, rgb(22, 24, 27) 0px, transparent 50%),
+    radial-gradient(at 95% 99%, rgb(22, 21, 22) 0px, transparent 50%),
+    radial-gradient(at 48% 26%, rgb(19, 21, 22) 0px, transparent 50%),
+    radial-gradient(at 75% 26%, rgb(17, 18, 18) 0px, transparent 50%);
+  background-size: 400% 400%;
+  animation: gradientDark 18s ease infinite;
 }
 
 .loading--out {
