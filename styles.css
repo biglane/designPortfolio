@@ -502,12 +502,20 @@ body,
     fill 0.3s ease-out;
 }
 
-/* navMobile sticky positioning */
 .navMobile {
   position: sticky;
   top: 12px;
+  left: 0;
+  right: 0;
+  height: 80px;
   z-index: 20000;
   overflow: visible;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  border-radius: 8px 8px 0 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 /* Pill hover state */
@@ -811,20 +819,6 @@ body.dark-mode .pill:hover .highlight {
 
 #hamburgerIcon.is-active .bottom-line {
   transform: translateY(-3.5px) rotate(-45deg);
-}
-
-/* Navigation Mobile */
-.navMobile {
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  padding: 2rem;
-  border-radius: 8px 8px 0 0;
 }
 
 .navMobile.nav-on-top {
