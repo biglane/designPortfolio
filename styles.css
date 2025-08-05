@@ -1834,10 +1834,10 @@ body.dark-mode .project-image-container {
 .word-is-hovered {
   /* Instantly place the gradient behind the word. */
   background: linear-gradient(110deg,
-      #77c49a 0%,
-      #77c4a3 25%,
-      #77c4b9 75%,
-      #7fd1b8 100%);
+      #4ad4a7 0%,
+      #4ac0b7 25%,
+      #4ad4c7 75%,
+      #4aded7 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
