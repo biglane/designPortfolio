@@ -2076,6 +2076,10 @@ body.dark-mode .project-image-container {
     width: 120px;
     max-width: 120px;
   }
+
+  .paragraph-spacing {
+  margin-top: 2rem;
+}
 }
 
 /* --------------------------------------------------
@@ -2394,6 +2398,10 @@ body.dark-mode .project-image-container {
     height: auto;
     object-fit: contain;
   }
+
+  .paragraph-spacing {
+  margin-top: 2rem;
+}
 
 }
 
