@@ -2513,38 +2513,37 @@ body.dark-mode .project-image-container {
   opacity: 1;
 }
 
-/* ==========================================================================
-   17. Scroll Indicator (FINAL)
-   ========================================================================== */
+/* ───────────────────────────────────────────────────────────────────────────────
+   CSS: Bounce + Mobile-Only Scroll Indicator
+────────────────────────────────────────────────────────────────────────────── */
 
+/* subtle up/down motion */
 @keyframes bounce-subtle {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50%     { transform: translateY(10px); }
 }
 
 @media (max-width: 768px) {
   .component-banner {
     position: relative;
-    z-index: 1; 
+    z-index: 1;
   }
 
   .scroll-indicator-container {
     position: absolute;
-    bottom: -40px; 
-    left: 0;
-    right: 0;
+    bottom: -40px;
+    left: 0; right: 0;
     display: flex;
     justify-content: center;
     pointer-events: none;
-    z-index: 10000; 
+    z-index: 10000;
+
+    /* hidden by default */
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
   }
 
+  /* when JS adds this, indicator fades in */
   .scroll-indicator-container.visible {
     opacity: 0.5;
   }
@@ -2552,11 +2551,12 @@ body.dark-mode .project-image-container {
   #scroll-indicator {
     width: 20px;
     height: 20px;
-    color: #333; 
+    color: #333;
     animation: bounce-subtle 2.5s infinite ease-in-out;
   }
 
+  /* invert color in dark mode */
   body.dark-mode #scroll-indicator {
-     color: #f2f2f2;
+    color: #f2f2f2;
   }
 }

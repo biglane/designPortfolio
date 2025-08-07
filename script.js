@@ -1479,47 +1479,44 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 16. SCROLL INDICATOR MANAGER (INTERSECTION OBSERVER METHOD)
+// JS: Show bouncing caret until .component-description scrolls into view
 // ───────────────────────────────────────────────────────────────────────────────
-const ScrollIndicatorManager = (function () {
-  let indicatorContainer = null;
-  let descriptionSection = null;
 
-  function initialize() {
-    // Gatekeepers: Only run on the home page and on mobile devices.
-    if (!IS_HOME || window.innerWidth > 768) {
-      return;
-    }
+(function() {
+  // only on home page
+  const isHome =
+    location.pathname === '/' ||
+    location.pathname.endsWith('/index.html');
 
-    indicatorContainer = document.querySelector('.scroll-indicator-container');
-    descriptionSection = document.querySelector('.component-description');
+  function initScrollIndicator() {
+    // mobile only, home only
+    if (!isHome || window.innerWidth > 768) return;
 
-    // If either element is missing, we can't proceed.
-    if (!indicatorContainer || !descriptionSection) {
-      return;
-    }
+    const indicator = document.querySelector('.scroll-indicator-container');
+    const target    = document.querySelector('.component-description');
+    if (!indicator || !target) return;
 
-    // This observer will watch the description section.
-    const observer = new IntersectionObserver((entries) => {
+    // show it immediately on load
+    indicator.classList.add('visible');
+
+    // hide once 10% of the description is visible
+    const obs = new IntersectionObserver((entries, o) => {
       entries.forEach(entry => {
-        // When the description section starts to enter the viewport...
         if (entry.isIntersecting) {
-          // ...hide the indicator.
-          indicatorContainer.classList.remove('visible');
-          // And stop watching to save performance.
-          observer.unobserve(descriptionSection);
+          indicator.classList.remove('visible');
+          o.disconnect();
         }
       });
-    }, { threshold: 0.1 }); // Trigger when 10% of the section is visible.
+    }, { threshold: 0.1 });
 
-    // Immediately show the indicator on load.
-    indicatorContainer.classList.add('visible');
-    
-    // Start watching the description section.
-    observer.observe(descriptionSection);
+    obs.observe(target);
   }
 
-  return { initialize };
+  // init after everything’s loaded
+  window.addEventListener('load', initScrollIndicator);
+
+  // re-run if user resizes (e.g. rotates device)
+  window.addEventListener('resize', initScrollIndicator);
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
