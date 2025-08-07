@@ -2539,7 +2539,7 @@ body.dark-mode .project-image-container {
 /* 4) Base state: absolutely positioned, hidden, with opacity transition */
 .component-banner .carat {
   position: absolute !important;
-  top: calc(100% + 2rem) !important;
+  top: calc(100% + 3rem) !important;
   left: 50%           !important;
   transform: translateX(-50%);
   pointer-events: none !important;
