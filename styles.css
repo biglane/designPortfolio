@@ -2495,7 +2495,7 @@ body.dark-mode .project-image-container {
 
 /*
 ==========================================================================
-   NEW: Navigation Logo Styles
+  Navigation Logo Styles
 ==========================================================================
 */
 
@@ -2511,4 +2511,52 @@ body.dark-mode .project-image-container {
 
 #lottie-logo-container.is-visible {
   opacity: 1;
+}
+
+/* ==========================================================================
+   Scroll Indicator (Mobile Overlay)
+   ========================================================================== */
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .component-banner {
+    position: relative; /* This is crucial for absolute positioning of the child */
+  }
+
+  .scroll-indicator-container {
+    position: absolute;
+    bottom: 20px; /* Position from the bottom of the banner */
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none; /* Make the container non-interactive */
+    z-index: 100; /* Ensure it's above the banner image */
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .scroll-indicator-container.visible {
+    opacity: 1;
+  }
+
+  #scroll-indicator {
+    width: 20px;
+    height: 20px;
+    color: #fff; /* White color for better visibility on the image */
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5)); /* Add a subtle shadow */
+    animation: bounce-subtle 2.5s infinite ease-in-out;
+  }
+
+  body.dark-mode #scroll-indicator {
+     color: #fff; /* Keep it white in dark mode too */
+  }
 }
