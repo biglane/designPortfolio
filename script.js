@@ -1479,32 +1479,53 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// JS: Show bouncing caret until .component-description scrolls into view
+// SCROLL INDICATOR MANAGER w/ DEBUG & DOMContentLoaded
 // ───────────────────────────────────────────────────────────────────────────────
-
 (function() {
-  // only on home page
   const isHome =
     location.pathname === '/' ||
     location.pathname.endsWith('/index.html');
 
   function initScrollIndicator() {
-    // mobile only, home only
-    if (!isHome || window.innerWidth > 768) return;
+    console.log('▶︎ initScrollIndicator', {
+      isHome,
+      width: window.innerWidth,
+    });
+
+    // gatekeepers
+    if (!isHome) {
+      console.warn('ScrollIndicator → not on home page, skipping');
+      return;
+    }
+    if (window.innerWidth > 768) {
+      console.warn('ScrollIndicator → viewport >768px, skipping');
+      return;
+    }
 
     const indicator = document.querySelector('.scroll-indicator-container');
     const target    = document.querySelector('.component-description');
-    if (!indicator || !target) return;
 
-    // show it immediately on load
+    if (!indicator) {
+      console.error('ScrollIndicator → .scroll-indicator-container not found');
+      return;
+    }
+
+    // show it right away
     indicator.classList.add('visible');
+    console.log('ScrollIndicator → shown');
 
-    // hide once 10% of the description is visible
+    if (!target) {
+      console.error('ScrollIndicator → .component-description not found');
+      return;
+    }
+
+    // hide when description hits 10%
     const obs = new IntersectionObserver((entries, o) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           indicator.classList.remove('visible');
-          o.disconnect();
+          console.log('ScrollIndicator → hidden (description in view)');
+          o.unobserve(entry.target);
         }
       });
     }, { threshold: 0.1 });
@@ -1512,10 +1533,9 @@ const ChatIconAnimator = (function () {
     obs.observe(target);
   }
 
-  // init after everything’s loaded
-  window.addEventListener('load', initScrollIndicator);
-
-  // re-run if user resizes (e.g. rotates device)
+  // fire as soon as DOM is ready
+  document.addEventListener('DOMContentLoaded', initScrollIndicator);
+  // re-run on resize/rotate
   window.addEventListener('resize', initScrollIndicator);
 })();
 
