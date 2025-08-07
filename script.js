@@ -1393,19 +1393,37 @@ window.addEventListener('load', () => {
     // ── Fade in the carat 3s after preloader finishes ──
     setTimeout(() => {
       const carat = document.querySelector('.component-banner .carat');
-      if (carat) {
-        carat.classList.add('visible');
+      if (!carat) return;
 
-        // ── Make it clickable: smooth-scroll to description on tap/click ──
-        carat.style.pointerEvents = 'auto';         // ensure clickability
-        carat.style.cursor = 'pointer';             // show pointer cursor
-        carat.addEventListener('click', () => {
-          const desc = document.querySelector('.component-description');
-          if (desc) {
-            desc.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
+      carat.classList.add('visible');
+      carat.style.pointerEvents = 'auto';
+      carat.style.cursor = 'pointer';
+
+      // ── On click, scroll so description sits 1rem below the nav ──
+      carat.addEventListener('click', () => {
+        const desc = document.querySelector('.component-description');
+        if (!desc) return;
+
+        // get nav height (assumes your site nav is a <nav> element)
+        const nav = document.querySelector('nav');
+        const navHeight = nav ? nav.offsetHeight : 0;
+
+        // compute 1rem in pixels
+        const rootFontSize = parseFloat(
+          getComputedStyle(document.documentElement).fontSize
+        );
+
+        // where we want the top of desc to end up
+        const targetY =
+          desc.getBoundingClientRect().top +
+          window.pageYOffset -
+          (navHeight + 2.5 * rootFontSize);
+
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth',
         });
-      }
+      });
     }, 3000);
   }
 
