@@ -2529,7 +2529,6 @@ body.dark-mode .project-image-container {
 @media (max-width: 768px) {
   .component-banner {
     position: relative;
-    /* THE FIX: This gives the banner a z-index, allowing children to appear on top */
     z-index: 1; 
   }
 
@@ -2541,7 +2540,6 @@ body.dark-mode .project-image-container {
     display: flex;
     justify-content: center;
     pointer-events: none;
-    /* Ensure this z-index is higher than the parent's */
     z-index: 100; 
     opacity: 0;
     transition: opacity 0.5s ease-in-out;

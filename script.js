@@ -1479,47 +1479,37 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 16. SCROLL INDICATOR MANAGER (REVISED FOR OVERLAY)
+// 14. SCROLL INDICATOR MANAGER 
 // ───────────────────────────────────────────────────────────────────────────────
 const ScrollIndicatorManager = (function () {
   let indicatorContainer = null;
-  let descriptionSection = null;
+
+  function handleFirstScroll() {
+    if (indicatorContainer) {
+      indicatorContainer.classList.remove('visible');
+    }
+    window.removeEventListener('scroll', handleFirstScroll);
+  }
 
   function initialize() {
-    // Only run this logic on the home page and on mobile
     if (!IS_HOME || window.innerWidth > 768) return;
 
     indicatorContainer = document.querySelector('.scroll-indicator-container');
-    descriptionSection = document.querySelector('.component-description');
+    if (!indicatorContainer) return;
 
-    if (!indicatorContainer || !descriptionSection) {
-      return;
-    }
-
-    // This observer checks if the DESCRIPTION section is visible yet.
-    // This is the trigger for hiding the carat.
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        // If the description section is intersecting (i.e., has appeared on screen)
-        if (entry.isIntersecting) {
-          // Hide the indicator and stop observing.
-          indicatorContainer.classList.remove('visible');
-          observer.unobserve(descriptionSection);
+    setTimeout(() => {
+        if (window.scrollY < 10) {
+            indicatorContainer.classList.add('visible');
         }
-      });
-    }, { threshold: 0.1 }); // Trigger when 10% of the section is visible
-
-    // Start by showing the indicator
-    indicatorContainer.classList.add('visible');
+    }, 500);
     
-    // Start observing the description section
-    observer.observe(descriptionSection);
+    window.addEventListener('scroll', handleFirstScroll);
   }
 
   return { initialize };
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 16. FINAL LOG
+// 15. FINAL LOG
 // ───────────────────────────────────────────────────────────────────────────────
 console.log('script.js (project-agnostic) loaded.');
