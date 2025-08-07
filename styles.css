@@ -2513,4 +2513,60 @@ body.dark-mode .project-image-container {
   opacity: 1;
 }
 
+/* ==========================================================================
+   Carat Indicator: Positioning, Fade-In & Bounce (Mobile Only)
+   ========================================================================== */
 
+/* 1) Banner as positioning context */
+.component-banner {
+  position: relative;
+}
+
+/* 2) Allow overflow on mobile so the carat isn’t clipped */
+@media (max-width: 767px) {
+  .component-banner {
+    overflow: visible;
+  }
+}
+
+/* 3) Hide the carat on tablet and up */
+@media (min-width: 768px) {
+  .component-banner .carat {
+    display: none;
+  }
+}
+
+/* 4) Base state: absolutely positioned, hidden, with opacity transition */
+.component-banner .carat {
+  position: absolute !important;
+  top: calc(100% + 2rem) !important;
+  left: 50%           !important;
+  transform: translateX(-50%);
+  pointer-events: none !important;
+
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+/* 5) Force the SVG to a sensible size */
+.component-banner .carat svg {
+  display: block;
+  width: 1.5rem;
+  height: auto;
+}
+
+/* 6) Visible state: fade in then start infinite bounce */
+.component-banner .carat.visible {
+  opacity: 1;
+  animation: caratBounce 1.5s ease-in-out infinite;
+}
+
+/* 7) Bounce keyframes */
+@keyframes caratBounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-0.5rem);
+  }
+}

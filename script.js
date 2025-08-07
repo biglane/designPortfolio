@@ -549,32 +549,30 @@ const SectionAnimator = (function () {
   }
 
   function animateDescriptionSection(section) {
+    // 1) Animate the section into view
     animateGenericSection(section);
 
+    // 2) Immediately hide the chevron
+    const carat = document.querySelector('.component-banner .carat');
+    if (carat) carat.classList.remove('visible');
+
+    // 3) Now animate the inner parts…
     const lineSeparator = section.querySelector('.lineSeparator');
     if (lineSeparator) {
-      lineSeparator.animate([
-        { opacity: 0, transform: 'translateY(40px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ], {
-        duration: 700,
-        delay: 100,
-        fill: 'forwards',
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      });
+      lineSeparator.animate(
+        [{ opacity: 0, transform: 'translateY(40px)' },
+        { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 700, delay: 100, fill: 'forwards', easing: 'cubic-bezier(0.645,0.045,0.355,1)' }
+      );
     }
 
     const paragraphs = section.querySelectorAll('.paragraph-section');
     paragraphs.forEach((paragraph, index) => {
-      paragraph.animate([
-        { opacity: 0, transform: 'translateY(40px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ], {
-        duration: 700,
-        delay: 200 + index * 150,
-        fill: 'forwards',
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      });
+      paragraph.animate(
+        [{ opacity: 0, transform: 'translateY(40px)' },
+        { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 700, delay: 200 + index * 150, fill: 'forwards', easing: 'cubic-bezier(0.645,0.045,0.355,1)' }
+      );
     });
   }
 
@@ -1084,24 +1082,24 @@ const WordHoverManager = (function () {
   let lastHoveredWord = null;
 
   function initialize() {
-  const containers = document.querySelectorAll(textContainerSelectors);
-  containers.forEach((container) => {
-    if (container.closest('a') || container.closest('button')) return;
+    const containers = document.querySelectorAll(textContainerSelectors);
+    containers.forEach((container) => {
+      if (container.closest('a') || container.closest('button')) return;
 
-    // Special, non-destructive handling for the intro text
-    if (container.classList.contains('introText')) {
-      const introSpans = container.querySelectorAll('span');
-      introSpans.forEach(span => span.classList.add('interactive-word'));
-    } else {
-      // Original logic for all other text elements
-      processNode(container);
-    }
+      // Special, non-destructive handling for the intro text
+      if (container.classList.contains('introText')) {
+        const introSpans = container.querySelectorAll('span');
+        introSpans.forEach(span => span.classList.add('interactive-word'));
+      } else {
+        // Original logic for all other text elements
+        processNode(container);
+      }
 
-    // Attach the event listeners to ALL containers, including the introText
-    container.addEventListener('mouseover', handleMouseOver);
-    container.addEventListener('mouseleave', handleMouseLeave);
-  });
-}
+      // Attach the event listeners to ALL containers, including the introText
+      container.addEventListener('mouseover', handleMouseOver);
+      container.addEventListener('mouseleave', handleMouseLeave);
+    });
+  }
 
   function processNode(node) {
     const childNodes = Array.from(node.childNodes);
@@ -1166,7 +1164,7 @@ const LottieLogoManager = (function () {
     if (logoAnimation) {
       logoAnimation.destroy();
     }
-    
+
     isPlaying = false; // Reset the flag whenever we load a new animation
 
     logoAnimation = lottie.loadAnimation({
@@ -1176,7 +1174,7 @@ const LottieLogoManager = (function () {
       autoplay: false,
       path: isDarkMode ? darkModePath : lightModePath
     });
-    
+
     // Add a listener to reset the flag once the animation completes
     logoAnimation.addEventListener('complete', () => {
       isPlaying = false;
@@ -1195,7 +1193,7 @@ const LottieLogoManager = (function () {
     lottieLogoContainer.addEventListener('mouseenter', () => {
       // Only play the animation if it's not already playing
       if (isPlaying) {
-        return; 
+        return;
       }
       isPlaying = true; // Set the lock
       logoAnimation.goToAndPlay(0, true);
@@ -1206,9 +1204,9 @@ const LottieLogoManager = (function () {
     loadAnimationByTheme();
   }
 
-  return { 
+  return {
     initialize,
-    onThemeChange 
+    onThemeChange
   };
 })();
 
@@ -1372,7 +1370,7 @@ window.addEventListener('load', () => {
     ExperienceManager.initialize();
     MobileMenuManager.initialize();
     WordHoverManager.initialize();
-    LottieLogoManager.initialize(); 
+    LottieLogoManager.initialize();
     ImageCarouselManager.initialize();
     CaretSuppressor.initialize();
     ChatIconAnimator.initialize();
@@ -1391,6 +1389,13 @@ window.addEventListener('load', () => {
       footer.style.pointerEvents = 'auto';
     }
     handleInitialHashScroll();
+
+    // ── Fade in the carat 3 s after preloader finishes ──
+    setTimeout(() => {
+      const carat = document.querySelector('.component-banner .carat');
+      if (carat) carat.classList.add('visible');
+    }, 3000);
+
   }
 
   function hidePreloader() {
@@ -1420,7 +1425,7 @@ window.addEventListener('load', () => {
   if (preloader) {
     const lottieContainer = document.getElementById('lottie-container');
     if (lottieContainer && typeof lottie !== 'undefined') {
-      
+
       // --- Define your animation files here ---
       const lightModePath = 'assets/logo-light_big-lottie.json';
       const darkModePath = 'assets/logo-dark_big-lottie.json';
@@ -1450,7 +1455,7 @@ window.addEventListener('load', () => {
 });
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 13.5. FOOTER ICON ANIMATOR
+// 16 FOOTER ICON ANIMATOR
 // ───────────────────────────────────────────────────────────────────────────────
 const ChatIconAnimator = (function () {
   function initialize() {
@@ -1479,6 +1484,6 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 15. FINAL LOG
+// 17. FINAL LOG
 // ───────────────────────────────────────────────────────────────────────────────
 console.log('script.js (project-agnostic) loaded.');
