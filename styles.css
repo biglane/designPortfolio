@@ -2514,42 +2514,29 @@ body.dark-mode .project-image-container {
 }
 
 /* ───────────────────────────────────────────────────────────────────────────────
-   CSS: Bounce + Mobile-Only Scroll Indicator
+   CSS: Mobile-Only Scroll Indicator + Fade & Bounce
 ────────────────────────────────────────────────────────────────────────────── */
-
-/* subtle up/down motion */
 @keyframes bounce-subtle {
-  0%, 100% { transform: translateY(0); }
+  0%,100% { transform: translateY(0); }
   50%     { transform: translateY(10px); }
 }
 
 @media (max-width: 768px) {
-  .component-banner {
-    position: relative;
-    z-index: 1;
-  }
-
   .scroll-indicator-container {
-    /* position fixed at bottom-center of the viewport */
     position: fixed;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
     pointer-events: none;
     z-index: 10000;
 
+    /* start invisible */
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
   }
 
-  /* when JS adds this, indicator fades in */
-  .scroll-indicator-container.visible {
-    opacity: 0.5;
-  }
-
-   #scroll-indicator {
+  /* the little arrow itself bounces */
+  #scroll-indicator {
     width: 20px;
     height: 20px;
     color: #333;

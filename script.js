@@ -1479,7 +1479,7 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// SCROLL INDICATOR w/ 1s DELAY + DISPLAY NONE ON HIDE
+// JS: Delayed fade-in + hide on description’s fade completion
 // ───────────────────────────────────────────────────────────────────────────────
 (function() {
   const isHome =
@@ -1488,44 +1488,32 @@ const ChatIconAnimator = (function () {
 
   function initScrollIndicator() {
     if (!isHome || window.innerWidth > 768) return;
-
     const indicator = document.querySelector('.scroll-indicator-container');
-    const target    = document.querySelector('.component-description');
-    if (!indicator || !target) return;
+    const desc      = document.querySelector('.component-description');
+    if (!indicator || !desc) return;
 
-    // 1) hide completely, and ensure no stray "visible" class
-    indicator.style.display = 'none';
-    indicator.classList.remove('visible');
+    // 1) reset
+    indicator.style.opacity = '0';
 
-    const thresholdY = window.innerHeight * 0.1;
-    // if the description is already in view, bail
-    if (target.getBoundingClientRect().top <= thresholdY) return;
-
-    // 2) after 1 second, show+fade it in
+    // 2) after 1s, fade to full opacity
     setTimeout(() => {
-      indicator.style.display = 'flex';
-      // force a reflow so the opacity transition will run
-      void indicator.offsetWidth;
-      indicator.classList.add('visible');
+      indicator.style.opacity = '1';
     }, 1000);
 
-    // 3) on scroll, once the description crosses the threshold...
-    function onScroll() {
-      if (target.getBoundingClientRect().top <= thresholdY) {
-        // ...remove the fade class and yank it out of the layout
-        indicator.classList.remove('visible');
-        indicator.style.display = 'none';
-        window.removeEventListener('scroll', onScroll);
+    // 3) when your description’s fade-in transition ends, hide the caret
+    function onDescFade(e) {
+      if (e.propertyName === 'opacity') {
+        indicator.style.opacity = '0';
+        desc.removeEventListener('transitionend', onDescFade);
       }
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
+    desc.addEventListener('transitionend', onDescFade);
   }
 
-  // run after everything’s loaded (so banner height is correct)
-  window.addEventListener('load', initScrollIndicator);
-  // re-run on resize/rotate
+  document.addEventListener('DOMContentLoaded', initScrollIndicator);
   window.addEventListener('resize', initScrollIndicator);
 })();
+
 
 
 // ───────────────────────────────────────────────────────────────────────────────
