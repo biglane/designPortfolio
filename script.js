@@ -1479,31 +1479,44 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 14. SCROLL INDICATOR MANAGER 
+// 16. SCROLL INDICATOR MANAGER (INTERSECTION OBSERVER METHOD)
 // ───────────────────────────────────────────────────────────────────────────────
 const ScrollIndicatorManager = (function () {
   let indicatorContainer = null;
-
-  function handleFirstScroll() {
-    if (indicatorContainer) {
-      indicatorContainer.classList.remove('visible');
-    }
-    window.removeEventListener('scroll', handleFirstScroll);
-  }
+  let descriptionSection = null;
 
   function initialize() {
-    if (!IS_HOME || window.innerWidth > 768) return;
+    // Gatekeepers: Only run on the home page and on mobile devices.
+    if (!IS_HOME || window.innerWidth > 768) {
+      return;
+    }
 
     indicatorContainer = document.querySelector('.scroll-indicator-container');
-    if (!indicatorContainer) return;
+    descriptionSection = document.querySelector('.component-description');
 
-    setTimeout(() => {
-        if (window.scrollY < 10) {
-            indicatorContainer.classList.add('visible');
+    // If either element is missing, we can't proceed.
+    if (!indicatorContainer || !descriptionSection) {
+      return;
+    }
+
+    // This observer will watch the description section.
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        // When the description section starts to enter the viewport...
+        if (entry.isIntersecting) {
+          // ...hide the indicator.
+          indicatorContainer.classList.remove('visible');
+          // And stop watching to save performance.
+          observer.unobserve(descriptionSection);
         }
-    }, 500);
+      });
+    }, { threshold: 0.1 }); // Trigger when 10% of the section is visible.
+
+    // Immediately show the indicator on load.
+    indicatorContainer.classList.add('visible');
     
-    window.addEventListener('scroll', handleFirstScroll);
+    // Start watching the description section.
+    observer.observe(descriptionSection);
   }
 
   return { initialize };
