@@ -1396,63 +1396,75 @@ window.addEventListener('load', () => {
       if (carat) carat.classList.add('visible');
     }, 3000);
 
-  }
-
-  function hidePreloader() {
-    if (!preloader) {
-      onPreloaderFinishedAndModulesReady();
-      return;
-    }
-    preloader.classList.add('loading--out');
-    let ended = false;
-    function onEnd(e) {
-      if (e.propertyName === 'opacity' && !ended) {
-        ended = true;
-        preloader.removeEventListener('transitionend', onEnd);
-        onPreloaderFinishedAndModulesReady();
-      }
-    }
-    preloader.addEventListener('transitionend', onEnd);
-    // Fallback timer for the fade-out transition
-    setTimeout(() => {
-      if (!ended) {
-        onPreloaderFinishedAndModulesReady();
-      }
-    }, 750);
-  }
-
-  // --- NEW Lottie-based preloader logic ---
-  if (preloader) {
-    const lottieContainer = document.getElementById('lottie-container');
-    if (lottieContainer && typeof lottie !== 'undefined') {
-
-      // --- Define your animation files here ---
-      const lightModePath = 'assets/logo-light_big-lottie.json';
-      const darkModePath = 'assets/logo-dark_big-lottie.json';
-
-      // Check the <html> element for the dark-mode class to prevent flashing
-      const isDarkMode = document.documentElement.classList.contains('dark-mode');
-
-      const lottieAnimation = lottie.loadAnimation({
-        container: lottieContainer,
-        renderer: 'canvas',
-        loop: false,
-        autoplay: true,
-        path: isDarkMode ? darkModePath : lightModePath // Choose path based on theme
+    const caratEl = document.querySelector('.component-banner .carat');
+    if (caratEl) {
+      caratEl.addEventListener('click', () => {
+        const desc = document.querySelector('.component-description');
+        if (desc) {
+          desc.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
       });
 
-      // When the Lottie animation is complete, start hiding the preloader
-      lottieAnimation.addEventListener('complete', hidePreloader);
-
-    } else {
-      // Fallback if Lottie isn't loaded or the container is missing
-      setTimeout(hidePreloader, 500);
     }
-  } else {
-    // If there's no preloader on the page, initialize modules immediately
-    onPreloaderFinishedAndModulesReady();
-  }
-});
+
+    function hidePreloader() {
+      if (!preloader) {
+        onPreloaderFinishedAndModulesReady();
+        return;
+      }
+      preloader.classList.add('loading--out');
+      let ended = false;
+      function onEnd(e) {
+        if (e.propertyName === 'opacity' && !ended) {
+          ended = true;
+          preloader.removeEventListener('transitionend', onEnd);
+          onPreloaderFinishedAndModulesReady();
+        }
+      }
+      preloader.addEventListener('transitionend', onEnd);
+      // Fallback timer for the fade-out transition
+      setTimeout(() => {
+        if (!ended) {
+          onPreloaderFinishedAndModulesReady();
+        }
+      }, 750);
+    }
+
+    // --- NEW Lottie-based preloader logic ---
+    if (preloader) {
+      const lottieContainer = document.getElementById('lottie-container');
+      if (lottieContainer && typeof lottie !== 'undefined') {
+
+        // --- Define your animation files here ---
+        const lightModePath = 'assets/logo-light_big-lottie.json';
+        const darkModePath = 'assets/logo-dark_big-lottie.json';
+
+        // Check the <html> element for the dark-mode class to prevent flashing
+        const isDarkMode = document.documentElement.classList.contains('dark-mode');
+
+        const lottieAnimation = lottie.loadAnimation({
+          container: lottieContainer,
+          renderer: 'canvas',
+          loop: false,
+          autoplay: true,
+          path: isDarkMode ? darkModePath : lightModePath // Choose path based on theme
+        });
+
+        // When the Lottie animation is complete, start hiding the preloader
+        lottieAnimation.addEventListener('complete', hidePreloader);
+
+      } else {
+        // Fallback if Lottie isn't loaded or the container is missing
+        setTimeout(hidePreloader, 500);
+      }
+    } else {
+      // If there's no preloader on the page, initialize modules immediately
+      onPreloaderFinishedAndModulesReady();
+    }
+  });
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 16 FOOTER ICON ANIMATOR
