@@ -1479,7 +1479,7 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// SCROLL INDICATOR MANAGER w/ DEBUG & DOMContentLoaded
+// SCROLL INDICATOR MANAGER (scroll-based, skips initial intersect)
 // ───────────────────────────────────────────────────────────────────────────────
 (function() {
   const isHome =
@@ -1487,57 +1487,36 @@ const ChatIconAnimator = (function () {
     location.pathname.endsWith('/index.html');
 
   function initScrollIndicator() {
-    console.log('▶︎ initScrollIndicator', {
-      isHome,
-      width: window.innerWidth,
-    });
-
-    // gatekeepers
-    if (!isHome) {
-      console.warn('ScrollIndicator → not on home page, skipping');
-      return;
-    }
-    if (window.innerWidth > 768) {
-      console.warn('ScrollIndicator → viewport >768px, skipping');
-      return;
-    }
+    // only on home + mobile
+    if (!isHome || window.innerWidth > 768) return;
 
     const indicator = document.querySelector('.scroll-indicator-container');
     const target    = document.querySelector('.component-description');
+    if (!indicator || !target) return;
 
-    if (!indicator) {
-      console.error('ScrollIndicator → .scroll-indicator-container not found');
-      return;
-    }
+    // if the description is already at or above the fold, never show the indicator
+    const { top } = target.getBoundingClientRect();
+    if (top <= window.innerHeight * 0.1) return;
 
-    // show it right away
+    // show it
     indicator.classList.add('visible');
-    console.log('ScrollIndicator → shown');
 
-    if (!target) {
-      console.error('ScrollIndicator → .component-description not found');
-      return;
+    // when you scroll down far enough that the description reaches 10% from top of viewport, hide it
+    function onScroll() {
+      const rect = target.getBoundingClientRect();
+      if (rect.top <= window.innerHeight * 0.1) {
+        indicator.classList.remove('visible');
+        window.removeEventListener('scroll', onScroll);
+      }
     }
 
-    // hide when description hits 10%
-    const obs = new IntersectionObserver((entries, o) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          indicator.classList.remove('visible');
-          console.log('ScrollIndicator → hidden (description in view)');
-          o.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1 });
-
-    obs.observe(target);
+    window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  // fire as soon as DOM is ready
   document.addEventListener('DOMContentLoaded', initScrollIndicator);
-  // re-run on resize/rotate
   window.addEventListener('resize', initScrollIndicator);
 })();
+
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 15. FINAL LOG
