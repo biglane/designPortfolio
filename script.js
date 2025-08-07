@@ -1479,7 +1479,7 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// SCROLL INDICATOR MANAGER (scroll-based, skips initial intersect)
+// SCROLL INDICATOR w/ 1s DELAY + DISPLAY NONE ON HIDE
 // ───────────────────────────────────────────────────────────────────────────────
 (function() {
   const isHome =
@@ -1487,33 +1487,43 @@ const ChatIconAnimator = (function () {
     location.pathname.endsWith('/index.html');
 
   function initScrollIndicator() {
-    // only on home + mobile
     if (!isHome || window.innerWidth > 768) return;
 
     const indicator = document.querySelector('.scroll-indicator-container');
     const target    = document.querySelector('.component-description');
     if (!indicator || !target) return;
 
-    // if the description is already at or above the fold, never show the indicator
-    const { top } = target.getBoundingClientRect();
-    if (top <= window.innerHeight * 0.1) return;
+    // 1) hide completely, and ensure no stray "visible" class
+    indicator.style.display = 'none';
+    indicator.classList.remove('visible');
 
-    // show it
-    indicator.classList.add('visible');
+    const thresholdY = window.innerHeight * 0.1;
+    // if the description is already in view, bail
+    if (target.getBoundingClientRect().top <= thresholdY) return;
 
-    // when you scroll down far enough that the description reaches 10% from top of viewport, hide it
+    // 2) after 1 second, show+fade it in
+    setTimeout(() => {
+      indicator.style.display = 'flex';
+      // force a reflow so the opacity transition will run
+      void indicator.offsetWidth;
+      indicator.classList.add('visible');
+    }, 1000);
+
+    // 3) on scroll, once the description crosses the threshold...
     function onScroll() {
-      const rect = target.getBoundingClientRect();
-      if (rect.top <= window.innerHeight * 0.1) {
+      if (target.getBoundingClientRect().top <= thresholdY) {
+        // ...remove the fade class and yank it out of the layout
         indicator.classList.remove('visible');
+        indicator.style.display = 'none';
         window.removeEventListener('scroll', onScroll);
       }
     }
-
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  document.addEventListener('DOMContentLoaded', initScrollIndicator);
+  // run after everything’s loaded (so banner height is correct)
+  window.addEventListener('load', initScrollIndicator);
+  // re-run on resize/rotate
   window.addEventListener('resize', initScrollIndicator);
 })();
 
