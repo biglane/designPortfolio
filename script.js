@@ -1479,44 +1479,6 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// JS: Delayed fade-in + hide on description’s fade completion
-// ───────────────────────────────────────────────────────────────────────────────
-(function() {
-  const isHome =
-    location.pathname === '/' ||
-    location.pathname.endsWith('/index.html');
-
-  function initScrollIndicator() {
-    if (!isHome || window.innerWidth > 768) return;
-    const indicator = document.querySelector('.scroll-indicator-container');
-    const desc      = document.querySelector('.component-description');
-    if (!indicator || !desc) return;
-
-    // 1) reset
-    indicator.style.opacity = '0';
-
-    // 2) after 1s, fade to full opacity
-    setTimeout(() => {
-      indicator.style.opacity = '1';
-    }, 1000);
-
-    // 3) when your description’s fade-in transition ends, hide the caret
-    function onDescFade(e) {
-      if (e.propertyName === 'opacity') {
-        indicator.style.opacity = '0';
-        desc.removeEventListener('transitionend', onDescFade);
-      }
-    }
-    desc.addEventListener('transitionend', onDescFade);
-  }
-
-  document.addEventListener('DOMContentLoaded', initScrollIndicator);
-  window.addEventListener('resize', initScrollIndicator);
-})();
-
-
-
-// ───────────────────────────────────────────────────────────────────────────────
 // 15. FINAL LOG
 // ───────────────────────────────────────────────────────────────────────────────
 console.log('script.js (project-agnostic) loaded.');

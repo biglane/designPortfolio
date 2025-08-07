@@ -2513,36 +2513,4 @@ body.dark-mode .project-image-container {
   opacity: 1;
 }
 
-/* ───────────────────────────────────────────────────────────────────────────────
-   CSS: Mobile-Only Scroll Indicator + Fade & Bounce
-────────────────────────────────────────────────────────────────────────────── */
-@keyframes bounce-subtle {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(10px); }
-}
 
-@media (max-width: 768px) {
-  .scroll-indicator-container {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    pointer-events: none;
-    z-index: 10000;
-
-    /* start invisible */
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-  }
-
-  /* the little arrow itself bounces */
-  #scroll-indicator {
-    width: 20px;
-    height: 20px;
-    color: #333;
-    animation: bounce-subtle 2.5s infinite ease-in-out;
-  }
-  body.dark-mode #scroll-indicator {
-    color: #f2f2f2;
-  }
-}
