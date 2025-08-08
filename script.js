@@ -1295,15 +1295,14 @@ const CaretSuppressor = (function () {
 
 // Same-page hash links: intercept and smooth scroll
 (function attachSamePageSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener('click', (e) => {
-      const targetId = link.getAttribute('href').slice(1);
-      if (!targetId) return;
-      const targetEl = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
-      if (targetEl) {
-        e.preventDefault();
-        smoothScrollTo(targetEl, 800);
-        history.pushState(null, '', `#${targetId}`);
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();                // stop the browser’s normal hash jump
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id)
+        || document.querySelector(`[name="${id}"]`);
+      if (target) {
+        smoothScrollTo(target, 800);     // just scroll—no URL change
       }
     });
   });
@@ -1514,6 +1513,33 @@ const ChatIconAnimator = (function () {
 })();
 
 // ───────────────────────────────────────────────────────────────────────────────
-// 17. FINAL LOG
+// 17. FOOTER LINK HANDLER
+// ───────────────────────────────────────────────────────────────────────────────
+const FooterLinkManager = (function() {
+  function initialize() {
+    // Select only internal anchor links within the footer
+    const footerLinks = document.querySelectorAll('.component-footer a[href^="#"]');
+
+    footerLinks.forEach(link => {
+      link.addEventListener('click', function(event) {
+        // Stop the default browser jump
+        event.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          // Use your existing global smooth scroll function
+          smoothScrollTo(targetElement, 800);
+        }
+      });
+    });
+  }
+
+  return { initialize };
+})();
+
+// ───────────────────────────────────────────────────────────────────────────────
+// 18. FINAL LOG
 // ───────────────────────────────────────────────────────────────────────────────
 console.log('script.js (project-agnostic) loaded.');
