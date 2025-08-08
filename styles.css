@@ -2063,8 +2063,8 @@ body.dark-mode .project-image-container {
   }
 
   .paragraph-spacing {
-  margin-top: 2rem;
-}
+    margin-top: 2rem;
+  }
 }
 
 /* --------------------------------------------------
@@ -2171,6 +2171,10 @@ body.dark-mode .project-image-container {
     margin-right: 1rem;
     font-weight: 300;
     transform: scaleX(1.5);
+  }
+
+  body.dark-mode .vertical-text {
+    opacity: 0.6;
   }
 
   .component-banner {
@@ -2385,8 +2389,8 @@ body.dark-mode .project-image-container {
   }
 
   .paragraph-spacing {
-  margin-top: 2rem;
-}
+    margin-top: 2rem;
+  }
 
 }
 
@@ -2540,7 +2544,7 @@ body.dark-mode .project-image-container {
 .component-banner .carat {
   position: absolute !important;
   top: calc(100% + 3rem) !important;
-  left: 50%           !important;
+  left: 50% !important;
   transform: translateX(-50%);
   pointer-events: auto !important;
   cursor: pointer;
@@ -2563,9 +2567,12 @@ body.dark-mode .project-image-container {
 
 /* 7) Bounce keyframes */
 @keyframes caratBounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(-50%) translateY(0);
   }
+
   50% {
     transform: translateX(-50%) translateY(-0.5rem);
   }
