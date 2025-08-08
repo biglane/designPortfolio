@@ -1154,8 +1154,8 @@ const LottieLogoManager = (function () {
   let logoAnimation = null;
   let lottieLogoContainer = null;
   let isPlaying = false; // Our new flag to track the animation state
-  const lightModePath = 'assets/nav-logo-light_big-lottie.json';
-  const darkModePath = 'assets/nav-logo-dark_big-lottie.json';
+  const lightModePath = '/assets/nav-logo-light_big-lottie.json';
+  const darkModePath = '/assets/nav-logo-dark_big-lottie.json';
 
   function loadAnimationByTheme() {
     // This was moved from outside the function to inside it
