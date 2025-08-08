@@ -2173,10 +2173,6 @@ body.dark-mode .project-image-container {
     transform: scaleX(1.5);
   }
 
-  body.dark-mode .vertical-text {
-    opacity: 1;
-  }
-
   .component-banner {
     padding: 2rem 4rem 0 4rem;
     max-height: 624px;
