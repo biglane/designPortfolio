@@ -2174,7 +2174,7 @@ body.dark-mode .project-image-container {
   }
 
   body.dark-mode .vertical-text {
-    opacity: 0.8;
+    opacity: 1;
   }
 
   .component-banner {
