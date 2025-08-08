@@ -1293,6 +1293,21 @@ const CaretSuppressor = (function () {
 // 14. GLOBAL HASH / SMOOTH SCROLL HANDLERS
 // ───────────────────────────────────────────────────────────────────────────────
 
+// Same-page hash links: intercept and smooth scroll
+(function attachSamePageSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();                // stop the browser’s normal hash jump
+      const id = link.getAttribute('href').slice(1);
+      const target = document.getElementById(id)
+        || document.querySelector(`[name="${id}"]`);
+      if (target) {
+        smoothScrollTo(target, 400);
+      }
+    });
+  });
+})();
+
 // Cross-page hash links anywhere (footer, etc.): store hash before leaving page
 (function attachCrossPageHashSaver() {
   document.querySelectorAll('a[href*=".html#"]').forEach((link) => {
