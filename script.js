@@ -27,7 +27,7 @@ function debounce(func, wait) {
 }
 
 // Smooth scroll utility (kept exactly as before, except now called from more places)
-function smoothScrollTo(targetElement, duration = 800) {
+function smoothScrollTo(targetElement, duration = 400) {
   isAutoScrolling = true;
 
   const navOffset = 160; // adjust if your header height changes
@@ -1302,7 +1302,7 @@ const CaretSuppressor = (function () {
       const target = document.getElementById(id)
         || document.querySelector(`[name="${id}"]`);
       if (target) {
-        smoothScrollTo(target, 800);
+        smoothScrollTo(target, 400);
       }
     });
   });
@@ -1332,7 +1332,7 @@ function handleInitialHashScroll() {
   const target = document.getElementById(storedHash)
     || document.querySelector(`[name="${storedHash}"]`);
   if (target) {
-    setTimeout(() => smoothScrollTo(target, 800), 100);
+    setTimeout(() => smoothScrollTo(target, 400), 100);
   }
 }
 
@@ -1531,7 +1531,7 @@ const FooterLinkManager = (function () {
 
         if (targetElement) {
           // Use your existing global smooth scroll function
-          smoothScrollTo(targetElement, 800);
+          smoothScrollTo(targetElement, 400);
         }
       });
     });
