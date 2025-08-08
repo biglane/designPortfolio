@@ -1302,7 +1302,7 @@ const CaretSuppressor = (function () {
       const target = document.getElementById(id)
         || document.querySelector(`[name="${id}"]`);
       if (target) {
-        smoothScrollTo(target, 800);     // just scroll—no URL change
+        smoothScrollTo(target, 800);
       }
     });
   });
@@ -1373,6 +1373,7 @@ window.addEventListener('load', () => {
     ImageCarouselManager.initialize();
     CaretSuppressor.initialize();
     ChatIconAnimator.initialize();
+    FooterLinkManager.initialize();
 
     if (window.matchMedia('(pointer: fine)').matches) {
       CustomCursorManager.initialize();
@@ -1515,13 +1516,13 @@ const ChatIconAnimator = (function () {
 // ───────────────────────────────────────────────────────────────────────────────
 // 17. FOOTER LINK HANDLER
 // ───────────────────────────────────────────────────────────────────────────────
-const FooterLinkManager = (function() {
+const FooterLinkManager = (function () {
   function initialize() {
     // Select only internal anchor links within the footer
     const footerLinks = document.querySelectorAll('.component-footer a[href^="#"]');
 
     footerLinks.forEach(link => {
-      link.addEventListener('click', function(event) {
+      link.addEventListener('click', function (event) {
         // Stop the default browser jump
         event.preventDefault();
 
