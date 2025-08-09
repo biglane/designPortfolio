@@ -1112,7 +1112,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 }
 
 .component-textSection .sectionTitle {
-  padding-bottom: 8px;
+  padding-bottom: 2rem;
   padding-top: 8px;
 }
 
