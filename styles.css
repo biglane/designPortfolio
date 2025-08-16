@@ -568,6 +568,10 @@ body.dark-mode .pill:hover .highlight {
   text-fill-color: #ffffff !important;
 }
 
+.pre-quote-paragraph {
+  margin-bottom: 0;
+}
+
 /* ==========================================================================
      7. Animations & Transitions (Keyframes & Base Transitions)
      ========================================================================== */
