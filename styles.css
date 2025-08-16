@@ -1334,7 +1334,6 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 
 .imageDescription {
   width: 100%;
-  padding-top: 0.6rem;
   text-align: center;
 }
 
@@ -2341,6 +2340,10 @@ body.dark-mode .project-image-container {
     flex: 1;
   }
 
+  .projectThumbnail+.columns {
+    padding-top: 2rem;
+  }
+
 }
 
 @media only screen and (min-width: 769px) {
@@ -2578,14 +2581,6 @@ body.dark-mode .project-image-container {
   }
 }
 
-:root {
-  --banner-gap: 2rem;           /* matches the “Finding a Solution” smaller gap */
-}
-
-.project-image-container {       /* make margin behavior consistent at all sizes */
-  margin-bottom: 0;
-}
-
-.projectThumbnail + .columns {   /* single source of truth for the gap */
-  padding-top: var(--banner-gap);
+.no-top-quote {
+  padding-top: 0;
 }
