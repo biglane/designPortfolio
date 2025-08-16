@@ -47,11 +47,9 @@
   <div id="site-frame"></div>
 
   <!-- Page Preloader -->
-  <div id="preloader" class="loading loading--in">
+  <div id="preloader" class="loading loading--in" role="none" aria-hidden="true" inert>
     <div class="loading__mask"></div>
-
     <div id="lottie-container"></div>
-
   </div>
 
   <!-- Mobile Navigation (Hamburger + Dark Mode) -->
@@ -146,7 +144,7 @@
         <section class="component-description">
           <hr class="lineSeparator" />
           <div class="sectionTitle">
-            <h2 class="sectionTitleText"></h2>
+            <h2 class="sectionTitleText sr-only">Overview</h2>
           </div>
           <div class="columns">
             <div class="leftColumnContainer"></div>
@@ -480,10 +478,10 @@
     </div>
 
     <!-- Vertical Motto Text -->
-    <div class="vertical-text">
+    <aside class="vertical-text" aria-label="Site motto">
       <span class="dash">—</span>
       <span class="vertical-text-inner">Fortune Favors the Foolish</span>
-    </div>
+    </aside>
 
     <!-- Custom Cursor -->
     <div id="custom-cursor"></div>
