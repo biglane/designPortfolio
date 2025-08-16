@@ -1557,7 +1557,7 @@ body.mobile-menu-active {
   overflow: hidden;
 }
 
-.projectThumbnail+.columns {
+.problem-section .projectThumbnail+.columns {
   padding-top: 4rem;
 }
 
