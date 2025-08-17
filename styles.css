@@ -2596,3 +2596,46 @@ body.dark-mode .project-image-container {
   white-space: nowrap;
   border: 0;
 }
+
+/* ─────────────────────────────────────────────────────────
+   PepsiCo banner: "safe zoom" (no clipping, keyboard-friendly)
+   Paste at END of styles.css
+   ───────────────────────────────────────────────────────── */
+body.projectPepsico-page .bannerImage {
+  display: block;
+  width: 100%;
+  height: auto;                 /* beats any base height:100% */
+  object-fit: cover;
+  border-radius: inherit;
+  background-color: transparent;
+  transform: scale(.985);       /* start a hair smaller */
+  transform-origin: 50% 50%;
+  transition: transform 0.7s cubic-bezier(0.645,0.045,0.355,1);
+  will-change: transform;
+}
+
+/* Keep hover effect but never exceed the frame */
+@media (hover: hover) and (pointer: fine) {
+  body.projectPepsico-page .bannerImage-container-for-zoom:hover .bannerImage {
+    transform: scale(1);        /* overrides the global 1.03 on this page */
+  }
+}
+
+/* Keyboard users get the same effect */
+body.projectPepsico-page .bannerImage-container-for-zoom:focus-within .bannerImage {
+  transform: scale(1);
+}
+
+/* Preserve your initial fade-in + the safe-zoom together */
+body.projectPepsico-page .bannerImage.start-hidden {
+  opacity: 0;                   /* keep your current fade-in */
+  transform: translateY(80px) scale(.985); /* combine translate + scale */
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body.projectPepsico-page .bannerImage {
+    transition: none;
+    transform: none;
+  }
+}
