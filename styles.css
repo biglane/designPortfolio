@@ -2125,7 +2125,7 @@ body.dark-mode .project-image-container {
   }
 
   .projectPepsico-page .bannerImage {
-    max-width: 760px;
+    max-width: 720px;
     margin: 0 auto;
   }
 
@@ -2139,7 +2139,7 @@ body.dark-mode .project-image-container {
 
   body:not(.projectPepsico-page) .component-projectGrid>.project-link:first-child .thumbnailImage {
     height: auto;
-    max-height: 400px;
+    max-height: 360px;
   }
 
   .component-header {
