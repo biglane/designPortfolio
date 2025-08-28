@@ -1321,17 +1321,23 @@ const CaretSuppressor = (function () {
 })();
 
 function handleInitialHashScroll() {
-  // Read—and immediately clear—the stored cross‑page hash
-  const storedHash = sessionStorage.getItem('targetHash');
+  // 1) Prefer a stored cross-page hash (for old `.html#...` links)
+  let hash = sessionStorage.getItem('targetHash');
   sessionStorage.removeItem('targetHash');
 
-  // If we never clicked a cross‑page hash link, bail
-  if (!storedHash) return;
+  // 2) Fallback to the actual URL hash (works with '/#about-section' etc.)
+  if (!hash && window.location.hash) {
+    hash = window.location.hash.slice(1); // remove the leading '#'
+  }
 
-  // Otherwise smooth‑scroll to that section
-  const target = document.getElementById(storedHash)
-    || document.querySelector(`[name="${storedHash}"]`);
+  if (!hash) return;
+
+  const target =
+    document.getElementById(hash) ||
+    document.querySelector(`[name="${hash}"]`);
+
   if (target) {
+    // give the preloader/layout a beat to settle, then smooth scroll
     setTimeout(() => smoothScrollTo(target, 400), 100);
   }
 }
