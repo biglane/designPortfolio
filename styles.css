@@ -1,41 +1,22 @@
-/* 2025-07-23 
-   Notes:
-   - Mobile = default (0–480px)
-   - Tablet overrides (481–768px) grouped after base
-   - Desktop overrides (>=769px) grouped after tablet
-   - Orientation / coarse pointer special cases at the end
-*/
-
-/* --------------------------------------------------
-   0. Base / Mobile-first styles (ALL default rules)
-   -------------------------------------------------- */
-
 /* ==========================================================================
-   1. CSS Reset & Base Styles
+   Alexander Biglane Portfolio - Mobile-First CSS
+   Updated: 2025
+   Structure:
+   1. CSS Reset & Root Variables
+   2. Base Typography & Fonts
+   3. Global Layout & Containers
+   4. Theme System (Light/Dark Mode)
+   5. Components (Mobile-First)
+   6. Animations & Keyframes
+   7. Utility Classes
+   8. Media Queries (Tablet: 481-768px, Desktop: 769px+)
    ========================================================================== */
 
-html {
-  scrollbar-width: none;
-  /* Hide scrollbar in Firefox */
-}
+/* ==========================================================================
+   1. CSS RESET & ROOT VARIABLES
+   ========================================================================== */
 
-input:focus,
-textarea:focus,
-[contenteditable]:focus {
-  caret-color: transparent !important;
-  outline: none;
-}
-
-*:focus {
-  caret-color: transparent !important;
-  outline: none;
-}
-
-html::-webkit-scrollbar {
-  display: none;
-  /* Hide scrollbar in WebKit-based browsers */
-}
-
+/* Reset */
 *,
 *::before,
 *::after {
@@ -44,18 +25,22 @@ html::-webkit-scrollbar {
   box-sizing: border-box;
 }
 
+/* Root Variables */
 :root {
   --focus-color: #007bff;
   --dark-mode-focus-color: #4ad4a7;
   -webkit-font-smoothing: antialiased;
-  /* From original Framer code */
   -moz-osx-font-smoothing: grayscale;
-  /* From o
-  riginal Framer code */
 }
 
+/* HTML & Body Base */
 html {
   scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 html,
@@ -70,34 +55,12 @@ body {
 
 body {
   -ms-overflow-style: none;
-  /* Hide scrollbar in IE/Edge */
   padding: 12px;
-  /* Space for the site frame */
   min-height: calc(100vh - 24px);
   overflow: auto;
 }
 
-
-/* Hide page content until preloader finishes */
-.pageContent {
-  opacity: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Remove tap highlight on touch devices for interactive icons */
-.animatable-theme-icon,
-.navMenu-icon {
-  -webkit-tap-highlight-color: transparent;
-}
-
-.component-footer {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease-in;
-}
-
-/* --- Link Color Reset --- */
+/* Links */
 a,
 a:link,
 a:visited {
@@ -105,110 +68,37 @@ a:visited {
   text-decoration: none;
 }
 
+/* Selection */
 ::selection {
   background-color: #4ad4a7;
   color: #ffffff;
-
 }
 
-/*
-==========================================================================
-   Anti-Flicker Snippet for Dark Mode
-==========================================================================
-*/
-html.dark-mode body,
-html.dark-mode .siteCard {
-  background-color: #080808;
-  /* Dark mode content background */
-  background-image: none;
+/* Focus & Caret */
+input:focus,
+textarea:focus,
+[contenteditable]:focus,
+*:focus {
+  caret-color: transparent !important;
+  outline: none;
 }
 
-html.dark-mode #site-frame {
-  border-color: #0c0c0c;
-  /* Dark mode border color */
+:focus:not(input):not(textarea):not([contenteditable]) {
+  outline: none;
+  caret-color: transparent !important;
 }
 
-html.dark-mode #top-frame,
-html.dark-mode #bottom-frame,
-html.dark-mode #left-frame,
-html.dark-mode #right-frame {
-  background-color: #0c0c0c;
-  /* Dark mode border color */
+/* Tap Highlight */
+.animatable-theme-icon,
+.navMenu-icon {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ==========================================================================
-     2. Floating “Card” Frame
-     ========================================================================== */
+   2. BASE TYPOGRAPHY & FONTS
+   ========================================================================== */
 
-#site-frame {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  z-index: 21000;
-  border: 12px solid #ffffff;
-  /* Light mode */
-  border-radius: 16px;
-  background: transparent;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease-out;
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-#top-frame,
-#bottom-frame {
-  position: fixed;
-  left: 0;
-  right: 0;
-  height: 12px;
-  background-color: #ffffff;
-  /* Light mode */
-  pointer-events: none;
-  z-index: 20999;
-  transition: background-color 0.3s ease-out;
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-#top-frame {
-  top: 0;
-}
-
-#bottom-frame {
-  bottom: 0;
-}
-
-#left-frame,
-#right-frame {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 12px;
-  background-color: #ffffff;
-  /* Light mode */
-  pointer-events: none;
-  z-index: 20999;
-  transition: background-color 0.3s ease-out;
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-#left-frame {
-  left: 0;
-}
-
-#right-frame {
-  right: 0;
-}
-
-/* ==========================================================================
-     3. Typography & Text Styles
-     ========================================================================== */
-
-/* Font Declarations (Albra Book) */
+/* Font Declarations */
 @font-face {
   font-family: 'Albra Book';
   src: url('fonts/Albra-Book-Light.woff') format('woff');
@@ -257,7 +147,7 @@ html.dark-mode #right-frame {
   font-display: swap;
 }
 
-/* Font Weight Helper Classes */
+/* Font Weight Classes */
 .light {
   font-weight: 100;
 }
@@ -282,7 +172,33 @@ html.dark-mode #right-frame {
   font-weight: 800;
 }
 
-/* Highlighted Gradient Text */
+/* Text Utilities */
+.soft {
+  opacity: 0.8;
+}
+
+.light-text {
+  font-weight: 200;
+  font-style: italic;
+}
+
+.paragraph-section {
+  margin-bottom: 2rem;
+}
+
+.paragraph-spacing {
+  margin-top: 2rem;
+}
+
+.pre-quote-paragraph {
+  margin-bottom: 0;
+}
+
+.no-top-quote {
+  padding-top: 0;
+}
+
+/* Highlight Gradient Text */
 .highlight {
   display: inline-block;
   position: relative;
@@ -305,81 +221,73 @@ html.dark-mode #right-frame {
   transition: none;
 }
 
-.soft {
-  opacity: 0.8;
-}
-
-/* Text Animation Helpers for JS */
-.word-container,
-.word-container-tall,
-.animation-container {
-  display: inline-block;
-  overflow: hidden;
-  padding-bottom: 0.2rem;
-}
-
-.word {
-  display: inline-block;
-  transform: translateY(80px);
-}
-
-/* General Paragraph Spacing */
-.paragraph-section {
-  margin-bottom: 2rem;
-}
-
-.light-text {
-  font-weight: 200;
-  font-style: italic; 
-}
-
 /* ==========================================================================
-     4. Preloader
-     ========================================================================== */
+   3. GLOBAL LAYOUT & CONTAINERS
+   ========================================================================== */
 
-#preloader {
+/* Site Frame (Border) */
+#site-frame {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #f2f2f2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  transition: opacity 0.7s ease-out;
-}
-
-
-#preloader .loader {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-}
-
-html.dark-mode #preloader {
-  background-color: #0f0f10;
-}
-
-.loading--out {
-  opacity: 0;
   pointer-events: none;
+  z-index: 21000;
+  border: 12px solid #ffffff;
+  border-radius: 16px;
+  background: transparent;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease-out;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-.loading__mask {
-  position: absolute;
-  top: 0;
+#top-frame,
+#bottom-frame {
+  position: fixed;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  z-index: 1;
+  right: 0;
+  height: 12px;
+  background-color: #ffffff;
+  pointer-events: none;
+  z-index: 20999;
+  transition: background-color 0.3s ease-out;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
-/* ==========================================================================
-     5. Layout & Grid System (Base)
-     ========================================================================== */
+#top-frame {
+  top: 0;
+}
 
+#bottom-frame {
+  bottom: 0;
+}
+
+#left-frame,
+#right-frame {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  background-color: #ffffff;
+  pointer-events: none;
+  z-index: 20999;
+  transition: background-color 0.3s ease-out;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+#left-frame {
+  left: 0;
+}
+
+#right-frame {
+  right: 0;
+}
+
+/* Main Site Card */
 .siteCard {
   position: relative;
   width: 100%;
@@ -388,7 +296,6 @@ html.dark-mode #preloader {
   flex-direction: column;
   justify-content: flex-start;
   background-color: hsla(180, 1%, 97%, 1);
-  /* Light-mode background */
   background-image:
     radial-gradient(at 81% 65%, hsla(218, 98%, 94%, 1) 0px, transparent 50%),
     radial-gradient(at 95% 99%, hsla(39, 95%, 94%, 1) 0px, transparent 50%),
@@ -396,11 +303,23 @@ html.dark-mode #preloader {
     radial-gradient(at 75% 26%, hsla(197, 87%, 94%, 1) 0px, transparent 50%);
   background-size: 500% 500%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease-out, color 0.3s ease-out;
 }
 
+body:not(.preloading) .siteCard {
+  animation: gradientLight 9s ease infinite;
+}
+
+/* Page Content */
+.pageContent {
+  opacity: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout Helpers */
 .columns {
   display: block;
-  /* Mobile-first: single column flow */
 }
 
 .lineSeparator {
@@ -416,14 +335,35 @@ html.dark-mode #preloader {
 
 .vertical-text {
   display: none;
-  /* Displayed on desktop via media query */
 }
 
 /* ==========================================================================
-     6. Color Schemes & Themes
-     ========================================================================== */
+   4. THEME SYSTEM (LIGHT/DARK MODE)
+   ========================================================================== */
 
-/* Dark Mode Overrides */
+/* Dark Mode HTML Anti-Flicker */
+html.dark-mode body,
+html.dark-mode .siteCard {
+  background-color: #080808;
+  background-image: none;
+}
+
+html.dark-mode #site-frame {
+  border-color: #0c0c0c;
+}
+
+html.dark-mode #top-frame,
+html.dark-mode #bottom-frame,
+html.dark-mode #left-frame,
+html.dark-mode #right-frame {
+  background-color: #0c0c0c;
+}
+
+html.dark-mode {
+  background-color: #0c0c0c;
+}
+
+/* Dark Mode Body Styles */
 body.dark-mode #site-frame {
   border-color: #0c0c0c;
 }
@@ -444,10 +384,6 @@ body.dark-mode .siteCard {
     radial-gradient(at 75% 26%, rgb(17, 18, 18) 0px, transparent 50%);
   background-size: 400% 400%;
   color: #f2f2f2;
-}
-
-body:not(.preloading) .siteCard {
-  animation: gradientLight 9s ease infinite;
 }
 
 body:not(.preloading).dark-mode .siteCard {
@@ -479,11 +415,24 @@ body.dark-mode .highlight {
   color: #4ad4a7;
 }
 
-html.dark-mode {
-  background-color: #0c0c0c;
+body.dark-mode #mobileMenuOverlay {
+  background-color: rgba(8, 8, 8, 0.95) !important;
 }
 
-/* Theme Change Transition Helpers */
+body.dark-mode .mobile-menu-nav a {
+  color: #f2f2f2;
+}
+
+body.dark-mode .mobile-menu-nav a:hover,
+body.dark-mode .mobile-menu-nav a:focus-visible {
+  color: #4ad4a7;
+}
+
+body.dark-mode .project-image-container {
+  background-color: #1C1C1C;
+}
+
+/* Theme Transition Helpers */
 body.dark-mode-transition,
 body.light-mode-transition {
   animation: none !important;
@@ -492,11 +441,10 @@ body.light-mode-transition {
 
 body.light-mode-transition .siteCard,
 body.dark-mode-transition .siteCard {
-  transition: background-color 0.3s ease-out,
-    color 0.3s ease-out;
+  transition: background-color 0.3s ease-out, color 0.3s ease-out;
 }
 
-/* Base Transitions for Theming */
+/* Base Theme Transitions */
 body,
 .siteCard,
 .navMobile,
@@ -511,6 +459,64 @@ body,
     fill 0.3s ease-out;
 }
 
+/* ==========================================================================
+   5. COMPONENTS (MOBILE-FIRST)
+   ========================================================================== */
+
+/* --- Preloader --- */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f2f2f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.7s ease-out;
+}
+
+#preloader .loader {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+html.dark-mode #preloader {
+  background-color: #0f0f10;
+}
+
+.loading--out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading__mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  z-index: 1;
+}
+
+#lottie-container {
+  width: 150px;
+  height: 150px;
+  position: relative;
+  z-index: 2;
+}
+
+#lottie-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  will-change: transform;
+}
+
+/* --- Navigation --- */
 .navMobile {
   position: sticky;
   top: 12px;
@@ -527,331 +533,18 @@ body,
   -webkit-backdrop-filter: blur(8px);
 }
 
-.navMobile .navLeft {
-  padding-left: 0.5rem;
-}
-
-.navMobile .navRight {
-  padding-right: 1rem;
-}
-
-/* Pill hover state */
-.pill:hover {
-  border-color: transparent;
-  background-color: #4ad4a7;
-}
-
-.pill:hover .pillText {
-  color: #ffffff;
-}
-
-.pill:hover .highlight {
-  background: none !important;
-  -webkit-background-clip: border-box !important;
-  background-clip: border-box !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  text-fill-color: #ffffff !important;
-}
-
-/* Dark Mode Pill Hover State Fix */
-body.dark-mode .pill:hover {
-  background-color: #4ad4a7;
-  border-color: #4ad4a7;
-}
-
-body.dark-mode .pill:hover .pillText {
-  color: #ffffff;
-}
-
-body.dark-mode .pill:hover .highlight {
-  background: none !important;
-  -webkit-background-clip: border-box !important;
-  background-clip: border-box !important;
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-  text-fill-color: #ffffff !important;
-}
-
-.pre-quote-paragraph {
-  margin-bottom: 0;
-}
-
-/* ==========================================================================
-     7. Animations & Transitions (Keyframes & Base Transitions)
-     ========================================================================== */
-
-/* Background Gradient Animations */
-@keyframes gradientLight {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes gradientDark {
-  0% {
-    background-position: 0% 0%;
-  }
-
-  25% {
-    background-position: 70% 30%;
-  }
-
-  50% {
-    background-position: 100% 100%;
-  }
-
-  75% {
-    background-position: 30% 70%;
-  }
-
-  100% {
-    background-position: 0% 0%;
-  }
-}
-
-/* Text Highlight Gradient Animation */
-@keyframes highlightGradient {
-  0% {
-    background-position: 0% center;
-  }
-
-  50% {
-    background-position: 100% center;
-  }
-
-  100% {
-    background-position: 0% center;
-  }
-}
-
-/* SVG Gradient Stop Animations */
-@keyframes darkModeGradientAnim {
-  0% {
-    stop-color: #4ad4a7;
-  }
-
-  25% {
-    stop-color: #77c4a3;
-  }
-
-  50% {
-    stop-color: #4ad4c7;
-  }
-
-  75% {
-    stop-color: #4aded7;
-  }
-
-  100% {
-    stop-color: #4ad4a7;
-  }
-}
-
-@keyframes chatGradientAnim {
-  0% {
-    stop-color: #4ad4a7;
-  }
-
-  25% {
-    stop-color: #77c4a3;
-  }
-
-  50% {
-    stop-color: #4ad4c7;
-  }
-
-  75% {
-    stop-color: #4aded7;
-  }
-
-  100% {
-    stop-color: #4ad4a7;
-  }
-}
-
-/* Apply SVG Gradient Stop Animations */
-#darkModeGradient stop,
-#chatGradient stop {
-  animation: darkModeGradientAnim 9s ease infinite;
-}
-
-/* Download Button Gradient Animation */
-@keyframes downloadButtonGradient {
-  0% {
-    background-position: 0% center;
-  }
-
-  50% {
-    background-position: 100% center;
-  }
-
-  100% {
-    background-position: 0% center;
-  }
-}
-
-/* Experience Item Carat Color Animation */
-@keyframes caratColorChange {
-  0% {
-    stop-color: #4ad4a7;
-  }
-
-  25% {
-    stop-color: #77c4a3;
-  }
-
-  50% {
-    stop-color: #4ad4c7;
-  }
-
-  75% {
-    stop-color: #4aded7;
-  }
-
-  100% {
-    stop-color: #4ad4a7;
-  }
-}
-
-.experienceItem-carat .caratRight {
-  animation: caratColorChange 9s ease infinite;
-}
-
-/* Hidden-init Utility for JS-Animated Elements */
-.hidden-init {
-  opacity: 0;
-  transform: translateY(80px);
-}
-
-
-/* ==========================================================================
-     8. Image Styles & Effects (Includes Banner Fade-In Fix)
-     ========================================================================== */
-
-/* Banner Image Initial Fade-In */
-.bannerImage.start-hidden {
-  opacity: 0;
-  transform: translateY(80px);
-}
-
-.bannerImage-container-for-zoom {
-  overflow: hidden;
-  display: block;
-  border-radius: 12px;
-
-}
-
-.bannerImage {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-  /* Inherits from container */
-  background-color: transparent;
-  transition:
-    opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
-    transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
-}
-
-.bannerImage-container-for-zoom:hover .bannerImage {
-  transform: scale(1.03);
-}
-
-/* Project Thumbnail Container */
-.thumbnailImage-container-for-zoom {
-  overflow: hidden;
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  height: 375px;
-  border-radius: 12px;
-  background-color: transparent;
-}
-
-/* Project Thumbnail Image */
-.thumbnailImage {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background-color: #333333;
-  transition: transform 0.3s ease-in-out;
-  border-radius: 12px;
-}
-
-.projectThumbnail:hover .thumbnailImage {
-  transform: scale(1.03);
-}
-
-/* Feature Image Container */
-.featureImage-container-for-zoom {
-  overflow: hidden;
-  display: block;
-  width: 100%;
-  height: 375px;
-  background-color: #333333;
-}
-
-/* Feature Image */
-.featureImage {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease-in-out;
-}
-
-.featureImage-container-for-zoom:hover .featureImage {
-  transform: scale(1.03);
-}
-
-/* ==========================================================================
-     9. Component Styles (Base Mobile-First Styles)
-     ========================================================================== */
-
-/* Hamburger Icon */
-#hamburgerIcon .line {
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  transition: transform 0.3s ease-in-out,
-    opacity 0.2s ease-in-out;
-  transform-origin: center;
-}
-
-#hamburgerIcon.is-active .top-line {
-  transform: translateY(5px) rotate(45deg);
-}
-
-#hamburgerIcon.is-active .middle-line {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-#hamburgerIcon.is-active .bottom-line {
-  transform: translateY(-3.5px) rotate(-45deg);
-}
-
 .navMobile.nav-on-top {
   z-index: 20501;
 }
 
-.navMobile .navLeft,
-.navMobile .navRight {
+.navMobile .navLeft {
+  padding-left: 0.5rem;
   flex: 1;
 }
 
 .navMobile .navRight {
+  padding-right: 1rem;
+  flex: 1;
   display: flex;
   gap: 1.5rem;
   justify-content: flex-end;
@@ -860,7 +553,20 @@ body.dark-mode .pill:hover .highlight {
   -webkit-user-select: none;
 }
 
-/* Icon Dimensions & Interaction */
+/* Navigation Logo */
+#lottie-logo-container {
+  width: 4rem;
+  height: 4rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+#lottie-logo-container.is-visible {
+  opacity: 1;
+}
+
+/* Navigation Icons */
 .navMobile .navRight img,
 .darkMode-icon,
 .navMenu-icon {
@@ -873,7 +579,7 @@ body.dark-mode .pill:hover .highlight {
   position: relative;
 }
 
-/* Dark Mode Toggle Icon */
+/* Dark Mode Toggle */
 .animatable-theme-icon .icon-main-disc {
   transition: fill 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center center;
@@ -886,12 +592,10 @@ body.dark-mode .pill:hover .highlight {
 
 .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   fill: #4ad4a7;
-  /* Light mode icon */
 }
 
 body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   fill: #f2f2f2;
-  /* Dark mode icon */
 }
 
 .animatable-theme-icon:not(.is-moon) .mask-eater {
@@ -915,6 +619,28 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   outline-offset: 2px;
 }
 
+/* Hamburger Menu */
+#hamburgerIcon .line {
+  stroke: currentColor;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  transform-origin: center;
+}
+
+#hamburgerIcon.is-active .top-line {
+  transform: translateY(5px) rotate(45deg);
+}
+
+#hamburgerIcon.is-active .middle-line {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+#hamburgerIcon.is-active .bottom-line {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
 .navMenu-icon:focus {
   outline: none;
 }
@@ -925,7 +651,89 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   border-radius: 4px;
 }
 
-/* Component: Header */
+/* Mobile Menu Overlay */
+#mobileMenuOverlay {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background-color: hsla(180, 1%, 97%, 0.95);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 20500;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.4s ease-in-out, visibility 0s linear 0.4s;
+}
+
+#mobileMenuOverlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.4s ease-in-out, visibility 0s linear 0s;
+}
+
+.mobile-menu-nav {
+  text-align: center;
+}
+
+.mobile-menu-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu-nav li {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(1) {
+  transition-delay: 0.20s;
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(2) {
+  transition-delay: 0.28s;
+}
+
+#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(3) {
+  transition-delay: 0.36s;
+}
+
+.mobile-menu-nav a {
+  display: block;
+  padding: 1rem 0;
+  font-size: 1.8rem;
+  font-family: 'Albra Book', sans-serif;
+  font-weight: 500;
+  color: #333333;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  caret-color: transparent;
+}
+
+.mobile-menu-nav a:hover,
+.mobile-menu-nav a:focus-visible {
+  color: #4ad4a7;
+}
+
+body.mobile-menu-active {
+  overflow: hidden;
+}
+
+/* --- Component: Header --- */
 .component-header {
   width: 100%;
   padding: 1rem 1rem 0 1rem;
@@ -934,20 +742,10 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   gap: .5rem;
   text-align: left;
   align-items: flex-start;
-}
-
-.sub-header-text {
-  font-size: 1.75rem;
-  /* Adjust size as needed */
-  font-weight: 300;
-  letter-spacing: -.1px;
-  /* A lighter font weight */
-  color: inherit;
-
-  /* Centers the text, similar to the main header */
-  text-align: left;
-  opacity: 0;
-  will-change: opacity, transform;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .introText {
@@ -964,14 +762,28 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   -ms-user-select: none;
 }
 
-/* Component: Banner */
+.sub-header-text {
+  font-size: 1.75rem;
+  font-weight: 300;
+  letter-spacing: -.1px;
+  color: inherit;
+  text-align: left;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+/* --- Component: Banner --- */
 .component-banner {
   width: 100%;
   justify-content: center;
   overflow: hidden;
   padding: 2rem 1rem 0 1rem;
-  /* Mobile-first height */
   max-height: 624px;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .project-page .component-banner {
@@ -983,7 +795,56 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   border-radius: 0;
 }
 
-/* Component: Description */
+.bannerImage-container-for-zoom {
+  overflow: hidden;
+  display: block;
+  border-radius: 12px;
+}
+
+.bannerImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  background-color: transparent;
+  transition: opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
+    transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.bannerImage.start-hidden {
+  opacity: 0;
+  transform: translateY(80px);
+}
+
+.bannerImage-container-for-zoom:hover .bannerImage {
+  transform: scale(1.03);
+}
+
+/* Banner Carat Indicator */
+.component-banner .carat {
+  position: absolute !important;
+  top: calc(100% + 3rem) !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+  pointer-events: auto !important;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+}
+
+.component-banner .carat svg {
+  display: block;
+  width: 1.5rem;
+  height: auto;
+}
+
+.component-banner .carat.visible {
+  opacity: 1;
+  animation: caratBounce 1.5s ease-in-out infinite;
+}
+
+/* --- Component: Description --- */
 .component-description {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -1002,14 +863,13 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   font-weight: 300;
 }
 
-/* Paragraphs fade-in helper */
 .paragraph-section.hidden-init {
   opacity: 0;
   transform: translateY(40px);
   will-change: opacity, transform;
 }
 
-/* Component: Pills */
+/* --- Component: Pills --- */
 .component-pills {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -1033,8 +893,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   padding: 8px 12px;
   align-items: center;
   justify-content: center;
-  transition:
-    opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
+  transition: opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
     transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
     background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out;
@@ -1046,7 +905,50 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   transition: color 0.2s ease-in-out;
 }
 
-/* Component: Section Title */
+.pill:hover {
+  border-color: transparent;
+  background-color: #4ad4a7;
+}
+
+.pill:hover .pillText {
+  color: #ffffff;
+}
+
+.pill:hover .highlight {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-fill-color: #ffffff !important;
+}
+
+body.dark-mode .pill:hover {
+  background-color: #4ad4a7;
+  border-color: #4ad4a7;
+}
+
+body.dark-mode .pill:hover .pillText {
+  color: #ffffff;
+}
+
+body.dark-mode .pill:hover .highlight {
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-fill-color: #ffffff !important;
+}
+
+.pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  padding-top: 3rem;
+}
+
+/* --- Component: Section Title --- */
 .component-sectionTitle {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -1062,7 +964,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   margin: 0;
 }
 
-/* Component: Project Grid */
+/* --- Component: Project Grid --- */
 .component-projectGrid {
   width: 100%;
   padding: 0 1rem;
@@ -1076,8 +978,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   align-items: center;
   opacity: 0;
   transform: translateY(80px);
-  transition: transform 0.3s ease-out,
-    opacity 0.3s ease-out;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   will-change: transform, opacity;
 }
 
@@ -1112,7 +1013,39 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   margin: 0;
 }
 
-/* Component: Text Section */
+.thumbnailImage-container-for-zoom {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  height: 375px;
+  border-radius: 12px;
+  background-color: transparent;
+}
+
+.thumbnailImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: #333333;
+  transition: transform 0.3s ease-in-out;
+  border-radius: 12px;
+}
+
+.projectThumbnail:hover .thumbnailImage {
+  transform: scale(1.03);
+}
+
+.projectThumbnail-inner + .imageDescription {
+  padding-top: 0.6rem;
+}
+
+.problem-section .projectThumbnail + .columns {
+  padding-top: 4rem;
+}
+
+/* --- Component: Text Section --- */
 .component-textSection {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -1129,13 +1062,18 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   margin-bottom: 0;
 }
 
+.component-textSection .rightColumnContainer > .sectionBody,
+.component-textSection .rightColumnContainer > .quoteSection {
+  opacity: 0;
+}
+
 .sectionBody {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.sectionBody>*+* {
+.sectionBody > * + * {
   margin-top: 2rem;
 }
 
@@ -1174,7 +1112,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   font-family: 'Albra Book', sans-serif;
 }
 
-/* Component: Experience */
+/* --- Component: Experience --- */
 .component-experience {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -1267,6 +1205,10 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   transform: rotate(90deg);
 }
 
+.experienceItem-carat .caratRight {
+  animation: caratColorChange 9s ease infinite;
+}
+
 .experienceItem-bodyText {
   overflow: hidden;
   max-height: 0;
@@ -1294,10 +1236,9 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   padding-top: 0.5rem;
   padding-bottom: 1rem;
   max-height: 1000px;
-  /* Arbitrary large to allow expansion */
 }
 
-/* Component: CTA */
+/* --- Component: CTA --- */
 .component-cta {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
@@ -1329,12 +1270,32 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   font-weight: 400;
 }
 
-/* Component: Feature Image */
+/* --- Component: Feature Image --- */
 .component-featureImage {
   width: 100%;
   padding-top: 2rem;
   display: flex;
   flex-direction: column;
+}
+
+.featureImage-container-for-zoom {
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  height: 375px;
+  background-color: #333333;
+}
+
+.featureImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+
+.featureImage-container-for-zoom:hover .featureImage {
+  transform: scale(1.03);
 }
 
 .imageDescription {
@@ -1349,12 +1310,19 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   margin: 0;
 }
 
-/* Component: Footer */
+/* --- Component: Footer --- */
 .component-footer {
   width: 100%;
   padding: 2rem 1rem 0 1rem;
   display: flex;
   flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in;
+}
+
+.component-footer .lineSeparator {
+  margin-bottom: 1rem;
 }
 
 .component-footer .footerLinkText {
@@ -1366,10 +1334,6 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 .component-footer .footerLinkText:hover,
 .component-footer .footerLinkText:focus-visible {
   color: var(--accentColor);
-}
-
-.component-footer .lineSeparator {
-  margin-bottom: 1rem;
 }
 
 .footerCTA {
@@ -1402,6 +1366,10 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 .chatIcon svg {
   width: 100%;
   height: 100%;
+}
+
+.chatIcon svg.is-wiggling {
+  animation: wiggle 0.5s ease-in-out;
 }
 
 .footerEmail {
@@ -1462,179 +1430,7 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
   margin: 0;
 }
 
-/* Component: Mobile Menu Overlay */
-#mobileMenuOverlay {
-  position: fixed;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  background-color: hsla(180, 1%, 97%, 0.95);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  z-index: 20500;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.4s ease-in-out,
-    visibility 0s linear 0.4s;
-}
-
-#mobileMenuOverlay.active {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transition: opacity 0.4s ease-in-out,
-    visibility 0s linear 0s;
-}
-
-body.dark-mode #mobileMenuOverlay {
-  background-color: rgba(8, 8, 8, 0.95) !important;
-}
-
-
-.mobile-menu-nav {
-  text-align: center;
-}
-
-.mobile-menu-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.mobile-menu-nav li {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.3s ease-out,
-    transform 0.3s ease-out;
-}
-
-#mobileMenuOverlay.active .mobile-menu-nav li {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(1) {
-  transition-delay: 0.20s;
-}
-
-#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(2) {
-  transition-delay: 0.28s;
-}
-
-#mobileMenuOverlay.active .mobile-menu-nav li:nth-child(3) {
-  transition-delay: 0.36s;
-}
-
-.mobile-menu-nav a {
-  display: block;
-  padding: 1rem 0;
-  font-size: 1.8rem;
-  font-family: 'Albra Book', sans-serif;
-  font-weight: 500;
-  color: #333333;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  caret-color: transparent;
-}
-
-body.dark-mode .mobile-menu-nav a {
-  color: #f2f2f2;
-}
-
-.mobile-menu-nav a:hover,
-.mobile-menu-nav a:focus-visible {
-  color: #4ad4a7;
-}
-
-body.dark-mode .mobile-menu-nav a:hover,
-body.dark-mode .mobile-menu-nav a:focus-visible {
-  color: #4ad4a7;
-}
-
-body.mobile-menu-active {
-  overflow: hidden;
-}
-
-.problem-section .projectThumbnail+.columns {
-  padding-top: 4rem;
-}
-
-.paragraph-spacing {
-  margin-top: 2rem;
-}
-
-/* ==========================================================================
-     10. Utility Classes
-     ========================================================================== */
-
-#custom-cursor {
-  position: fixed;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 22000;
-  left: 0;
-  top: 0;
-
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  transform: translateY(-50%) scale(0);
-  transform-origin: center;
-
-  background-image: linear-gradient(110deg,
-      #4ad4a7 0%,
-      #4ac0b7 25%,
-      #4ad4c7 75%,
-      #4aded7 100%);
-  background-size: 200% auto;
-  animation: highlightGradient 9s ease infinite;
-
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-    height 0.3s cubic-bezier(0.25, 1, 0.5, 1),
-    width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-#custom-cursor.large-text-hover,
-#custom-cursor.small-text-hover {
-  opacity: 1;
-  transform: translateY(-50%) scaleY(1);
-  border-radius: 3px;
-}
-
-#custom-cursor.large-text-hover {
-  height: 80px;
-}
-
-#custom-cursor.small-text-hover {
-  height: 40px;
-}
-
-#custom-cursor.horizontal-text-hover {
-  opacity: 1;
-  width: 40px;
-  height: 2px;
-  border-radius: 3px;
-  transform: translate(-50%, -50%) scaleX(1);
-}
-
-.component-textSection .rightColumnContainer>.sectionBody,
-.component-textSection .rightColumnContainer>.quoteSection {
-  opacity: 0;
-}
-
-
-/* ==========================================================================
-   NEW: Project Details List (for project pages)
-   ========================================================================== */
-
+/* --- Project Details (Project Pages) --- */
 .project-details-list {
   display: flex;
   flex-direction: column;
@@ -1673,19 +1469,21 @@ body.mobile-menu-active {
   color: inherit;
 }
 
-/* Container for the moved pills */
-.pills-container {
+.project-detail-logos {
   display: flex;
+  align-items: center;
+  gap: 2rem;
   flex-wrap: wrap;
-  gap: 0.8rem;
-  padding-top: 3rem;
 }
 
-/* ==========================================================================
-   11. Image Carousel Styles (Corrected)
-   ========================================================================== */
+.project-detail-logos img {
+  width: 104px;
+  max-width: 104px;
+  height: auto;
+  object-fit: contain;
+}
 
-
+/* --- Image Carousel --- */
 .project-image-container {
   position: relative;
   width: 100%;
@@ -1694,23 +1492,6 @@ body.mobile-menu-active {
   overflow: visible;
   border-radius: 12px;
   background-color: #F0F0F0;
-}
-
-.carousel-nav-container {
-  position: absolute;
-  bottom: -6rem;
-  /* This pushes it 2rem below the parent's bottom edge */
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  gap: 0;
-  z-index: 1000;
-}
-
-body.dark-mode .project-image-container {
-  background-color: #1C1C1C;
-  /* Off-black for dark mode */
 }
 
 .carousel-slide {
@@ -1727,14 +1508,29 @@ body.dark-mode .project-image-container {
   opacity: 1;
 }
 
-/* FIX for Image Height: This rule is specific enough to override other styles */
+.carousel-slide.slide-fit-contain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .image-carousel .thumbnailImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* Navigation Buttons */
+.carousel-nav-container {
+  position: absolute;
+  bottom: -6rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  z-index: 1000;
+}
+
 .carousel-nav {
   position: static;
   transform: none;
@@ -1751,7 +1547,6 @@ body.dark-mode .project-image-container {
   border: none;
   transition: background-color 0.2s ease;
   flex-shrink: 0;
-  /* Prevents buttons from shrinking */
 }
 
 .carousel-nav:hover {
@@ -1761,22 +1556,19 @@ body.dark-mode .project-image-container {
 .carousel-nav.prev {
   left: 50%;
   transform: translateX(-125%);
-  /* Shift left from the center point */
 }
 
 .carousel-nav.next {
   right: 50%;
   transform: translateX(125%);
-  /* Shift right from the center point */
 }
 
 .carousel-nav svg {
   width: 12px;
   height: 12px;
-  fill: #ffffff;
+  fill: currentColor;
 }
 
-/* FIX for Stacked Captions */
 .carousel-captions-container {
   position: relative;
   min-height: 40px;
@@ -1792,49 +1584,167 @@ body.dark-mode .project-image-container {
   line-height: 24px;
   font-weight: 400;
   color: inherit;
-  /* Inactive captions are now fully transparent */
   opacity: 0;
   transition: opacity 0.8s ease-in-out;
 }
 
 .carousel-caption.active {
-  /* The active caption becomes visible and takes up space */
   position: relative;
   opacity: 0.8;
-  /* This was the 'soft' style you wanted */
 }
 
 /* ==========================================================================
-     11. Consolidated Media Queries
-     ========================================================================== */
+   6. ANIMATIONS & KEYFRAMES
+   ========================================================================== */
 
-/* Small tablets and large phones (481px - 768px) */
-
-@media only screen and (min-width: 481px) and (max-width: 768px) {
-  .projectPepsico-page .bannerImage {
-    max-width: 560px;
-    /* Adjust this value as needed */
-    margin: 0 auto;
-    /* This keeps the image centered */
-    width: auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  .navMobile {
-    padding: 1.5rem 2rem;
-    /* This sets 2rem horizontal padding */
-  }
-
-  .navMobile .navLeft,
-  .navMobile .navRight {
-    padding: 0;
-    /* This resets the specific mobile padding */
-  }
+/* Background Gradient Animations */
+@keyframes gradientLight {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* --- Word Hover Effect Styles (with fade transition) --- */
+@keyframes gradientDark {
+  0% { background-position: 0% 0%; }
+  25% { background-position: 70% 30%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 30% 70%; }
+  100% { background-position: 0% 0%; }
+}
 
+/* Text Highlight Gradient */
+@keyframes highlightGradient {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+
+/* SVG Gradient Animations */
+@keyframes darkModeGradientAnim {
+  0% { stop-color: #4ad4a7; }
+  25% { stop-color: #77c4a3; }
+  50% { stop-color: #4ad4c7; }
+  75% { stop-color: #4aded7; }
+  100% { stop-color: #4ad4a7; }
+}
+
+@keyframes chatGradientAnim {
+  0% { stop-color: #4ad4a7; }
+  25% { stop-color: #77c4a3; }
+  50% { stop-color: #4ad4c7; }
+  75% { stop-color: #4aded7; }
+  100% { stop-color: #4ad4a7; }
+}
+
+#darkModeGradient stop,
+#chatGradient stop {
+  animation: darkModeGradientAnim 9s ease infinite;
+}
+
+/* Download Button Gradient */
+@keyframes downloadButtonGradient {
+  0% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+  100% { background-position: 0% center; }
+}
+
+/* Experience Carat Color */
+@keyframes caratColorChange {
+  0% { stop-color: #4ad4a7; }
+  25% { stop-color: #77c4a3; }
+  50% { stop-color: #4ad4c7; }
+  75% { stop-color: #4aded7; }
+  100% { stop-color: #4ad4a7; }
+}
+
+/* Carat Bounce */
+@keyframes caratBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-0.5rem); }
+}
+
+/* Chat Icon Wiggle */
+@keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(25deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* ==========================================================================
+   7. UTILITY CLASSES
+   ========================================================================== */
+
+/* Hidden/Visibility */
+.hidden-init {
+  opacity: 0;
+  transform: translateY(80px);
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Custom Cursor */
+#custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 22000;
+  left: 0;
+  top: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  transform: translateY(-50%) scale(0);
+  transform-origin: center;
+  background-image: linear-gradient(110deg,
+      #4ad4a7 0%,
+      #4ac0b7 25%,
+      #4ad4c7 75%,
+      #4aded7 100%);
+  background-size: 200% auto;
+  animation: highlightGradient 9s ease infinite;
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    height 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+    width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#custom-cursor.large-text-hover,
+#custom-cursor.small-text-hover {
+  opacity: 1;
+  transform: translateY(-50%) scaleY(1);
+  border-radius: 3px;
+}
+
+#custom-cursor.large-text-hover {
+  height: 80px;
+}
+
+#custom-cursor.small-text-hover {
+  height: 40px;
+}
+
+#custom-cursor.horizontal-text-hover {
+  opacity: 1;
+  width: 40px;
+  height: 2px;
+  border-radius: 3px;
+  transform: translate(-50%, -50%) scaleX(1);
+}
+
+/* Word Hover Effects */
 .interactive-word {
   display: inline-block;
   color: inherit;
@@ -1842,9 +1752,7 @@ body.dark-mode .project-image-container {
   transition: color 1.3s ease, -webkit-text-fill-color 0.3s ease;
 }
 
-/* This is the style that gets applied to the hovered word. */
 .word-is-hovered {
-  /* Instantly place the gradient behind the word. */
   background: linear-gradient(110deg,
       #4ad4a7 0%,
       #4ac0b7 25%,
@@ -1854,136 +1762,35 @@ body.dark-mode .project-image-container {
   -webkit-background-clip: text;
   background-clip: text;
   animation: highlightGradient 9s ease infinite;
-
-  /* The transition will now smoothly animate the solid color to transparent, revealing the gradient. */
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
 
+/* Animation Helpers */
+.word-container,
+.word-container-tall,
+.animation-container {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.2rem;
+}
 
-/* Targets mobile phones specifically in landscape orientation */
+.word {
+  display: inline-block;
+  transform: translateY(80px);
+}
 
-
-
-
-/* Prevents the blue focus outline on anchor link navigation */
+/* Focus States */
 #about-section:focus,
 #selected-work-title:focus {
   outline: none;
 }
 
-
 /* ==========================================================================
-   12. Page-Specific Overrides
+   8. MEDIA QUERIES
    ========================================================================== */
 
-/* PepsiCo Project Page Banner Styles */
-.projectPepsico-page .bannerImage-container-for-zoom {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.projectPepsico-page .bannerImage {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  /* or 'contain' if you prefer no crop */
-}
-
-.carousel-slide.slide-fit-contain {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Styling for the new navigation button container */
-.carousel-nav-container {
-  display: flex;
-  justify-content: center;
-  padding-top: 1rem;
-}
-
-/* Base style for carousel navigation buttons (Mobile First) */
-.carousel-nav {
-  position: static;
-  /* Remove absolute positioning for mobile */
-  transform: none;
-  background-color: rgba(128, 128, 128, 0.15);
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  transition: background-color 0.2s ease;
-}
-
-.carousel-nav svg {
-  fill: currentColor;
-}
-
-.projectThumbnail-inner+.imageDescription {
-  padding-top: 0.6rem;
-  /* Matches the gap used in other thumbnails */
-}
-
-/* Re-apply absolute positioning for desktop view */
-
-
-
-
-/*
-==========================================================================
-   13. Extras
-==========================================================================
-*/
-
-:focus:not(input):not(textarea):not([contenteditable]) {
-  outline: none;
-  /* you probably already have this */
-  caret-color: transparent !important;
-}
-
-.component-header,
-.component-banner {
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
-
-.project-detail-logos img {
-  width: 104px;
-  max-width: 104px;
-  height: auto;
-  object-fit: contain;
-}
-
-.project-detail-logos {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  /* Adjust this value for your desired mobile spacing */
-  flex-wrap: wrap;
-}
-
-
-/* --------------------------------------------------
-   1. Tablet (481px–768px)
-   -------------------------------------------------- */
-
-@media only screen and (min-width: 481px) and (max-width: 768px) {
-  .component-header {
-    padding: 3rem 1rem 0 1rem;
-  }
-}
-
+/* --- Mobile Landscape Mode --- */
 @media only screen and (max-width: 768px) {
   .component-banner {
     max-height: 450px;
@@ -1992,7 +1799,6 @@ body.dark-mode .project-image-container {
 
   .bannerImage-container-for-zoom {
     border-radius: 12px;
-    /* Maintains width/height from parent */
   }
 
   .projectThumbnail .thumbnailImage-container-for-zoom {
@@ -2034,72 +1840,35 @@ body.dark-mode .project-image-container {
 
   .component-description .leftColumnContainer {
     order: 2;
-    /* Details appear AFTER main text on mobile */
     margin-right: 0;
   }
 
   .component-description .rightColumnContainer {
     order: 1;
-    /* Main text appears FIRST on mobile */
   }
 
   .project-details-list {
     padding-top: 3rem;
   }
-}
 
-@media only screen and (min-width: 481px) {
-
-  .darkMode-icon,
-  .navMenu-icon {
-    /* smooth transition for both hover in and out */
-    transition: transform 0.3s ease-in-out;
-  }
-
-  .darkMode-icon:hover,
-  .navMenu-icon:hover {
-    /* lift up 5px on hover */
-    transform: translateY(-2px);
+  /* Mobile-only carat visibility */
+  .component-banner {
+    overflow: visible;
   }
 }
 
-/* Desktop override for PepsiCo logos */
-@media only screen and (min-width: 769px) {
-  .projectPepsico-page .project-detail-logos img {
-    width: 120px;
-    max-width: 120px;
+/* --- Tablet (481px - 768px) --- */
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  .component-header {
+    padding: 3rem 1rem 0 1rem;
   }
 
-  .paragraph-spacing {
-    margin-top: 2rem;
-  }
-}
-
-/* --------------------------------------------------
-   2. Desktop (>=769px)
-   -------------------------------------------------- */
-
-@media only screen and (min-width: 769px) {
-  .maxWidthContainer {
-    max-width: 1088px;
+  .projectPepsico-page .bannerImage {
+    max-width: 560px;
     margin: 0 auto;
-  }
-
-  .project-detail-logos img {
-    width: 160px;
-    max-width: none;
-  }
-
-  /* Restore carousel styles for desktop */
-  .project-image-container {
-    overflow: hidden;
-    margin-bottom: 0;
-  }
-
-  .carousel-nav {
-    top: 50%;
-    transform: translateY(-50%);
-    margin-top: 0;
+    width: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
   .navMobile {
@@ -2110,57 +1879,80 @@ body.dark-mode .project-image-container {
   .navMobile .navRight {
     padding: 0;
   }
+}
 
-  .carousel-nav.prev {
-    left: 1rem;
-    transform: none;
+@media only screen and (min-width: 481px) {
+  .darkMode-icon,
+  .navMenu-icon {
+    transition: transform 0.3s ease-in-out;
   }
 
-  .carousel-nav.next {
-    right: 1rem;
-    transform: none;
-    left: auto;
-    /* Reset left property from mobile */
+  .darkMode-icon:hover,
+  .navMenu-icon:hover {
+    transform: translateY(-2px);
   }
+}
 
-  .project-page .component-header {
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+/* --- Desktop (769px+) --- */
+@media only screen and (min-width: 768px) {
+  /* Hide carat on tablet and up */
+  .component-banner .carat {
+    display: none;
   }
+}
 
-  .projectPepsico-page .bannerImage {
-    max-width: 720px;
+@media only screen and (min-width: 769px) {
+  /* Layout */
+  .maxWidthContainer {
+    max-width: 1088px;
     margin: 0 auto;
   }
 
-
-  body:not(.projectPepsico-page) .component-projectGrid>.project-link:first-child .thumbnailImage-container-for-zoom {
-    max-width: none;
-    width: 100%;
-    height: auto;
-    max-height: 400px;
+  .columns {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
   }
 
-  body:not(.projectPepsico-page) .component-projectGrid>.project-link:first-child .thumbnailImage {
-    height: auto;
-    max-height: 360px;
+  .leftColumnContainer {
+    margin-right: 2rem;
+    flex: 1;
   }
 
-  .component-header {
-    padding: 2rem 4rem 0 4rem;
+  .rightColumnContainer {
+    flex: 1;
   }
 
-  .sub-header-text {
-    /* padding: 0 4rem; */
+  /* Navigation */
+  .navMobile {
+    padding: 1.5rem 2rem;
   }
 
+  .navMobile .navLeft,
+  .navMobile .navRight {
+    padding: 0;
+  }
+
+  /* Typography */
   .introText {
     max-width: 880px;
     font-size: 4.5rem;
     line-height: 5rem;
   }
 
+  .quoteText {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+
+  .sectionBodyText {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 300;
+    margin: 0;
+  }
+
+  /* Vertical Text */
   .vertical-text {
     display: flex;
     position: fixed;
@@ -2181,8 +1973,14 @@ body.dark-mode .project-image-container {
     transform: scaleX(1.5);
   }
 
+  /* Dark Mode */
   body.dark-mode {
     color: #f2f2f2;
+  }
+
+  /* Components */
+  .component-header {
+    padding: 2rem 4rem 0 4rem;
   }
 
   .component-banner {
@@ -2192,16 +1990,6 @@ body.dark-mode .project-image-container {
 
   .bannerImage-container-for-zoom {
     border-radius: 12px;
-  }
-
-  .columns {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-  }
-
-  .leftColumnContainer {
-    margin-right: 2rem;
   }
 
   .component-description {
@@ -2218,7 +2006,7 @@ body.dark-mode .project-image-container {
     pointer-events: none;
   }
 
-  .descriptionText-1>.paragraph-section {
+  .descriptionText-1 > .paragraph-section {
     pointer-events: auto;
   }
 
@@ -2243,19 +2031,31 @@ body.dark-mode .project-image-container {
     padding: 0 4rem 4rem 4rem;
   }
 
-  .component-projectGrid>.projectThumbnail:first-of-type .projectThumbnail-inner {
+  .component-projectGrid > .projectThumbnail:first-of-type .projectThumbnail-inner {
     width: 100%;
   }
 
-  .component-projectGrid>.projectThumbnail:first-of-type .thumbnailImage-container-for-zoom {
+  .component-projectGrid > .projectThumbnail:first-of-type .thumbnailImage-container-for-zoom {
     max-width: none;
     width: 100%;
     height: auto;
     max-height: 400px;
   }
 
-  .component-projectGrid>.projectThumbnail:first-of-type .thumbnailImage {
+  .component-projectGrid > .projectThumbnail:first-of-type .thumbnailImage {
     height: auto;
+  }
+
+  body:not(.projectPepsico-page) .component-projectGrid > .project-link:first-child .thumbnailImage-container-for-zoom {
+    max-width: none;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+  }
+
+  body:not(.projectPepsico-page) .component-projectGrid > .project-link:first-child .thumbnailImage {
+    height: auto;
+    max-height: 360px;
   }
 
   .component-projectGrid .columns .projectThumbnail .projectThumbnail-inner {
@@ -2266,6 +2066,10 @@ body.dark-mode .project-image-container {
     max-width: none;
     width: 100%;
     height: 325px;
+  }
+
+  .projectThumbnail + .columns {
+    padding-top: 2rem;
   }
 
   .component-textSection {
@@ -2286,18 +2090,6 @@ body.dark-mode .project-image-container {
   .component-textSection .quoteSection {
     max-width: 400px;
     margin: 0 auto;
-  }
-
-  .quoteText {
-    font-size: 2rem;
-    line-height: 2.5rem;
-  }
-
-  .sectionBodyText {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 300;
-    margin: 0;
   }
 
   .component-experience {
@@ -2340,47 +2132,16 @@ body.dark-mode .project-image-container {
     padding: 2rem 4rem 0 4rem;
   }
 
-  .leftColumnContainer,
-  .rightColumnContainer {
-    flex: 1;
+  /* Project Pages */
+  .project-page .component-header {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .projectThumbnail+.columns {
-    padding-top: 2rem;
-  }
-
-}
-
-@media only screen and (min-width: 769px) {
-  .carousel-nav-container {
-    position: absolute;
-    top: 0;
-    bottom: auto;
-    /* Add this to override the mobile 'bottom' style */
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-
-  .carousel-nav {
-    position: absolute;
-    top: 47.5%;
-    background-color: rgba(0, 0, 0, 0.3);
-    pointer-events: auto;
-    /* This makes the buttons clickable again */
-  }
-
-  .carousel-nav svg {
-    fill: #ffffff;
-  }
-
-  .carousel-nav.prev {
-    left: 1rem;
-  }
-
-  .carousel-nav.next {
-    right: 1rem;
+  .projectPepsico-page .bannerImage {
+    max-width: 720px;
+    margin: 0 auto;
   }
 
   .project-detail-logos {
@@ -2396,16 +2157,55 @@ body.dark-mode .project-image-container {
     object-fit: contain;
   }
 
+  .projectPepsico-page .project-detail-logos img {
+    width: 120px;
+    max-width: 120px;
+  }
+
   .paragraph-spacing {
     margin-top: 2rem;
   }
 
+  /* Carousel */
+  .carousel-nav-container {
+    position: absolute;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .carousel-nav {
+    position: absolute;
+    top: 47.5%;
+    background-color: rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+  }
+
+  .carousel-nav svg {
+    fill: #ffffff;
+  }
+
+  .carousel-nav.prev {
+    left: 1rem;
+    transform: none;
+  }
+
+  .carousel-nav.next {
+    right: 1rem;
+    transform: none;
+    left: auto;
+  }
+
+  .project-image-container {
+    overflow: hidden;
+    margin-bottom: 0;
+  }
 }
 
-/* --------------------------------------------------
-   3. Special Cases
-   -------------------------------------------------- */
-
+/* --- Special Cases & Edge Cases --- */
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 550px) {
   #site-frame {
     border-radius: 56px;
@@ -2439,208 +2239,76 @@ body.dark-mode .project-image-container {
 
   .navMobile .navRight {
     padding-right: 2rem;
-    /* Creates space on the right */
     padding-top: .5rem;
   }
 
   .vertical-text {
     display: none;
-    /* Makes the element visible in this view */
-
-    /* Set the desired final position */
     top: 50%;
     left: .5rem;
-
-    /* --- Explicitly RESET the conflicting desktop styles to their defaults --- */
     bottom: initial;
     transform-origin: initial;
-
-    /* Now, apply the transform for centering and rotation on a clean slate */
     transform: translateY(-50%) rotate(-90deg);
   }
 }
 
-@keyframes wiggle {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  25% {
-    transform: rotate(25deg);
-  }
-
-  50% {
-    transform: rotate(-10deg);
-  }
-
-  75% {
-    transform: rotate(5deg);
-  }
-
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-.chatIcon svg.is-wiggling {
-  animation: wiggle 0.5s ease-in-out;
-}
-
-
-/* --- Preloader Logo Animation (Final Corrected Version) --- */
-
-#lottie-container {
-  width: 150px;
-  height: 150px;
-  position: relative;
-  z-index: 2;
-}
-
-#lottie-container canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  will-change: transform;
-  /* promote to its own layer */
-}
-
-
-/*
-==========================================================================
-  Navigation Logo Styles
-==========================================================================
-*/
-
-#lottie-logo-container {
-  width: 4rem;
-  height: 4rem;
-  cursor: pointer;
-  opacity: 0;
-  /* Start invisible */
-  transition: opacity 0.5s ease-out;
-  /* Define the fade animation */
-}
-
-#lottie-logo-container.is-visible {
-  opacity: 1;
-}
-
-/* ==========================================================================
-   Carat Indicator: Positioning, Fade-In & Bounce (Mobile Only)
-   ========================================================================== */
-
-/* 1) Banner as positioning context */
-.component-banner {
-  position: relative;
-}
-
-/* 2) Allow overflow on mobile so the carat isn’t clipped */
-@media (max-width: 767px) {
-  .component-banner {
-    overflow: visible;
-  }
-}
-
-/* 3) Hide the carat on tablet and up */
-@media (min-width: 768px) {
-  .component-banner .carat {
-    display: none;
-  }
-}
-
-/* 4) Base state: absolutely positioned, hidden, with opacity transition */
-.component-banner .carat {
-  position: absolute !important;
-  top: calc(100% + 3rem) !important;
-  left: 50% !important;
-  transform: translateX(-50%);
-  pointer-events: auto !important;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.3s ease-in;
-}
-
-/* 5) Force the SVG to a sensible size */
-.component-banner .carat svg {
-  display: block;
-  width: 1.5rem;
-  height: auto;
-}
-
-/* 6) Visible state: fade in then start infinite bounce */
-.component-banner .carat.visible {
-  opacity: 1;
-  animation: caratBounce 1.5s ease-in-out infinite;
-}
-
-/* 7) Bounce keyframes */
-@keyframes caratBounce {
-
-  0%,
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
-
-  50% {
-    transform: translateX(-50%) translateY(-0.5rem);
-  }
-}
-
-.no-top-quote {
-  padding-top: 0;
-}
-
-.sr-only {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ─────────────────────────────────────────────────────────
-   PepsiCo banner: "safe zoom" (no clipping, keyboard-friendly)
-   Paste at END of styles.css
-   ───────────────────────────────────────────────────────── */
-body.projectPepsico-page .bannerImage {
-  display: block;
-  width: 100%;
-  height: auto;                 /* beats any base height:100% */
-  object-fit: cover;
-  border-radius: inherit;
-  background-color: transparent;
-  transform: scale(.985);       /* start a hair smaller */
-  transform-origin: 50% 50%;
-  transition: transform 0.7s cubic-bezier(0.645,0.045,0.355,1);
-  will-change: transform;
-}
-
-/* Keep hover effect but never exceed the frame */
-@media (hover: hover) and (pointer: fine) {
-  body.projectPepsico-page .bannerImage-container-for-zoom:hover .bannerImage {
-    transform: scale(1);        /* overrides the global 1.03 on this page */
-  }
-}
-
-/* Keyboard users get the same effect */
-body.projectPepsico-page .bannerImage-container-for-zoom:focus-within .bannerImage {
-  transform: scale(1);
-}
-
-/* Preserve your initial fade-in + the safe-zoom together */
-body.projectPepsico-page .bannerImage.start-hidden {
-  opacity: 0;                   /* keep your current fade-in */
-  transform: translateY(80px) scale(.985); /* combine translate + scale */
-}
-
-/* Respect reduced motion */
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   body.projectPepsico-page .bannerImage {
     transition: none;
     transform: none;
   }
 }
+
+/* ==========================================================================
+   9. PAGE-SPECIFIC OVERRIDES
+   ========================================================================== */
+
+/* PepsiCo Project Page */
+.projectPepsico-page .bannerImage-container-for-zoom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.projectPepsico-page .bannerImage {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* PepsiCo Banner Safe Zoom */
+body.projectPepsico-page .bannerImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: inherit;
+  background-color: transparent;
+  transform: scale(.985);
+  transform-origin: 50% 50%;
+  transition: transform 0.7s cubic-bezier(0.645,0.045,0.355,1);
+  will-change: transform;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.projectPepsico-page .bannerImage-container-for-zoom:hover .bannerImage {
+    transform: scale(1);
+  }
+}
+
+body.projectPepsico-page .bannerImage-container-for-zoom:focus-within .bannerImage {
+  transform: scale(1);
+}
+
+body.projectPepsico-page .bannerImage.start-hidden {
+  opacity: 0;
+  transform: translateY(80px) scale(.985);
+}
+
+/* ==========================================================================
+   END OF STYLESHEET
+   ========================================================================== */
