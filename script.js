@@ -1,23 +1,61 @@
 /**
  * Alexander Biglane Portfolio Website
- * Project-agnostic JavaScript
- * Refactor date: 2025-07-23
- * Goal: Maintain ALL existing functionality, only changing how we detect pages & handle smooth scroll.
+ * Refactored JavaScript - Clean Modular Organization
+ * Updated: 2025
+ * 
+ * Structure:
+ * 1. Global Configuration & State
+ * 2. Utility Functions
+ * 3. Theme Management
+ * 4. Animation Modules
+ * 5. UI Components
+ * 6. Navigation & Menu
+ * 7. Interactive Features
+ * 8. Page Initialization
  */
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 0. GLOBAL FLAGS / UTILITIES
-// ───────────────────────────────────────────────────────────────────────────────
+// =============================================================================
+// 1. GLOBAL CONFIGURATION & STATE
+// =============================================================================
 
-let isAutoScrolling = false; // Pause scroll-driven anims during programmatic scrolls
-const IS_HOME = !!document.getElementById('selected-work-title'); // Feature-detect home page
+// Global flags
+let isAutoScrolling = false;
 
-// Linear interpolation helper
+// Feature detection
+const IS_HOME = !!document.getElementById('selected-work-title');
+
+// Global state container
+const STATE = {
+  layout: {
+    current: window.innerWidth <= 768 ? 'mobile' : 'desktop',
+    resizeTimeout: null,
+  },
+  animations: {
+    thumbnailPositions: new Map(),
+    thumbnails: [],
+    bannerHeightLocked: false,
+    bannerPosition: null,
+  },
+  darkMode: {
+    active: false,
+    transitioning: false,
+  },
+};
+
+// =============================================================================
+// 2. UTILITY FUNCTIONS
+// =============================================================================
+
+/**
+ * Linear interpolation helper
+ */
 function interpolate(startValue, endValue, progress) {
   return startValue + (endValue - startValue) * progress;
 }
 
-// Debounce
+/**
+ * Debounce function
+ */
 function debounce(func, wait) {
   let timeout;
   return function (...args) {
@@ -26,11 +64,13 @@ function debounce(func, wait) {
   };
 }
 
-// Smooth scroll utility (kept exactly as before, except now called from more places)
+/**
+ * Smooth scroll utility
+ */
 function smoothScrollTo(targetElement, duration = 400) {
   isAutoScrolling = true;
 
-  const navOffset = 160; // adjust if your header height changes
+  const navOffset = 160;
   const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY - navOffset;
   const startPosition = window.scrollY;
   const distance = targetPosition - startPosition;
@@ -63,27 +103,10 @@ function smoothScrollTo(targetElement, duration = 400) {
   }, duration + 50);
 }
 
-// Global state container (unchanged)
-const STATE = {
-  layout: {
-    current: window.innerWidth <= 768 ? 'mobile' : 'desktop',
-    resizeTimeout: null,
-  },
-  animations: {
-    thumbnailPositions: new Map(),
-    thumbnails: [],
-    bannerHeightLocked: false,
-    bannerPosition: null,
-  },
-  darkMode: {
-    active: false,
-    transitioning: false,
-  },
-};
+// =============================================================================
+// 3. THEME MANAGEMENT
+// =============================================================================
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 1. THEME MANAGEMENT
-// ───────────────────────────────────────────────────────────────────────────────
 const ThemeManager = (function () {
   let darkModeIconElement = null;
 
@@ -135,7 +158,6 @@ const ThemeManager = (function () {
     darkModeIconElement.removeEventListener('click', toggleThemeAndIconState);
     darkModeIconElement.addEventListener('click', toggleThemeAndIconState);
 
-    // Keyboard accessibility (can remove if undesired)
     darkModeIconElement.removeEventListener('keydown', handleIconKeydown);
     darkModeIconElement.addEventListener('keydown', handleIconKeydown);
   }
@@ -192,12 +214,19 @@ const ThemeManager = (function () {
     }, 300);
   }
 
-  return { applyInitialThemeAndIcon, setupEventListeners };
+  return { 
+    applyInitialThemeAndIcon, 
+    setupEventListeners 
+  };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 2. TEXT ANIMATIONS
-// ───────────────────────────────────────────────────────────────────────────────
+// =============================================================================
+// 4. ANIMATION MODULES
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 4.1 Text Animations
+// -----------------------------------------------------------------------------
 const TextAnimator = (function () {
   function initialize() {
     animateIntroText();
@@ -231,26 +260,32 @@ const TextAnimator = (function () {
 
     rows.sort((a, b) => a.top - b.top);
 
-    const movementDuration = 700;
-    const opacityDuration = 500;
-    const staggerDelay = 50;
+    // Animation timings
+    const movementDuration = 1600;
+    const opacityDuration = 600;
+    const rowStagger = 200;
+    const intraStagger = 120; // Extra stagger per word for row 2
 
     rows.forEach((row, rowIndex) => {
-      row.spans.forEach((span) => {
+      row.spans.forEach((span, spanIndex) => {
+        const delay = rowIndex * rowStagger + 
+                      (rowIndex === 1 ? spanIndex * intraStagger : 0);
+
         span.animate(
           [{ opacity: 0 }, { opacity: 1 }],
           {
             duration: opacityDuration,
-            delay: rowIndex * staggerDelay,
+            delay,
             fill: 'forwards',
             easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
           }
         );
+
         span.animate(
           [{ transform: 'translateY(80px)' }, { transform: 'translateY(0)' }],
           {
             duration: movementDuration,
-            delay: rowIndex * staggerDelay,
+            delay,
             fill: 'forwards',
             easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
           }
@@ -258,7 +293,7 @@ const TextAnimator = (function () {
       });
     });
 
-    // Optional sub-header animation (kept from your code)
+    // Optional sub-header animation
     const subHeader = document.querySelector('.sub-header-text');
     if (subHeader) {
       subHeader.animate(
@@ -279,9 +314,9 @@ const TextAnimator = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 3. BANNER MANAGEMENT
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 4.2 Banner Management
+// -----------------------------------------------------------------------------
 const BannerManager = (function () {
   function initialize() {
     const bannerImg = document.querySelector('.bannerImage');
@@ -295,7 +330,7 @@ const BannerManager = (function () {
       STATE.animations.bannerPosition = null;
     });
 
-    // fade/scale scroll ONLY on home
+    // Fade/scale scroll only on home
     if (IS_HOME) {
       window.addEventListener('scroll', () => {
         requestAnimationFrame(updateBannerOnScroll);
@@ -342,12 +377,15 @@ const BannerManager = (function () {
     }
   }
 
-  return { initialize, updateBannerOnScroll };
+  return { 
+    initialize, 
+    updateBannerOnScroll 
+  };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 4. PILL ANIMATIONS
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 4.3 Pill Animations
+// -----------------------------------------------------------------------------
 const PillAnimator = (function () {
   function initialize() {
     const pillSection = document.querySelector('.component-pills');
@@ -391,9 +429,9 @@ const PillAnimator = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 5. PROJECT THUMBNAILS
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 4.4 Project Thumbnails
+// -----------------------------------------------------------------------------
 const ProjectThumbnails = (function () {
   function initialize() {
     STATE.animations.thumbnails = Array.from(document.querySelectorAll('.projectThumbnail'));
@@ -482,12 +520,16 @@ const ProjectThumbnails = (function () {
     });
   }
 
-  return { initialize, updateThumbnailsOnScroll, refreshThumbnails };
+  return { 
+    initialize, 
+    updateThumbnailsOnScroll, 
+    refreshThumbnails 
+  };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 6. SECTION ANIMATOR
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 4.5 Section Animator
+// -----------------------------------------------------------------------------
 const SectionAnimator = (function () {
   let observer;
   let sections;
@@ -505,7 +547,8 @@ const SectionAnimator = (function () {
     sections = Array.from(document.querySelectorAll(selectors.join(', ')));
 
     sections.forEach((section) => {
-      if (!section.classList.contains('component-pills') && !section.classList.contains('component-experience')) {
+      if (!section.classList.contains('component-pills') && 
+          !section.classList.contains('component-experience')) {
         section.classList.add('hidden-init');
       }
     });
@@ -549,14 +592,13 @@ const SectionAnimator = (function () {
   }
 
   function animateDescriptionSection(section) {
-    // 1) Animate the section into view
     animateGenericSection(section);
 
-    // 2) Immediately hide the chevron
+    // Hide the chevron
     const carat = document.querySelector('.component-banner .carat');
     if (carat) carat.classList.remove('visible');
 
-    // 3) Now animate the inner parts…
+    // Animate inner parts
     const lineSeparator = section.querySelector('.lineSeparator');
     if (lineSeparator) {
       lineSeparator.animate(
@@ -639,12 +681,138 @@ const SectionAnimator = (function () {
     });
   }
 
-  return { initialize, refresh };
+  return { 
+    initialize, 
+    refresh 
+  };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 7. EXPERIENCE ACCORDION
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 4.6 Rotating Words Manager
+// -----------------------------------------------------------------------------
+const RotatingWordsManager = (function () {
+  const START_DELAY_MS = 3200;
+  const STEP_EVERY_MS = 2400;
+  const TRANSITION_MS = 1600;
+  const PHRASES = ['problem solver.', 'systems builder.', 'curious creative.'];
+
+  let index = 0;
+  let intervalId = null;
+  let container, inner;
+  let LINE_H = 0;
+  let COUNT = 0;
+  let debouncedResize = null;
+
+  function initialize() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const slot = document.getElementById('rotating-slot');
+    if (!slot) return;
+
+    // Build markup
+    container = document.createElement('span');
+    container.className = 'strong rotating-words';
+    container.setAttribute('data-no-split', 'true');
+
+    inner = document.createElement('span');
+    inner.className = 'rotating-words-inner';
+
+    PHRASES.forEach(text => {
+      const item = document.createElement('span');
+      item.className = 'rotating-word';
+      item.textContent = text;
+      inner.appendChild(item);
+    });
+
+    // Clone first item for seamless loop
+    inner.appendChild(inner.children[0].cloneNode(true));
+    container.appendChild(inner);
+
+    // Wait for intro animation, then start
+    setTimeout(() => {
+      slot.replaceWith(container);
+      COUNT = PHRASES.length;
+      measureAndLockHeight();
+      startLoop();
+
+      debouncedResize = debounce(onResizeStable, 180);
+      window.addEventListener('resize', debouncedResize, { passive: true });
+    }, START_DELAY_MS);
+  }
+
+  function measureAndLockHeight() {
+    const first = inner.children[0];
+    LINE_H = Math.ceil(first.getBoundingClientRect().height);
+    container.style.height = LINE_H + 'px';
+    inner.style.transition = `transform ${TRANSITION_MS}ms ease`;
+  }
+
+  function getTranslateYPx(el) {
+    const style = window.getComputedStyle(el);
+    const transform = style.transform || style.webkitTransform || 'none';
+    if (transform === 'none') return 0;
+    
+    const match2d = transform.match(/^matrix\(([-0-9., e]+)\)$/);
+    if (match2d) {
+      const parts = match2d[1].split(',').map(Number);
+      return parts[5] || 0;
+    }
+    
+    const match3d = transform.match(/^matrix3d\(([-0-9., e]+)\)$/);
+    if (match3d) {
+      const parts = match3d[1].split(',').map(Number);
+      return parts[13] || 0;
+    }
+    return 0;
+  }
+
+  function onResizeStable() {
+    const ty = getTranslateYPx(inner);
+    const progressPx = Math.abs(ty);
+    const indexFloat = progressPx / LINE_H;
+    
+    measureAndLockHeight();
+    
+    index = Math.floor(indexFloat);
+    const mapped = -indexFloat * LINE_H;
+    
+    const prevTransition = inner.style.transition;
+    inner.style.transition = 'none';
+    inner.style.transform = `translateY(${mapped}px)`;
+    void inner.offsetHeight;
+    inner.style.transition = prevTransition;
+  }
+
+  function step() {
+    index += 1;
+    inner.style.transform = `translateY(-${index * LINE_H}px)`;
+
+    if (index === COUNT) {
+      setTimeout(() => {
+        const prevTransition = inner.style.transition;
+        inner.style.transition = 'none';
+        inner.style.transform = 'translateY(0px)';
+        index = 0;
+        void inner.offsetHeight;
+        inner.style.transition = prevTransition;
+      }, TRANSITION_MS);
+    }
+  }
+
+  function startLoop() {
+    intervalId = setInterval(step, STEP_EVERY_MS + TRANSITION_MS);
+  }
+
+  return { initialize };
+})();
+
+// =============================================================================
+// 5. UI COMPONENTS
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 5.1 Experience Accordion
+// -----------------------------------------------------------------------------
 const ExperienceManager = (function () {
   function initialize() {
     const experienceItems = document.querySelectorAll('.experienceItem');
@@ -695,55 +863,187 @@ const ExperienceManager = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 8. RESPONSIVE LAYOUT MANAGEMENT
-// ───────────────────────────────────────────────────────────────────────────────
-const LayoutManager = (function () {
-  function initialize() {
-    const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
-    mobileBreakpoint.addEventListener('change', handleMediaQueryChange);
-    window.addEventListener('resize', debounce(handleResize, 250));
+// -----------------------------------------------------------------------------
+// 5.2 Image Carousel
+// -----------------------------------------------------------------------------
+const ImageCarouselManager = (function () {
+  function initializeCarousel(carouselElement) {
+    const projectThumbnail = carouselElement.closest('.projectThumbnail');
+    const slides = carouselElement.querySelectorAll('.carousel-slide');
+    const captionsContainer = projectThumbnail?.querySelector('.carousel-captions-container');
+    const captions = captionsContainer ? captionsContainer.querySelectorAll('.carousel-caption') : [];
+    const navPrev = projectThumbnail?.querySelector('.carousel-nav.prev');
+    const navNext = projectThumbnail?.querySelector('.carousel-nav.next');
 
-    handleResize();
-    window.scrollTo(0, 0);
-    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  }
+    let currentIndex = 0;
+    let intervalId = null;
+    const slideDuration = 6000;
 
-  function handleMediaQueryChange(event) {
-    const newLayout = event.matches ? 'mobile' : 'desktop';
-    if (newLayout !== STATE.layout.current) {
-      STATE.layout.current = newLayout;
-      ProjectThumbnails.refreshThumbnails();
-      if (newLayout === 'desktop') STATE.animations.bannerHeightLocked = false;
-    }
-  }
-
-  function handleResize() {
-    const newLayout = window.innerWidth <= 768 ? 'mobile' : 'desktop';
-    if (newLayout !== STATE.layout.current) {
-      STATE.layout.current = newLayout;
-      ProjectThumbnails.refreshThumbnails();
-      if (newLayout === 'desktop') STATE.animations.bannerHeightLocked = false;
+    if (slides.length <= 1) {
+      if (navPrev) navPrev.style.display = 'none';
+      if (navNext) navNext.style.display = 'none';
+      return;
     }
 
-    STATE.animations.thumbnailPositions.clear();
-    STATE.animations.thumbnails.forEach((thumb) => {
-      if (thumb.classList.contains('fadeIn-visible')) {
-        const rect = thumb.getBoundingClientRect();
-        STATE.animations.thumbnailPositions.set(thumb, {
-          top: rect.top + window.scrollY,
-          height: rect.height,
-        });
+    function showSlide(index) {
+      if (index >= slides.length) currentIndex = 0;
+      else if (index < 0) currentIndex = slides.length - 1;
+      else currentIndex = index;
+
+      slides.forEach((slide) => slide.classList.remove('active'));
+      slides[currentIndex].classList.add('active');
+
+      if (captions.length === slides.length) {
+        captions.forEach((c) => c.classList.remove('active'));
+        captions[currentIndex].classList.add('active');
       }
+    }
+
+    function startInterval() {
+      intervalId = setInterval(() => showSlide(currentIndex + 1), slideDuration);
+    }
+
+    function resetInterval() {
+      clearInterval(intervalId);
+      startInterval();
+    }
+
+    navPrev && navPrev.addEventListener('click', () => {
+      showSlide(currentIndex - 1);
+      resetInterval();
+    });
+
+    navNext && navNext.addEventListener('click', () => {
+      showSlide(currentIndex + 1);
+      resetInterval();
+    });
+
+    startInterval();
+  }
+
+  function initialize() {
+    const allCarousels = document.querySelectorAll('.image-carousel');
+    allCarousels.forEach(initializeCarousel);
+  }
+
+  return { initialize };
+})();
+
+// -----------------------------------------------------------------------------
+// 5.3 Lottie Logo Manager
+// -----------------------------------------------------------------------------
+const LottieLogoManager = (function () {
+  let logoAnimation = null;
+  let lottieLogoContainer = null;
+  let isPlaying = false;
+  const lightModePath = '/assets/nav-logo-light_big-lottie.json';
+  const darkModePath = '/assets/nav-logo-dark_big-lottie.json';
+
+  function loadAnimationByTheme() {
+    const isDarkMode = document.documentElement.classList.contains('dark-mode');
+
+    if (logoAnimation) {
+      logoAnimation.destroy();
+    }
+
+    isPlaying = false;
+
+    logoAnimation = lottie.loadAnimation({
+      container: lottieLogoContainer,
+      renderer: 'canvas',
+      loop: false,
+      autoplay: false,
+      path: isDarkMode ? darkModePath : lightModePath
+    });
+
+    logoAnimation.addEventListener('complete', () => {
+      isPlaying = false;
+    });
+  }
+
+  function initialize() {
+    lottieLogoContainer = document.getElementById('lottie-logo-container');
+
+    if (!lottieLogoContainer || typeof lottie === 'undefined') {
+      return;
+    }
+    
+    setTimeout(() => lottieLogoContainer.classList.add('is-visible'), 100);
+    loadAnimationByTheme();
+
+    lottieLogoContainer.addEventListener('mouseenter', () => {
+      if (isPlaying) {
+        return;
+      }
+      isPlaying = true;
+      logoAnimation.goToAndPlay(0, true);
+    });
+  }
+
+  function onThemeChange() {
+    loadAnimationByTheme();
+  }
+
+  return {
+    initialize,
+    onThemeChange
+  };
+})();
+
+// -----------------------------------------------------------------------------
+// 5.4 Footer Components
+// -----------------------------------------------------------------------------
+const ChatIconAnimator = (function () {
+  function initialize() {
+    const footerCTA = document.querySelector('.footerCTA');
+    const chatIconSVG = document.querySelector('.chatIcon svg');
+
+    if (!footerCTA || !chatIconSVG) {
+      return;
+    }
+
+    footerCTA.addEventListener('mouseenter', () => {
+      if (!chatIconSVG.classList.contains('is-wiggling')) {
+        chatIconSVG.classList.add('is-wiggling');
+      }
+    });
+
+    chatIconSVG.addEventListener('animationend', () => {
+      chatIconSVG.classList.remove('is-wiggling');
+    });
+  }
+  
+  return { initialize };
+})();
+
+const FooterLinkManager = (function () {
+  function initialize() {
+    const footerLinks = document.querySelectorAll('.component-footer a[href^="#"]');
+
+    footerLinks.forEach(link => {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+
+        const targetId = this.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          smoothScrollTo(targetElement, 400);
+        }
+      });
     });
   }
 
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 9. MOBILE MENU MANAGEMENT
-// ───────────────────────────────────────────────────────────────────────────────
+// =============================================================================
+// 6. NAVIGATION & MENU
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 6.1 Mobile Menu Management
+// -----------------------------------------------------------------------------
 const MobileMenuManager = (function () {
   let hamburgerIcon = null;
   let mobileMenuOverlay = null;
@@ -831,19 +1131,20 @@ const MobileMenuManager = (function () {
     const link = event.currentTarget;
     const href = link.getAttribute('href') || '';
 
-    // Cross-page with hash → store hash to smooth scroll after load
+    // Cross-page with hash
     if (href.includes('.html#')) {
       const hash = href.split('#')[1];
       if (hash) sessionStorage.setItem('targetHash', hash);
       closeMobileMenu();
-      return; // let browser navigate normally
+      return;
     }
 
     // Same-page hash
     if (href.startsWith('#')) {
       event.preventDefault();
       const targetId = href.substring(1);
-      const targetElement = document.getElementById(targetId) || document.querySelector(`[name="${targetId}"]`);
+      const targetElement = document.getElementById(targetId) || 
+                           document.querySelector(`[name="${targetId}"]`);
       closeMobileMenu();
       if (targetElement) {
         setTimeout(() => smoothScrollTo(targetElement), 400);
@@ -852,7 +1153,6 @@ const MobileMenuManager = (function () {
       return;
     }
 
-    // Other links (downloads, external, etc.)
     closeMobileMenu();
   }
 
@@ -867,7 +1167,8 @@ const MobileMenuManager = (function () {
 
     const focusableInOverlay = Array.from(
       mobileMenuOverlay.querySelectorAll(
-        'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        'a[href], button:not([disabled]), textarea:not([disabled]), ' +
+        'input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
       )
     ).filter((el) => {
       const style = window.getComputedStyle(el);
@@ -902,9 +1203,59 @@ const MobileMenuManager = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 10. CUSTOM CURSOR
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 6.2 Layout Manager
+// -----------------------------------------------------------------------------
+const LayoutManager = (function () {
+  function initialize() {
+    const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
+    mobileBreakpoint.addEventListener('change', handleMediaQueryChange);
+    window.addEventListener('resize', debounce(handleResize, 250));
+
+    handleResize();
+    window.scrollTo(0, 0);
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  }
+
+  function handleMediaQueryChange(event) {
+    const newLayout = event.matches ? 'mobile' : 'desktop';
+    if (newLayout !== STATE.layout.current) {
+      STATE.layout.current = newLayout;
+      ProjectThumbnails.refreshThumbnails();
+      if (newLayout === 'desktop') STATE.animations.bannerHeightLocked = false;
+    }
+  }
+
+  function handleResize() {
+    const newLayout = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+    if (newLayout !== STATE.layout.current) {
+      STATE.layout.current = newLayout;
+      ProjectThumbnails.refreshThumbnails();
+      if (newLayout === 'desktop') STATE.animations.bannerHeightLocked = false;
+    }
+
+    STATE.animations.thumbnailPositions.clear();
+    STATE.animations.thumbnails.forEach((thumb) => {
+      if (thumb.classList.contains('fadeIn-visible')) {
+        const rect = thumb.getBoundingClientRect();
+        STATE.animations.thumbnailPositions.set(thumb, {
+          top: rect.top + window.scrollY,
+          height: rect.height,
+        });
+      }
+    });
+  }
+
+  return { initialize };
+})();
+
+// =============================================================================
+// 7. INTERACTIVE FEATURES
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 7.1 Custom Cursor
+// -----------------------------------------------------------------------------
 const CustomCursorManager = (function () {
   let customCursorElement = null;
   let activeTextHoverCount = 0;
@@ -982,9 +1333,11 @@ const CustomCursorManager = (function () {
   }
 
   function moveCursor(e) {
-    const isHorizontalMode = customCursorElement && customCursorElement.classList.contains('horizontal-text-hover');
+    const isHorizontalMode = customCursorElement && 
+                            customCursorElement.classList.contains('horizontal-text-hover');
     if (!customCursorElement || (activeTextHoverCount === 0 && !isHorizontalMode)) {
-      if (customCursorElement && activeTextHoverCount === 0 && !isHorizontalMode && customCursorElement.style.opacity !== '0') {
+      if (customCursorElement && activeTextHoverCount === 0 && 
+          !isHorizontalMode && customCursorElement.style.opacity !== '0') {
         customCursorElement.style.opacity = '0';
       }
       return;
@@ -996,7 +1349,7 @@ const CustomCursorManager = (function () {
   function handleMouseEnter(event) {
     const targetElement = event.currentTarget;
 
-    // vertical-text special case
+    // Vertical-text special case
     if (targetElement.closest('.vertical-text')) {
       if (!customCursorElement) return;
       document.documentElement.classList.add('custom-cursor-is-active');
@@ -1059,9 +1412,9 @@ const CustomCursorManager = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 11. WORD HOVER INTERACTIVITY
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 7.2 Word Hover Manager
+// -----------------------------------------------------------------------------
 const WordHoverManager = (function () {
   const textContainerSelectors = `
     .introText,
@@ -1086,16 +1439,14 @@ const WordHoverManager = (function () {
     containers.forEach((container) => {
       if (container.closest('a') || container.closest('button')) return;
 
-      // Special, non-destructive handling for the intro text
+      // Special handling for intro text
       if (container.classList.contains('introText')) {
         const introSpans = container.querySelectorAll('span');
         introSpans.forEach(span => span.classList.add('interactive-word'));
       } else {
-        // Original logic for all other text elements
         processNode(container);
       }
 
-      // Attach the event listeners to ALL containers, including the introText
       container.addEventListener('mouseover', handleMouseOver);
       container.addEventListener('mouseleave', handleMouseLeave);
     });
@@ -1147,138 +1498,9 @@ const WordHoverManager = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 11b. LOTTIE LOGO MANAGER
-// ───────────────────────────────────────────────────────────────────────────────
-const LottieLogoManager = (function () {
-  let logoAnimation = null;
-  let lottieLogoContainer = null;
-  let isPlaying = false; // Our new flag to track the animation state
-  const lightModePath = '/assets/nav-logo-light_big-lottie.json';
-  const darkModePath = '/assets/nav-logo-dark_big-lottie.json';
-
-  function loadAnimationByTheme() {
-    // This was moved from outside the function to inside it
-    const isDarkMode = document.documentElement.classList.contains('dark-mode');
-
-    if (logoAnimation) {
-      logoAnimation.destroy();
-    }
-
-    isPlaying = false; // Reset the flag whenever we load a new animation
-
-    logoAnimation = lottie.loadAnimation({
-      container: lottieLogoContainer,
-      renderer: 'canvas',
-      loop: false,
-      autoplay: false,
-      path: isDarkMode ? darkModePath : lightModePath
-    });
-
-    // Add a listener to reset the flag once the animation completes
-    logoAnimation.addEventListener('complete', () => {
-      isPlaying = false;
-    });
-  }
-
-  function initialize() {
-    lottieLogoContainer = document.getElementById('lottie-logo-container');
-
-    if (!lottieLogoContainer || typeof lottie === 'undefined') {
-      return;
-    }
-    setTimeout(() => lottieLogoContainer.classList.add('is-visible'), 100);
-    loadAnimationByTheme();
-
-    lottieLogoContainer.addEventListener('mouseenter', () => {
-      // Only play the animation if it's not already playing
-      if (isPlaying) {
-        return;
-      }
-      isPlaying = true; // Set the lock
-      logoAnimation.goToAndPlay(0, true);
-    });
-  }
-
-  function onThemeChange() {
-    loadAnimationByTheme();
-  }
-
-  return {
-    initialize,
-    onThemeChange
-  };
-})();
-
-// ───────────────────────────────────────────────────────────────────────────────
-// 12. IMAGE CAROUSEL MANAGER
-// ───────────────────────────────────────────────────────────────────────────────
-const ImageCarouselManager = (function () {
-  function initializeCarousel(carouselElement) {
-    const projectThumbnail = carouselElement.closest('.projectThumbnail');
-    const slides = carouselElement.querySelectorAll('.carousel-slide');
-    const captionsContainer = projectThumbnail?.querySelector('.carousel-captions-container');
-    const captions = captionsContainer ? captionsContainer.querySelectorAll('.carousel-caption') : [];
-    const navPrev = projectThumbnail?.querySelector('.carousel-nav.prev');
-    const navNext = projectThumbnail?.querySelector('.carousel-nav.next');
-
-    let currentIndex = 0;
-    let intervalId = null;
-    const slideDuration = 6000;
-
-    if (slides.length <= 1) {
-      if (navPrev) navPrev.style.display = 'none';
-      if (navNext) navNext.style.display = 'none';
-      return;
-    }
-
-    function showSlide(index) {
-      if (index >= slides.length) currentIndex = 0;
-      else if (index < 0) currentIndex = slides.length - 1;
-      else currentIndex = index;
-
-      slides.forEach((slide) => slide.classList.remove('active'));
-      slides[currentIndex].classList.add('active');
-
-      if (captions.length === slides.length) {
-        captions.forEach((c) => c.classList.remove('active'));
-        captions[currentIndex].classList.add('active');
-      }
-    }
-
-    function startInterval() {
-      intervalId = setInterval(() => showSlide(currentIndex + 1), slideDuration);
-    }
-
-    function resetInterval() {
-      clearInterval(intervalId);
-      startInterval();
-    }
-
-    navPrev && navPrev.addEventListener('click', () => {
-      showSlide(currentIndex - 1);
-      resetInterval();
-    });
-
-    navNext && navNext.addEventListener('click', () => {
-      showSlide(currentIndex + 1);
-      resetInterval();
-    });
-
-    startInterval();
-  }
-
-  function initialize() {
-    const allCarousels = document.querySelectorAll('.image-carousel');
-    allCarousels.forEach(initializeCarousel);
-  }
-
-  return { initialize };
-})();
-
-// ───────────────────────────────────────────────────────────────────────────────
-// 13. CARET SUPPRESSOR
-// ───────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
+// 7.3 Caret Suppressor
+// -----------------------------------------------------------------------------
 const CaretSuppressor = (function () {
   function initialize() {
     const introTextElement = document.querySelector('.introText');
@@ -1289,27 +1511,24 @@ const CaretSuppressor = (function () {
   return { initialize };
 })();
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 14. GLOBAL HASH / SMOOTH SCROLL HANDLERS
-// ───────────────────────────────────────────────────────────────────────────────
-
-// Same-page hash links: intercept and smooth scroll
-(function attachSamePageSmoothScroll() {
+// -----------------------------------------------------------------------------
+// 7.4 Hash & Smooth Scroll Handlers
+// -----------------------------------------------------------------------------
+function attachSamePageSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(link => {
     link.addEventListener('click', e => {
-      e.preventDefault();                // stop the browser’s normal hash jump
+      e.preventDefault();
       const id = link.getAttribute('href').slice(1);
-      const target = document.getElementById(id)
-        || document.querySelector(`[name="${id}"]`);
+      const target = document.getElementById(id) || 
+                    document.querySelector(`[name="${id}"]`);
       if (target) {
         smoothScrollTo(target, 400);
       }
     });
   });
-})();
+}
 
-// Cross-page hash links anywhere (footer, etc.): store hash before leaving page
-(function attachCrossPageHashSaver() {
+function attachCrossPageHashSaver() {
   document.querySelectorAll('a[href*=".html#"]').forEach((link) => {
     link.addEventListener('click', () => {
       const parts = link.href.split('#');
@@ -1318,33 +1537,145 @@ const CaretSuppressor = (function () {
       }
     });
   });
-})();
+}
 
 function handleInitialHashScroll() {
-  // 1) Prefer a stored cross-page hash (for old `.html#...` links)
   let hash = sessionStorage.getItem('targetHash');
   sessionStorage.removeItem('targetHash');
 
-  // 2) Fallback to the actual URL hash (works with '/#about-section' etc.)
   if (!hash && window.location.hash) {
-    hash = window.location.hash.slice(1); // remove the leading '#'
+    hash = window.location.hash.slice(1);
   }
 
   if (!hash) return;
 
-  const target =
-    document.getElementById(hash) ||
-    document.querySelector(`[name="${hash}"]`);
+  const target = document.getElementById(hash) || 
+                document.querySelector(`[name="${hash}"]`);
 
   if (target) {
-    // give the preloader/layout a beat to settle, then smooth scroll
     setTimeout(() => smoothScrollTo(target, 400), 100);
   }
 }
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 15. PRELOADER & MAIN INIT
-// ───────────────────────────────────────────────────────────────────────────────
+// =============================================================================
+// 8. PAGE INITIALIZATION
+// =============================================================================
+
+/**
+ * Initialize all modules after preloader
+ */
+function onPreloaderFinishedAndModulesReady() {
+  document.body.classList.remove('preloading');
+  
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    preloader.style.display = 'none';
+  }
+
+  // Initialize all modules
+  ThemeManager.setupEventListeners();
+  LayoutManager.initialize();
+  TextAnimator.initialize();
+  BannerManager.initialize();
+  PillAnimator.initialize();
+  ProjectThumbnails.initialize();
+  SectionAnimator.initialize();
+  ExperienceManager.initialize();
+  MobileMenuManager.initialize();
+  /* WordHoverManager.initialize(); */
+  LottieLogoManager.initialize();
+  ImageCarouselManager.initialize();
+  CaretSuppressor.initialize();
+  ChatIconAnimator.initialize();
+  FooterLinkManager.initialize();
+  RotatingWordsManager.initialize();
+
+  // Initialize custom cursor on desktop only
+  if (window.matchMedia('(pointer: fine)').matches) {
+    /* CustomCursorManager.initialize(); */
+  }
+
+  // Show page content
+  const pageContent = document.querySelector('.pageContent');
+  if (pageContent) {
+    pageContent.style.opacity = '1';
+    pageContent.style.transition = 'opacity 0.3s ease-in';
+  }
+  
+  const footer = document.querySelector('.component-footer');
+  if (footer) {
+    footer.style.opacity = '1';
+    footer.style.pointerEvents = 'auto';
+  }
+  
+  handleInitialHashScroll();
+
+  // Initialize banner carat after delay
+  setTimeout(() => {
+    const carat = document.querySelector('.component-banner .carat');
+    if (!carat) return;
+
+    carat.classList.add('visible');
+    carat.style.pointerEvents = 'auto';
+    carat.style.cursor = 'pointer';
+
+    carat.addEventListener('click', () => {
+      const desc = document.querySelector('.component-description');
+      if (!desc) return;
+
+      const nav = document.querySelector('nav');
+      const navHeight = nav ? nav.offsetHeight : 0;
+      const rootFontSize = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+
+      const targetY = desc.getBoundingClientRect().top +
+                     window.pageYOffset -
+                     (navHeight + 2.5 * rootFontSize);
+
+      window.scrollTo({
+        top: targetY,
+        behavior: 'smooth',
+      });
+    });
+  }, 3000);
+}
+
+/**
+ * Hide preloader and transition to main content
+ */
+function hidePreloader() {
+  const preloader = document.getElementById('preloader');
+  
+  if (!preloader) {
+    onPreloaderFinishedAndModulesReady();
+    return;
+  }
+  
+  preloader.classList.add('loading--out');
+  let ended = false;
+  
+  function onEnd(e) {
+    if (e.propertyName === 'opacity' && !ended) {
+      ended = true;
+      preloader.removeEventListener('transitionend', onEnd);
+      onPreloaderFinishedAndModulesReady();
+    }
+  }
+  
+  preloader.addEventListener('transitionend', onEnd);
+  
+  // Fallback timer
+  setTimeout(() => {
+    if (!ended) {
+      onPreloaderFinishedAndModulesReady();
+    }
+  }, 750);
+}
+
+// =============================================================================
+// DOM READY & WINDOW LOAD HANDLERS
+// =============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('preloading');
@@ -1359,114 +1690,16 @@ window.addEventListener('load', () => {
     pageContent.style.opacity = '0';
   }
 
-  function onPreloaderFinishedAndModulesReady() {
-    document.body.classList.remove('preloading');
-    if (preloader) {
-      preloader.style.display = 'none';
-    }
+  // Setup scroll handlers
+  attachSamePageSmoothScroll();
+  attachCrossPageHashSaver();
 
-    ThemeManager.setupEventListeners();
-    LayoutManager.initialize();
-    TextAnimator.initialize();
-    BannerManager.initialize();
-    PillAnimator.initialize();
-    ProjectThumbnails.initialize();
-    SectionAnimator.initialize();
-    ExperienceManager.initialize();
-    MobileMenuManager.initialize();
-    WordHoverManager.initialize();
-    LottieLogoManager.initialize();
-    ImageCarouselManager.initialize();
-    CaretSuppressor.initialize();
-    ChatIconAnimator.initialize();
-    FooterLinkManager.initialize();
-
-    if (window.matchMedia('(pointer: fine)').matches) {
-      CustomCursorManager.initialize();
-    }
-
-    if (pageContent) {
-      pageContent.style.opacity = '1';
-      pageContent.style.transition = 'opacity 0.3s ease-in';
-    }
-    const footer = document.querySelector('.component-footer');
-    if (footer) {
-      footer.style.opacity = '1';
-      footer.style.pointerEvents = 'auto';
-    }
-    handleInitialHashScroll();
-
-    // ── Fade in the carat 3s after preloader finishes ──
-    setTimeout(() => {
-      const carat = document.querySelector('.component-banner .carat');
-      if (!carat) return;
-
-      carat.classList.add('visible');
-      carat.style.pointerEvents = 'auto';
-      carat.style.cursor = 'pointer';
-
-      // ── On click, scroll so description sits 1rem below the nav ──
-      carat.addEventListener('click', () => {
-        const desc = document.querySelector('.component-description');
-        if (!desc) return;
-
-        // get nav height (assumes your site nav is a <nav> element)
-        const nav = document.querySelector('nav');
-        const navHeight = nav ? nav.offsetHeight : 0;
-
-        // compute 1rem in pixels
-        const rootFontSize = parseFloat(
-          getComputedStyle(document.documentElement).fontSize
-        );
-
-        // where we want the top of desc to end up
-        const targetY =
-          desc.getBoundingClientRect().top +
-          window.pageYOffset -
-          (navHeight + 2.5 * rootFontSize);
-
-        window.scrollTo({
-          top: targetY,
-          behavior: 'smooth',
-        });
-      });
-    }, 3000);
-  }
-
-
-  function hidePreloader() {
-    if (!preloader) {
-      onPreloaderFinishedAndModulesReady();
-      return;
-    }
-    preloader.classList.add('loading--out');
-    let ended = false;
-    function onEnd(e) {
-      if (e.propertyName === 'opacity' && !ended) {
-        ended = true;
-        preloader.removeEventListener('transitionend', onEnd);
-        onPreloaderFinishedAndModulesReady();
-      }
-    }
-    preloader.addEventListener('transitionend', onEnd);
-    // Fallback timer for the fade-out transition
-    setTimeout(() => {
-      if (!ended) {
-        onPreloaderFinishedAndModulesReady();
-      }
-    }, 750);
-  }
-
-  // --- NEW Lottie-based preloader logic ---
+  // Initialize Lottie preloader or fallback
   if (preloader) {
     const lottieContainer = document.getElementById('lottie-container');
     if (lottieContainer && typeof lottie !== 'undefined') {
-
-      // --- Define your animation files here ---
       const lightModePath = 'assets/logo-light_big-lottie.json';
       const darkModePath = 'assets/logo-dark_big-lottie.json';
-
-      // Check the <html> element for the dark-mode class to prevent flashing
       const isDarkMode = document.documentElement.classList.contains('dark-mode');
 
       const lottieAnimation = lottie.loadAnimation({
@@ -1474,79 +1707,21 @@ window.addEventListener('load', () => {
         renderer: 'canvas',
         loop: false,
         autoplay: true,
-        path: isDarkMode ? darkModePath : lightModePath // Choose path based on theme
+        path: isDarkMode ? darkModePath : lightModePath
       });
 
-      // When the Lottie animation is complete, start hiding the preloader
       lottieAnimation.addEventListener('complete', hidePreloader);
-
     } else {
-      // Fallback if Lottie isn't loaded or the container is missing
+      // Fallback if Lottie isn't available
       setTimeout(hidePreloader, 500);
     }
   } else {
-    // If there's no preloader on the page, initialize modules immediately
+    // No preloader, initialize immediately
     onPreloaderFinishedAndModulesReady();
   }
 });
 
-// ───────────────────────────────────────────────────────────────────────────────
-// 16 FOOTER ICON ANIMATOR
-// ───────────────────────────────────────────────────────────────────────────────
-const ChatIconAnimator = (function () {
-  function initialize() {
-    const footerCTA = document.querySelector('.footerCTA');
-    const chatIconSVG = document.querySelector('.chatIcon svg');
-
-    if (!footerCTA || !chatIconSVG) {
-      return; // Exit if elements aren't on the page
-    }
-
-    // When the mouse enters the CTA area...
-    footerCTA.addEventListener('mouseenter', () => {
-      // ...add the class to start the animation, but only if it's not already running.
-      if (!chatIconSVG.classList.contains('is-wiggling')) {
-        chatIconSVG.classList.add('is-wiggling');
-      }
-    });
-
-    // When the animation finishes...
-    chatIconSVG.addEventListener('animationend', () => {
-      // ...remove the class to reset it for the next hover.
-      chatIconSVG.classList.remove('is-wiggling');
-    });
-  }
-  return { initialize };
-})();
-
-// ───────────────────────────────────────────────────────────────────────────────
-// 17. FOOTER LINK HANDLER
-// ───────────────────────────────────────────────────────────────────────────────
-const FooterLinkManager = (function () {
-  function initialize() {
-    // Select only internal anchor links within the footer
-    const footerLinks = document.querySelectorAll('.component-footer a[href^="#"]');
-
-    footerLinks.forEach(link => {
-      link.addEventListener('click', function (event) {
-        // Stop the default browser jump
-        event.preventDefault();
-
-        const targetId = this.getAttribute('href');
-        const targetElement = document.querySelector(targetId);
-
-        if (targetElement) {
-          // Use your existing global smooth scroll function
-          smoothScrollTo(targetElement, 400);
-        }
-      });
-    });
-  }
-
-  return { initialize };
-})();
-
-// ───────────────────────────────────────────────────────────────────────────────
-// 18. FINAL LOG
-// ───────────────────────────────────────────────────────────────────────────────
-console.log('script.js (project-agnostic) loaded.');
+// =============================================================================
+// FINAL LOG
+// =============================================================================
+console.log('script.js loaded - Alexander Biglane Portfolio');

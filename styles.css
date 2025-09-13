@@ -55,8 +55,8 @@ body {
 
 body {
   -ms-overflow-style: none;
-  padding: 12px;
-  min-height: calc(100vh - 24px);
+  padding: 0px;
+  min-height: 100vh;
   overflow: auto;
 }
 
@@ -225,7 +225,7 @@ textarea:focus,
    3. GLOBAL LAYOUT & CONTAINERS
    ========================================================================== */
 
-/* Site Frame (Border) */
+/* Site Frame (Border)
 #site-frame {
   position: fixed;
   top: 0;
@@ -285,7 +285,7 @@ textarea:focus,
 
 #right-frame {
   right: 0;
-}
+}  */
 
 /* Main Site Card */
 .siteCard {
@@ -325,7 +325,7 @@ body:not(.preloading) .siteCard {
 .lineSeparator {
   width: 100%;
   height: 1px;
-  background-color: #333333;
+  background-color: #4adad14f;
   margin-bottom: .5rem;
   border: none;
   transition: background-color 0.3s ease-out,
@@ -335,6 +335,56 @@ body:not(.preloading) .siteCard {
 
 .vertical-text {
   display: none;
+}
+
+/* ==========================================================================
+   PROFILE IMAGE STYLES
+   ========================================================================== */
+
+/* Header Layout */
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Profile Image Container */
+.header-image-container {
+  width: 180px;
+  height: 180px;
+  position: relative;
+  margin: 0 auto; /* Center on mobile */
+}
+
+/* Profile Image with Star Shape */
+.header-profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: url(#star-clip);
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect */
+.header-image-container:hover .header-profile-image {
+  transform: scale(1.05);
+}
+
+/* Optional: Animation on load */
+.header-image-container {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================================
@@ -519,7 +569,7 @@ html.dark-mode #preloader {
 /* --- Navigation --- */
 .navMobile {
   position: sticky;
-  top: 12px;
+  top: 0;
   left: 0;
   right: 0;
   height: 80px;
@@ -654,10 +704,10 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 /* Mobile Menu Overlay */
 #mobileMenuOverlay {
   position: fixed;
-  top: 12px;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: hsla(180, 1%, 97%, 0.95);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
@@ -784,6 +834,7 @@ body.mobile-menu-active {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  display: none;
 }
 
 .project-page .component-banner {
@@ -1694,7 +1745,7 @@ body.dark-mode .pill:hover .highlight {
   border: 0;
 }
 
-/* Custom Cursor */
+/* Custom Cursor 
 #custom-cursor {
   position: fixed;
   pointer-events: none;
@@ -1741,8 +1792,8 @@ body.dark-mode .pill:hover .highlight {
   width: 40px;
   height: 2px;
   border-radius: 3px;
-  transform: translate(-50%, -50%) scaleX(1);
-}
+  transform: translate(-50%, -50%) scaleX(1); 
+} */
 
 /* Word Hover Effects */
 .interactive-word {
@@ -1785,6 +1836,29 @@ body.dark-mode .pill:hover .highlight {
 #selected-work-title:focus {
   outline: none;
 }
+
+/* Rotating words (hero) */
+.rotating-words {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: inherit;
+}
+
+.rotating-words-inner {
+  display: inline-flex;
+  flex-direction: column;
+  transform: translateY(0);
+  transition: transform 0.6s ease; /* animation duration */
+  will-change: transform;
+}
+
+.rotating-word {
+  display: block;
+  white-space: nowrap;
+  line-height: inherit;
+}
+
 
 /* ==========================================================================
    8. MEDIA QUERIES
@@ -1863,6 +1937,11 @@ body.dark-mode .pill:hover .highlight {
     padding: 3rem 1rem 0 1rem;
   }
 
+  header-image-container {
+    width: 160px;
+    height: 160px;
+  }
+
   .projectPepsico-page .bannerImage {
     max-width: 560px;
     margin: 0 auto;
@@ -1899,6 +1978,26 @@ body.dark-mode .pill:hover .highlight {
   .component-banner .carat {
     display: none;
   }
+
+  @media only screen and (min-width: 769px) {
+  .header-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+  }
+  
+  .animation-container {
+    flex: 1;
+  }
+  
+  .header-image-container {
+    flex-shrink: 0;
+    width: 200px;
+    height: 200px;
+    margin: 0; /* Remove center margin on desktop */
+  }
+}
 }
 
 @media only screen and (min-width: 769px) {
@@ -1936,8 +2035,8 @@ body.dark-mode .pill:hover .highlight {
   /* Typography */
   .introText {
     max-width: 880px;
-    font-size: 4.5rem;
-    line-height: 5rem;
+    font-size: 2rem;
+    line-height: 2.5rem;
   }
 
   .quoteText {
@@ -2207,7 +2306,7 @@ body.dark-mode .pill:hover .highlight {
 
 /* --- Special Cases & Edge Cases --- */
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 550px) {
-  #site-frame {
+/* #site-frame {
     border-radius: 56px;
     border-width: 24px;
   }
@@ -2235,7 +2334,7 @@ body.dark-mode .pill:hover .highlight {
   body.dark-mode #left-frame,
   body.dark-mode #right-frame {
     background-color: #0c0c0c;
-  }
+  } */
 
   .navMobile .navRight {
     padding-right: 2rem;
