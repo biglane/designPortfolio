@@ -477,6 +477,10 @@ const ProjectThumbnails = (function () {
     STATE.animations.thumbnails = Array.from(document.querySelectorAll('.projectThumbnail'));
     if (STATE.animations.thumbnails.length === 0) return;
 
+    // ⭐ Mark the first thumbnail as the hero (preloader-controlled)
+    const hero = STATE.animations.thumbnails[0];
+    if (hero) hero.classList.add('is-hero');
+
     STATE.animations.thumbnails.forEach(initializeThumbnail);
 
     window.addEventListener('scroll', () => {
@@ -1824,6 +1828,19 @@ function onPreloaderFinishedAndModulesReady() {
 
       document.body.classList.remove('projects-locked');
       document.body.classList.add('projects-unlocked');
+
+      // Ensure the hero is considered revealed for post-unlock micro-effects
+      const hero = document.querySelector('.projectThumbnail.is-hero');
+      if (hero) {
+        setTimeout(() => {
+          if (!hero.classList.contains('fadeIn-visible')) hero.classList.add('fadeIn-visible');
+          // Refresh positions so the scale/opacity-on-scroll logic kicks in for the hero too
+          try {
+            ProjectThumbnails.refreshThumbnails();
+            ProjectThumbnails.updateThumbnailsOnScroll();
+          } catch (e) { }
+        }, 60);
+      }
 
       // The setTimeout goes INSIDE this final .then() block.
       // It wraps only the initializers for the lower content.
