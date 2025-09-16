@@ -214,9 +214,9 @@ const ThemeManager = (function () {
     }, 300);
   }
 
-  return { 
-    applyInitialThemeAndIcon, 
-    setupEventListeners 
+  return {
+    applyInitialThemeAndIcon,
+    setupEventListeners
   };
 })();
 
@@ -225,7 +225,7 @@ const ThemeManager = (function () {
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// 4.1 Text Animations
+// 4.1 Text Animations  (UPDATED: dispatch 'headerIntroDone' when finished)
 // -----------------------------------------------------------------------------
 const TextAnimator = (function () {
   function initialize() {
@@ -234,16 +234,32 @@ const TextAnimator = (function () {
 
   function animateIntroText() {
     const introText = document.querySelector('.introText');
-    if (!introText) return;
+
+    // If there is no header intro on this page, resolve immediately
+    if (!introText) {
+      document.dispatchEvent(new CustomEvent('headerIntroDone'));
+      return;
+    }
+
+    const allAnims = []; // collect Animation objects
 
     const spans = Array.from(introText.querySelectorAll('span'));
+    if (spans.length === 0) {
+      // Nothing to animate — resolve immediately
+      document.dispatchEvent(new CustomEvent('headerIntroDone'));
+      return;
+    }
+
+    // Prepare spans
     spans.forEach((span) => {
       span.style.display = 'inline-block';
       span.classList.add('hidden-init');
     });
 
-    introText.offsetHeight; // force reflow
+    // Force reflow to ensure initial styles are applied
+    introText.offsetHeight;
 
+    // Group spans by visual rows so we can stagger per row
     const rows = [];
     let currentTop = -Infinity;
     let currentRow = null;
@@ -260,18 +276,20 @@ const TextAnimator = (function () {
 
     rows.sort((a, b) => a.top - b.top);
 
-    // Animation timings
+    // Animation timings (same as your existing logic)
     const movementDuration = 1600;
     const opacityDuration = 600;
     const rowStagger = 200;
-    const intraStagger = 120; // Extra stagger per word for row 2
+    const intraStagger = 120; // extra stagger per word for row 2
 
+    // Animate each span and collect the Animation objects
     rows.forEach((row, rowIndex) => {
       row.spans.forEach((span, spanIndex) => {
-        const delay = rowIndex * rowStagger + 
-                      (rowIndex === 1 ? spanIndex * intraStagger : 0);
+        const delay =
+          rowIndex * rowStagger +
+          (rowIndex === 1 ? spanIndex * intraStagger : 0);
 
-        span.animate(
+        const aFade = span.animate(
           [{ opacity: 0 }, { opacity: 1 }],
           {
             duration: opacityDuration,
@@ -280,8 +298,9 @@ const TextAnimator = (function () {
             easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
           }
         );
+        allAnims.push(aFade);
 
-        span.animate(
+        const aMove = span.animate(
           [{ transform: 'translateY(80px)' }, { transform: 'translateY(0)' }],
           {
             duration: movementDuration,
@@ -290,13 +309,14 @@ const TextAnimator = (function () {
             easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
           }
         );
+        allAnims.push(aMove);
       });
     });
 
-    // Optional sub-header animation
+    // Optional sub-header animation — include in the "finished" gate if present
     const subHeader = document.querySelector('.sub-header-text');
     if (subHeader) {
-      subHeader.animate(
+      const aSub = subHeader.animate(
         [
           { opacity: 0, transform: 'translateY(20px)' },
           { opacity: 0.8, transform: 'translateY(0)' },
@@ -308,7 +328,15 @@ const TextAnimator = (function () {
           easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
         }
       );
+      allAnims.push(aSub);
     }
+
+    // When everything finishes, announce completion
+    Promise.all(
+      allAnims.map((a) => (a && a.finished ? a.finished.catch(() => { }) : Promise.resolve()))
+    ).then(() => {
+      document.dispatchEvent(new CustomEvent('headerIntroDone'));
+    });
   }
 
   return { initialize };
@@ -318,10 +346,14 @@ const TextAnimator = (function () {
 // 4.2 Banner Management
 // -----------------------------------------------------------------------------
 const BannerManager = (function () {
-  function initialize() {
+  function initialize(options = {}) {
     const bannerImg = document.querySelector('.bannerImage');
     if (bannerImg) {
-      requestAnimationFrame(() => bannerImg.classList.remove('start-hidden'));
+      if (options.delayed) {
+        // Keep it hidden, will be revealed later
+      } else {
+        requestAnimationFrame(() => bannerImg.classList.remove('start-hidden'));
+      }
     }
 
     storeBannerPosition();
@@ -377,9 +409,17 @@ const BannerManager = (function () {
     }
   }
 
-  return { 
-    initialize, 
-    updateBannerOnScroll 
+  function reveal() {
+    const bannerImg = document.querySelector('.bannerImage');
+    if (bannerImg) {
+      requestAnimationFrame(() => bannerImg.classList.remove('start-hidden'));
+    }
+  }
+
+  return {
+    initialize,
+    updateBannerOnScroll,
+    reveal
   };
 })();
 
@@ -520,10 +560,10 @@ const ProjectThumbnails = (function () {
     });
   }
 
-  return { 
-    initialize, 
-    updateThumbnailsOnScroll, 
-    refreshThumbnails 
+  return {
+    initialize,
+    updateThumbnailsOnScroll,
+    refreshThumbnails
   };
 })();
 
@@ -546,15 +586,23 @@ const SectionAnimator = (function () {
     ];
     sections = Array.from(document.querySelectorAll(selectors.join(', ')));
 
+    // IMPORTANT: do not re-hide the Overview — revealDescriptionFirst() already handled it
     sections.forEach((section) => {
-      if (!section.classList.contains('component-pills') && 
-          !section.classList.contains('component-experience')) {
+      if (section.classList.contains('component-description')) return;
+
+      if (
+        !section.classList.contains('component-pills') &&
+        !section.classList.contains('component-experience')
+      ) {
         section.classList.add('hidden-init');
       }
     });
 
     observer = new IntersectionObserver(onIntersect, { threshold: THRESHOLD });
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) => {
+      if (section.classList.contains('component-description')) return;
+      observer.observe(section);
+    });
   }
 
   function onIntersect(entries, obs) {
@@ -580,40 +628,61 @@ const SectionAnimator = (function () {
   }
 
   function animateGenericSection(section) {
-    section.animate([
-      { opacity: 0, transform: 'translateY(80px)' },
-      { opacity: 1, transform: 'translateY(0)' },
-    ], {
-      duration: 700,
-      fill: 'forwards',
-      easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-    });
+    // ⛑️ Guard: if this section was already revealed earlier, do nothing.
+    if (!section.classList.contains('hidden-init')) return;
+    section.animate(
+      [
+        { opacity: 0, transform: 'translateY(80px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      {
+        duration: 700,
+        fill: 'forwards',
+        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+      }
+    );
     section.classList.remove('hidden-init');
   }
 
   function animateDescriptionSection(section) {
+    // ⛑️ If the preloader sequence already revealed this, skip.
+    if (!section.classList.contains('hidden-init') || section.dataset.revealed === '1') return;
+    // If revealDescriptionFirst already ran, this is a no-op visually, but safe.
     animateGenericSection(section);
 
-    // Hide the chevron
+    // Hide the chevron when the description enters
     const carat = document.querySelector('.component-banner .carat');
     if (carat) carat.classList.remove('visible');
 
-    // Animate inner parts
     const lineSeparator = section.querySelector('.lineSeparator');
     if (lineSeparator) {
       lineSeparator.animate(
-        [{ opacity: 0, transform: 'translateY(40px)' },
-        { opacity: 1, transform: 'translateY(0)' }],
-        { duration: 700, delay: 100, fill: 'forwards', easing: 'cubic-bezier(0.645,0.045,0.355,1)' }
+        [
+          { opacity: 0, transform: 'translateY(40px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        {
+          duration: 700,
+          delay: 100,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645,0.045,0.355,1)',
+        }
       );
     }
 
     const paragraphs = section.querySelectorAll('.paragraph-section');
     paragraphs.forEach((paragraph, index) => {
       paragraph.animate(
-        [{ opacity: 0, transform: 'translateY(40px)' },
-        { opacity: 1, transform: 'translateY(0)' }],
-        { duration: 700, delay: 200 + index * 150, fill: 'forwards', easing: 'cubic-bezier(0.645,0.045,0.355,1)' }
+        [
+          { opacity: 0, transform: 'translateY(40px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        {
+          duration: 700,
+          delay: 200 + index * 150,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645,0.045,0.355,1)',
+        }
       );
     });
   }
@@ -623,15 +692,18 @@ const SectionAnimator = (function () {
     const container = section.querySelector('.rightColumnContainer');
     if (!container) return;
     Array.from(container.children).forEach((el, index) => {
-      el.animate([
-        { opacity: 0, transform: 'translateY(40px)' },
-        { opacity: 1, transform: 'translateY(0)' },
-      ], {
-        duration: 700,
-        delay: 200 + index * 150,
-        fill: 'forwards',
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      });
+      el.animate(
+        [
+          { opacity: 0, transform: 'translateY(40px)' },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        {
+          duration: 700,
+          delay: 200 + index * 150,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        }
+      );
     });
   }
 
@@ -641,49 +713,57 @@ const SectionAnimator = (function () {
     const experienceTitle = section.querySelector('.experienceTitleText');
     if (experienceTitle) {
       experienceTitle.style.transform = 'translateY(20px)';
-      experienceTitle.offsetHeight;
-      experienceTitle.animate([
-        { opacity: 0, transform: experienceTitle.style.transform },
-        { opacity: 1, transform: 'translateY(0)' },
-      ], {
-        duration: 600,
-        delay: 100,
-        fill: 'forwards',
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      });
+      experienceTitle.offsetHeight; // reflow
+      experienceTitle.animate(
+        [
+          { opacity: 0, transform: experienceTitle.style.transform },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        {
+          duration: 600,
+          delay: 100,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        }
+      );
     }
 
     const experienceItems = section.querySelectorAll('.experienceItem');
     experienceItems.forEach((item, index) => {
       item.style.transform = 'translateY(80px)';
-      item.offsetHeight;
-      item.animate([
-        { opacity: 0, transform: item.style.transform },
-        { opacity: 1, transform: 'translateY(0)' },
-      ], {
-        duration: 700,
-        delay: 200 + index * 150 + (experienceTitle ? 100 : 0),
-        fill: 'forwards',
-        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-      });
+      item.offsetHeight; // reflow
+      item.animate(
+        [
+          { opacity: 0, transform: item.style.transform },
+          { opacity: 1, transform: 'translateY(0)' },
+        ],
+        {
+          duration: 700,
+          delay: 200 + index * 150 + (experienceTitle ? 100 : 0),
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        }
+      );
     });
   }
 
   function refresh() {
+    if (!sections) return;
     sections.forEach((section) => {
+      // Do not re-hide/re-animate Overview here either.
       if (!section.classList.contains('hidden-init')) return;
       const rect = section.getBoundingClientRect();
       const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
       if (inViewport) {
         triggerAnimation(section);
-        observer.unobserve(section);
+        observer && observer.unobserve(section);
       }
     });
   }
 
-  return { 
-    initialize, 
-    refresh 
+  return {
+    initialize,
+    refresh,
   };
 })();
 
@@ -751,13 +831,13 @@ const RotatingWordsManager = (function () {
     const style = window.getComputedStyle(el);
     const transform = style.transform || style.webkitTransform || 'none';
     if (transform === 'none') return 0;
-    
+
     const match2d = transform.match(/^matrix\(([-0-9., e]+)\)$/);
     if (match2d) {
       const parts = match2d[1].split(',').map(Number);
       return parts[5] || 0;
     }
-    
+
     const match3d = transform.match(/^matrix3d\(([-0-9., e]+)\)$/);
     if (match3d) {
       const parts = match3d[1].split(',').map(Number);
@@ -770,12 +850,12 @@ const RotatingWordsManager = (function () {
     const ty = getTranslateYPx(inner);
     const progressPx = Math.abs(ty);
     const indexFloat = progressPx / LINE_H;
-    
+
     measureAndLockHeight();
-    
+
     index = Math.floor(indexFloat);
     const mapped = -indexFloat * LINE_H;
-    
+
     const prevTransition = inner.style.transition;
     inner.style.transition = 'none';
     inner.style.transform = `translateY(${mapped}px)`;
@@ -967,7 +1047,7 @@ const LottieLogoManager = (function () {
     if (!lottieLogoContainer || typeof lottie === 'undefined') {
       return;
     }
-    
+
     setTimeout(() => lottieLogoContainer.classList.add('is-visible'), 100);
     loadAnimationByTheme();
 
@@ -1012,7 +1092,7 @@ const ChatIconAnimator = (function () {
       chatIconSVG.classList.remove('is-wiggling');
     });
   }
-  
+
   return { initialize };
 })();
 
@@ -1143,8 +1223,8 @@ const MobileMenuManager = (function () {
     if (href.startsWith('#')) {
       event.preventDefault();
       const targetId = href.substring(1);
-      const targetElement = document.getElementById(targetId) || 
-                           document.querySelector(`[name="${targetId}"]`);
+      const targetElement = document.getElementById(targetId) ||
+        document.querySelector(`[name="${targetId}"]`);
       closeMobileMenu();
       if (targetElement) {
         setTimeout(() => smoothScrollTo(targetElement), 400);
@@ -1333,11 +1413,11 @@ const CustomCursorManager = (function () {
   }
 
   function moveCursor(e) {
-    const isHorizontalMode = customCursorElement && 
-                            customCursorElement.classList.contains('horizontal-text-hover');
+    const isHorizontalMode = customCursorElement &&
+      customCursorElement.classList.contains('horizontal-text-hover');
     if (!customCursorElement || (activeTextHoverCount === 0 && !isHorizontalMode)) {
-      if (customCursorElement && activeTextHoverCount === 0 && 
-          !isHorizontalMode && customCursorElement.style.opacity !== '0') {
+      if (customCursorElement && activeTextHoverCount === 0 &&
+        !isHorizontalMode && customCursorElement.style.opacity !== '0') {
         customCursorElement.style.opacity = '0';
       }
       return;
@@ -1519,8 +1599,8 @@ function attachSamePageSmoothScroll() {
     link.addEventListener('click', e => {
       e.preventDefault();
       const id = link.getAttribute('href').slice(1);
-      const target = document.getElementById(id) || 
-                    document.querySelector(`[name="${id}"]`);
+      const target = document.getElementById(id) ||
+        document.querySelector(`[name="${id}"]`);
       if (target) {
         smoothScrollTo(target, 400);
       }
@@ -1549,8 +1629,8 @@ function handleInitialHashScroll() {
 
   if (!hash) return;
 
-  const target = document.getElementById(hash) || 
-                document.querySelector(`[name="${hash}"]`);
+  const target = document.getElementById(hash) ||
+    document.querySelector(`[name="${hash}"]`);
 
   if (target) {
     setTimeout(() => smoothScrollTo(target, 400), 100);
@@ -1562,83 +1642,198 @@ function handleInitialHashScroll() {
 // =============================================================================
 
 /**
+ * Smoothly reveal the avatar container (image on the right).
+ * Relies on your CSS having the container initially at opacity:0, translateY(16px)
+ * with a transition of ~0.6s.
+ */
+function revealHeaderAvatar() {
+  return new Promise((resolve) => {
+    const el = document.querySelector('.header-image-container');
+    if (!el) return resolve();
+    // Let CSS transitions do the work
+    requestAnimationFrame(() => {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0)';
+      // resolve when the transition ends (fallback timer just in case)
+      const done = () => { el.removeEventListener('transitionend', done); resolve(); };
+      el.addEventListener('transitionend', done);
+      setTimeout(resolve, 400);
+    });
+  });
+}
+
+/**
+ * Animate the Overview block (component-description) BEFORE the grid.
+ * Mirrors SectionAnimator timings so it looks identical.
+ */
+function revealDescriptionFirst() {
+  const section = document.querySelector('.component-description');
+  if (!section) return Promise.resolve();
+
+  // If it's already visible, bail out
+  if (!section.classList.contains('hidden-init')) return Promise.resolve();
+
+  const EASE = 'cubic-bezier(0.645, 0.045, 0.355, 1)';
+  const D_GENERIC = 400; // matches SectionAnimator.animateGenericSection
+  const anims = [];
+
+  // 1) Reveal the section container (fade + slide up)
+  const a1 = section.animate(
+    [{ opacity: 0, transform: 'translateY(80px)' }, { opacity: 1, transform: 'translateY(0)' }],
+    { duration: D_GENERIC, fill: 'forwards', easing: EASE }
+  );
+  anims.push(a1);
+  section.classList.remove('hidden-init');
+
+  // 2) Inner bits: line + paragraphs (same delays as your SectionAnimator)
+  const lineSeparator = section.querySelector('.lineSeparator');
+  if (lineSeparator) {
+    anims.push(
+      lineSeparator.animate(
+        [{ opacity: 0, transform: 'translateY(40px)' }, { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 400, delay: 60, fill: 'forwards', easing: EASE }
+      )
+    );
+  }
+
+  const paragraphs = section.querySelectorAll('.paragraph-section');
+  let maxDelay = 200; // Track the maximum delay for proper timing
+  paragraphs.forEach((p, idx) => {
+    const delay = 200 + idx * 150;
+    maxDelay = Math.max(maxDelay, delay);
+    anims.push(
+      p.animate(
+        [{ opacity: 0, transform: 'translateY(40px)' }, { opacity: 1, transform: 'translateY(0)' }],
+        { duration: 700, delay, fill: 'forwards', easing: EASE }
+      )
+    );
+  });
+
+  // Calculate total animation time needed
+  const totalAnimationTime = maxDelay + 700; // max delay + duration
+
+  // Return a promise that resolves after all animations complete
+  return new Promise(resolve => {
+    // Use a timer based on the calculated total time
+    setTimeout(resolve, totalAnimationTime + 100); // Add small buffer
+
+    // Also try to use the finished promises as backup
+    Promise.all(anims.map(a => a.finished?.catch(() => { }) ?? Promise.resolve()))
+      .then(() => resolve());
+  });
+}
+
+/**
  * Initialize all modules after preloader
  */
 function onPreloaderFinishedAndModulesReady() {
+  // Stage 0: app can start
+  document.body.classList.add('app-ready');
   document.body.classList.remove('preloading');
-  
-  const preloader = document.getElementById('preloader');
-  if (preloader) {
-    preloader.style.display = 'none';
-  }
 
-  // Initialize all modules
+  // Hide preloader node entirely
+  const preloader = document.getElementById('preloader');
+  if (preloader) preloader.style.display = 'none';
+
+  // --- Build a promise that resolves when the header intro finishes ---
+  // Preferred: a custom event from TextAnimator; Fallback: a timer.
+  const HEADER_FALLBACK_MS = 2400; // keep >= your header movement max time
+
+  const waitForHeaderIntro = new Promise((resolve) => {
+    let settled = false;
+
+    // Event path (fired by TextAnimator when the last span finishes)
+    const onEvent = () => {
+      if (!settled) { settled = true; resolve(); }
+      document.removeEventListener('headerIntroDone', onEvent);
+    };
+    document.addEventListener('headerIntroDone', onEvent, { once: true });
+
+    // Fallback timer (just in case)
+    setTimeout(() => {
+      if (!settled) { settled = true; resolve(); }
+    }, HEADER_FALLBACK_MS);
+  });
+
+  // --- Initialize “early” modules (don’t animate grid/sections yet) ---
   ThemeManager.setupEventListeners();
   LayoutManager.initialize();
-  TextAnimator.initialize();
-  BannerManager.initialize();
-  PillAnimator.initialize();
-  ProjectThumbnails.initialize();
-  SectionAnimator.initialize();
-  ExperienceManager.initialize();
+  BannerManager.initialize({ delayed: true });
   MobileMenuManager.initialize();
-  /* WordHoverManager.initialize(); */
   LottieLogoManager.initialize();
   ImageCarouselManager.initialize();
   CaretSuppressor.initialize();
   ChatIconAnimator.initialize();
   FooterLinkManager.initialize();
+
+  // Start the header text animation now (we’re waiting on it above)
+  TextAnimator.initialize();
+
+  // Optional extras that don’t affect ordering
   RotatingWordsManager.initialize();
 
-  // Initialize custom cursor on desktop only
-  if (window.matchMedia('(pointer: fine)').matches) {
-    /* CustomCursorManager.initialize(); */
-  }
-
-  // Show page content
+  // Show page chrome immediately
   const pageContent = document.querySelector('.pageContent');
   if (pageContent) {
     pageContent.style.opacity = '1';
     pageContent.style.transition = 'opacity 0.3s ease-in';
   }
-  
   const footer = document.querySelector('.component-footer');
   if (footer) {
     footer.style.opacity = '1';
     footer.style.pointerEvents = 'auto';
   }
-  
+
   handleInitialHashScroll();
 
-  // Initialize banner carat after delay
+  // Stage 1½: bring in the banner carat a bit later
   setTimeout(() => {
     const carat = document.querySelector('.component-banner .carat');
     if (!carat) return;
-
     carat.classList.add('visible');
     carat.style.pointerEvents = 'auto';
     carat.style.cursor = 'pointer';
-
     carat.addEventListener('click', () => {
       const desc = document.querySelector('.component-description');
       if (!desc) return;
-
       const nav = document.querySelector('nav');
       const navHeight = nav ? nav.offsetHeight : 0;
-      const rootFontSize = parseFloat(
-        getComputedStyle(document.documentElement).fontSize
-      );
-
-      const targetY = desc.getBoundingClientRect().top +
-                     window.pageYOffset -
-                     (navHeight + 2.5 * rootFontSize);
-
-      window.scrollTo({
-        top: targetY,
-        behavior: 'smooth',
-      });
+      const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      const targetY = desc.getBoundingClientRect().top + window.pageYOffset - (navHeight + 2.5 * rootFontSize);
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
     });
   }, 3000);
+
+  // --- Stage 2: AFTER header intro, reveal avatar, then description,
+  //              THEN unlock and initialize thumbnails/sections.
+  waitForHeaderIntro
+    .then(() => revealHeaderAvatar())     // (2) image on the right
+    .then(() => revealDescriptionFirst()) // (3) overview/secondary description - properly waits for completion
+    // This is the preceding block that reveals the banner.
+    // Make sure you are AFTER this part.
+    .then(() => {
+      // (4) Reveal banner after description
+      BannerManager.reveal();
+      // Wait for banner animation to complete (now ~500ms per CSS)
+      return new Promise(resolve => setTimeout(resolve, 400));
+    })
+    // This is the final block you need to modify.
+    .then(() => {
+      // (5) Now reveal projects after banner is done
+      document.body.classList.add('app-stage-content');
+
+      document.body.classList.remove('projects-locked');
+      document.body.classList.add('projects-unlocked');
+
+      // The setTimeout goes INSIDE this final .then() block.
+      // It wraps only the initializers for the lower content.
+      setTimeout(() => {
+        PillAnimator.initialize();
+        ProjectThumbnails.initialize();
+        SectionAnimator.initialize();
+        ExperienceManager.initialize();
+      }, 250); // Change this back to 600ms
+    });
 }
 
 /**
@@ -1646,15 +1841,14 @@ function onPreloaderFinishedAndModulesReady() {
  */
 function hidePreloader() {
   const preloader = document.getElementById('preloader');
-  
   if (!preloader) {
     onPreloaderFinishedAndModulesReady();
     return;
   }
-  
+
   preloader.classList.add('loading--out');
   let ended = false;
-  
+
   function onEnd(e) {
     if (e.propertyName === 'opacity' && !ended) {
       ended = true;
@@ -1662,14 +1856,12 @@ function hidePreloader() {
       onPreloaderFinishedAndModulesReady();
     }
   }
-  
+
   preloader.addEventListener('transitionend', onEnd);
-  
+
   // Fallback timer
   setTimeout(() => {
-    if (!ended) {
-      onPreloaderFinishedAndModulesReady();
-    }
+    if (!ended) onPreloaderFinishedAndModulesReady();
   }, 750);
 }
 
@@ -1678,7 +1870,7 @@ function hidePreloader() {
 // =============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.body.classList.add('preloading');
+  document.body.classList.add('preloading', 'projects-locked');
   ThemeManager.applyInitialThemeAndIcon();
 });
 
@@ -1720,6 +1912,114 @@ window.addEventListener('load', () => {
     onPreloaderFinishedAndModulesReady();
   }
 });
+
+
+// =============================================================================
+// IMAGE SPINNER ASSIST (mouse hover + touch press) — no snap-back on stop
+// =============================================================================
+(function () {
+  const container = document.querySelector('.header-image-container');
+  if (!container) return;
+
+  const mask = container.querySelector('.avatar-mask');
+  const img = container.querySelector('.header-profile-image');
+  if (!mask || !img) return;
+
+  // ---- Tuning knobs ----
+  const SPIN_PERIOD_MS = 16000;                 // one full revolution at max speed (16s)
+  const MAX_SPEED = 360 / SPIN_PERIOD_MS;       // degrees per ms at full speed
+  const RAMP_MS = 600;                        // ease-in/out duration to/from full speed (ms)
+  const SCALE_ON = 1.10;                       // scale while spinning
+  const SCALE_OFF = 1.00;
+
+  // ---- state ----
+  let rafId = null;
+  let lastT = 0;
+  let angle = 0;            // current angle in degrees
+  let currentSpeed = 0;     // deg/ms
+  let targetSpeed = 0;     // deg/ms
+  let currentScale = SCALE_OFF;
+  let targetScale = SCALE_OFF;
+
+  function stepToward(current, target, dt, rampMs) {
+    const k = Math.min(1, dt / rampMs); // fraction of the way each frame
+    return current + (target - current) * k;
+  }
+
+  function tick(t) {
+    if (!lastT) lastT = t;
+    const dt = t - lastT;    // ms
+    lastT = t;
+
+    currentSpeed = stepToward(currentSpeed, targetSpeed, dt, RAMP_MS);
+    currentScale = stepToward(currentScale, targetScale, dt, RAMP_MS);
+
+    angle += currentSpeed * dt;
+
+    mask.style.transform = `rotate(${angle}deg) scale(${currentScale})`;
+    img.style.transform = `rotate(${-angle}deg) scale(${currentScale})`;
+
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function ensureRAF() {
+    if (rafId == null) rafId = requestAnimationFrame(tick);
+  }
+
+  function startSpin() {
+    container.classList.add('is-pressed');  // also triggers color via CSS
+    targetSpeed = MAX_SPEED;
+    targetScale = SCALE_ON;
+    lastT = 0;                               // avoid a big first dt after idle
+    ensureRAF();
+  }
+
+  function stopSpin() {
+    container.classList.remove('is-pressed');
+    targetSpeed = 0;
+    targetScale = SCALE_OFF;
+
+    // Let the ramp-down finish; then stop the RAF loop without snapping transforms.
+    const check = () => {
+      const nearZeroSpeed = Math.abs(currentSpeed) < 0.00001;
+      const nearUnitScale = Math.abs(currentScale - SCALE_OFF) < 0.001;
+      if (nearZeroSpeed && nearUnitScale) {
+        if (rafId != null) cancelAnimationFrame(rafId);
+        rafId = null;
+        // IMPORTANT: do NOT reset angle or transforms here
+        // We keep the final angle so there’s no visual jump.
+      } else {
+        requestAnimationFrame(check);
+      }
+    };
+    requestAnimationFrame(check);
+  }
+
+  // ----- Desktop hover -----
+  container.addEventListener('mouseenter', startSpin);
+  container.addEventListener('mouseleave', stopSpin);
+
+  // ----- Pointer (touch/stylus/pen) -----
+  container.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse') startSpin();
+  });
+  container.addEventListener('pointerup', (e) => {
+    if (e.pointerType !== 'mouse') stopSpin();
+  });
+  container.addEventListener('pointercancel', stopSpin);
+  container.addEventListener('pointerleave', (e) => {
+    if (e.pointerType !== 'mouse') stopSpin();
+  });
+
+  // ----- Touch fallback (older Safari) -----
+  container.addEventListener('touchstart', startSpin, { passive: true });
+  container.addEventListener('touchend', stopSpin);
+  container.addEventListener('touchcancel', stopSpin);
+})();
+
+
+
+
 
 // =============================================================================
 // FINAL LOG

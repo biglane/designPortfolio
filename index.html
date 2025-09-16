@@ -37,6 +37,36 @@
       <filter id="noiseFilter">
         <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
       </filter>
+
+      <!-- New scallop/stamp mask -->
+      <mask id="stampMask" maskUnits="objectBoundingBox">
+        <rect x="0" y="0" width="1" height="1" fill="black" />
+        <circle cx="0.5" cy="0.5" r="0.39" fill="white" />
+        <circle cx="0.5" cy="0.5" r="0.39" fill="none" stroke="white" stroke-width="0.18" stroke-linecap="round"
+          stroke-dasharray="0 0.11" />
+      </mask>
+    </defs>
+  </svg>
+
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <clipPath id="scalloped-clip" clipPathUnits="objectBoundingBox">
+        <path d="M0.5,0.02 
+               C0.58,0.02 0.65,0.05 0.7,0.1 
+               C0.78,0.1 0.85,0.05 0.93,0.05 
+               C0.97,0.08 0.98,0.15 0.95,0.22 
+               C0.98,0.3 0.98,0.37 0.95,0.45 
+               C0.98,0.52 0.97,0.6 0.93,0.63 
+               C0.85,0.63 0.78,0.58 0.7,0.58 
+               C0.65,0.63 0.58,0.66 0.5,0.66 
+               C0.42,0.66 0.35,0.63 0.3,0.58 
+               C0.22,0.58 0.15,0.63 0.07,0.63 
+               C0.03,0.6 0.02,0.52 0.05,0.45 
+               C0.02,0.37 0.02,0.3 0.05,0.22 
+               C0.02,0.15 0.03,0.08 0.07,0.05 
+               C0.15,0.05 0.22,0.1 0.3,0.1 
+               C0.35,0.05 0.42,0.02 0.5,0.02 Z" />
+      </clipPath>
     </defs>
   </svg>
   <!-- Decorative Frames 
@@ -112,21 +142,28 @@
       <main class="pageContent homePage" aria-labelledby="home-page-title">
         <!-- Intro Header -->
         <header class="component-header">
-          <div class="animation-container">
-            <h1 id="home-page-title" class="introText">
-              <span>Alex</span>
-              <span class="strong">Biglane</span><br>
-              <span class="strong highlight">product designer</span>
-              <span class="strong">&amp;</span>
-              <span id="rotating-slot" class="strong">problem solver.</span>
-            </h1>
+          <div class="header-content">
+            <div class="animation-container">
+              <h1 id="home-page-title" class="introText">
+                <span>Alex</span>
+                <span class="strong">Biglane</span><br>
+                <span class="strong highlight">product designer</span>
+                <span class="strong">&amp;</span>
+                <span id="rotating-slot" class="strong">problem solver.</span>
+              </h1>
+            </div>
+            <div class="header-image-container">
+              <div class="avatar-mask">
+                <img src="assets/images/thumbnail-headshot.jpg" alt="Alex Biglane" class="header-profile-image" />
+              </div>
+            </div>
           </div>
         </header>
 
         <!-- Banner Section -->
         <section class="component-banner">
           <div class="bannerImage-container-for-zoom">
-            <img class="bannerImage start-hidden" src="assets/images/darkmodeBanner_dsg.jpg"
+            <img class="bannerImage start-hidden hidden-init" src="assets/images/darkmodeBanner_dsg.jpg"
               alt="Alex working outside." />
           </div>
           <!-- Carat indicator (mobile only) -->
@@ -139,41 +176,26 @@
         </section>
 
         <!-- Description Section -->
-        <section class="component-description">
+        <section class="component-description hidden-init">
           <hr class="lineSeparator" />
           <div class="sectionTitle">
             <h2 class="sectionTitleText sr-only">Overview</h2>
           </div>
+          <div class="descriptionText-1">
+            <div class="paragraph-section"> I'm an agent of good UX. A <span class="highlight strong">strategic
+                leader </span> with <span class="highlight strong">10+ years </span> of experience in turning ideas
+              into meaningful products and systems. </div>
+          </div>
           <div class="columns">
             <div class="leftColumnContainer"></div>
-            <div class="rightColumnContainer">
-              <div class="descriptionText-1">
-                <div class="paragraph-section">
-                  I'm an agent of good UX. A <span class="highlight strong">strategic leader </span> with <span
-                    class="highlight strong">10+ years </span> of
-                  experience in turning ideas into meaningful products and systems. I work across the full spectrum of
-                  the end-to-end design
-                  process, from research, guiding strategy, and maintaining design systems all the way to shipping
-                  scalable solutions with real people (<span class="light-text">and business</span>) value.
-                </div>
-                <div class="paragraph-section">
-                  At <span class="highlight strong">IBM</span>, I guided key initiatives with world-class brands like
-                  <span class="highlight strong">PepsiCo</span> and <span class="highlight strong">Google</span>.
-                </div>
-                <div class="paragraph-section">
-                  From running workshops to mentoring junior designers, I care a lot about good people, good
-                  products, strong relationships and keeping things human.
-                </div>
-              </div>
-            </div>
+            <div class="rightColumnContainer"></div>
           </div>
         </section>
 
-        <!-- Experience Pills Section -->
+        <!-- Experience Pills Section 
         <section class="component-pills">
           <div class="columns">
-            <div class="leftColumnContainer"></div>
-            <div class="rightColumnContainer">
+            <div class="leftColumnContainer">
               <div class="pill hidden-init">
                 <span class="pillText">
                   <span class="extraBold highlight">10+</span> years experience
@@ -190,15 +212,16 @@
               </div>
             </div>
           </div>
-        </section>
+        </section> -->
 
-        <!-- Selected Work Title -->
+
+        <!-- Selected Work Title
         <section class="component-sectionTitle">
           <hr class="lineSeparator" />
           <div class="sectionTitle">
             <h2 class="sectionTitleText" id="selected-work-title" tabindex="-1">Selected Work</h2>
           </div>
-        </section>
+        </section>  -->
 
         <!-- Project Grid Section -->
         <div class="component-projectGrid">
@@ -207,7 +230,7 @@
             <article class="projectThumbnail">
               <div class="projectThumbnail-inner">
                 <div class="thumbnailImage-container-for-zoom">
-                  <img class="thumbnailImage" src="assets/images/PepsiCo_BannerImage.jpg" alt="Sales Hub+ thumbnail"
+                  <img class="thumbnailImage" src="assets/images/PepsiCo_BannerImage2.jpg" alt="Sales Hub+ thumbnail"
                     loading="lazy" />
                 </div>
                 <div class="projectThumbnail-Title">
@@ -268,8 +291,8 @@
             <div class="rightColumnContainer">
               <div class="sectionBody">
                 <p class="sectionBodyText">
-                  My journey began at Blue Cross Blue Shield. Through modernizing their online member portal
-                  I learned the importance of accessibility in design. I developed a human-centered
+                  I started my design career through modernizing BCBSLA's online member portal.
+                  I learned the importance of accessibility in design and developed a human-centered
                   problem solving mind-set from the very beginning.
                 </p>
                 <div class="paragraph-section pre-quote-paragraph">

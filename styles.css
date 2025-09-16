@@ -182,9 +182,9 @@ textarea:focus,
   font-style: italic;
 }
 
-.paragraph-section {
+/*  .paragraph-section {
   margin-bottom: 2rem;
-}
+} */
 
 .paragraph-spacing {
   margin-top: 2rem;
@@ -341,51 +341,133 @@ body:not(.preloading) .siteCard {
    PROFILE IMAGE STYLES
    ========================================================================== */
 
-/* Header Layout */
+:root {
+  /* Single knob for size */
+  --avatar-size: 120px; /* mobile default (override in media queries below) */
+}
+
+/* Touch: remove 300ms delay and make taps snappy */
+.header-image-container { touch-action: manipulation; }
+
+/* Color while pressed (works for touch + keyboard focus too) */
+.header-image-container.is-pressed .header-profile-image {
+  -webkit-filter: grayscale(0%);
+          filter: grayscale(0%);
+}
+
+/* Header Layout (mobile-first) */
 .header-content {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2rem;                 /* space between name block and avatar on mobile */
   align-items: flex-start;
   width: 100%;
 }
 
-/* Profile Image Container */
+/* Avatar container owns the size */
 .header-image-container {
-  width: 180px;
-  height: 180px;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
   position: relative;
-  margin: 0 auto; /* Center on mobile */
+  margin: 0 auto;            /* center on mobile */
 }
 
-/* Profile Image with Star Shape */
+/* Start hidden under preloader */
+.header-image-container {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .6s ease, transform .6s ease;
+  will-change: opacity, transform;
+}
+
+
+/* Mask wrapper: applies the PNG scallop;
+   JS will rotate/scale this element, so do NOT animate transform in CSS. */
+.avatar-mask {
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image: url('assets/images/stamp-oval-16.png');
+  mask-image: url('assets/images/stamp-oval-16.png');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+
+  /* Let JS handle rotation/scale smoothly */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* The actual photo (counter-rotated by JS to appear still) */
 .header-profile-image {
   width: 100%;
   height: 100%;
+  display: block;
   object-fit: cover;
-  clip-path: url(#star-clip);
-  transition: transform 0.3s ease;
+
+  /* JS drives transform for rotation/scale; keep CSS out of the way */
+  transform: translateZ(0);
+  will-change: transform, filter;
 }
 
-/* Hover effect */
-.header-image-container:hover .header-profile-image {
-  transform: scale(1.05);
-}
+/* Grayscale-on-desktop behavior (color on hover) */
+@media (hover: hover) and (pointer: fine) {
+  .header-profile-image {
+    -webkit-filter: grayscale(100%);
+            filter: grayscale(100%);
+    transition: -webkit-filter 0.4s ease, filter 0.4s ease; /* smooth fade to color */
+  }
 
-/* Optional: Animation on load */
-.header-image-container {
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.8s ease forwards;
-  animation-delay: 0.5s;
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .header-image-container:hover .header-profile-image,
+  .header-image-container:focus-within .header-profile-image {
+    -webkit-filter: grayscale(0%);
+            filter: grayscale(0%);
   }
 }
+
+/* --- Desktop layout & spacing tweaks --- */
+@media (min-width: 769px) {
+  :root { --avatar-size: 120px; }      /* set your desktop avatar size here */
+
+  .header-content {
+    flex-direction: row;               /* text left, image right */
+    justify-content: flex-start;       /* don't push to edges */
+    gap: 1rem;                         /* space between text and avatar (tweak me) */
+  }
+
+  .animation-container {
+    flex: 0 1 auto;                    /* text sizes to its content */
+    max-width: 640px;                  /* keep lines comfortable */
+  }
+
+  .header-image-container {
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+}
+
+/* --- Tablet size --- */
+@media (min-width: 481px) and (max-width: 768px) {
+  :root { --avatar-size: 160px; }      /* tablet avatar size */
+}
+
+/* Respect reduced motion for filter fades if you like */
+@media (prefers-reduced-motion: reduce) {
+  .header-profile-image {
+    transition: none;
+  }
+}
+
+/* Intro rise-in animation for the avatar container */
+@keyframes fadeInUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
 
 /* ==========================================================================
    4. THEME SYSTEM (LIGHT/DARK MODE)
@@ -859,8 +941,8 @@ body.mobile-menu-active {
   object-fit: cover;
   border-radius: inherit;
   background-color: transparent;
-  transition: opacity 0.7s cubic-bezier(0.645, 0.045, 0.355, 1),
-    transform 0.7s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: opacity 0.5s cubic-bezier(0.645, 0.045, 0.355, 1),
+    transform 0.5s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .bannerImage.start-hidden {
@@ -898,7 +980,12 @@ body.mobile-menu-active {
 /* --- Component: Description --- */
 .component-description {
   width: 100%;
-  padding: 2rem 1rem 0 1rem;
+  padding: 4rem 1rem 0rem 1rem;
+}
+
+.component-description.hidden-init {
+  opacity: 0;
+  transform: translateY(80px);
 }
 
 .component-description .lineSeparator,
@@ -923,7 +1010,7 @@ body.mobile-menu-active {
 /* --- Component: Pills --- */
 .component-pills {
   width: 100%;
-  padding: 2rem 1rem 0 1rem;
+  padding: 0 4rem 0 4rem;
 }
 
 .component-pills .columns {
@@ -1859,6 +1946,46 @@ body.dark-mode .pill:hover .highlight {
   line-height: inherit;
 }
 
+/* ==========================================================================
+   Entrance sequencing gates (header first, then rest)
+   ========================================================================== */
+
+/* Hide header pieces until app is ready */
+body:not(.app-ready) .header-content,
+body:not(.app-ready) .header-image-container,
+body:not(.app-ready) .animation-container {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Reveal header pieces when JS adds .app-ready */
+body.app-ready .header-content,
+body.app-ready .animation-container {
+  opacity: 1;
+  transform: none;
+  transition: opacity .45s ease, transform .45s ease;
+}
+
+/* Gate the project grid until JS unlocks it */
+.projects-locked .component-projectGrid,
+.projects-locked .projectThumbnail {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  pointer-events: none;
+  transition: none !important; /* stay frozen while locked */
+}
+
+/* When unlocked, let your normal fade/IO observers take over */
+.projects-unlocked .component-projectGrid,
+.projects-unlocked .projectThumbnail {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 500ms cubic-bezier(0.645,0.045,0.355,1),
+              transform 600ms cubic-bezier(0.645,0.045,0.355,1);
+}
+
 
 /* ==========================================================================
    8. MEDIA QUERIES
@@ -1897,9 +2024,9 @@ body.dark-mode .pill:hover .highlight {
     margin-right: 0;
   }
 
-  .component-description {
+  /* .component-description {
     padding-top: 2rem;
-  }
+  } */
 
   .component-description .lineSeparator {
     opacity: 0;
@@ -1990,18 +2117,23 @@ body.dark-mode .pill:hover .highlight {
   .animation-container {
     flex: 1;
   }
-  
-  .header-image-container {
-    flex-shrink: 0;
-    width: 200px;
-    height: 200px;
-    margin: 0; /* Remove center margin on desktop */
-  }
 }
 }
 
 @media only screen and (min-width: 769px) {
   /* Layout */
+   .header-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+  }
+  
+  .animation-container {
+    flex: 1;
+  }
+
+
   .maxWidthContainer {
     max-width: 1088px;
     margin: 0 auto;
@@ -2092,7 +2224,7 @@ body.dark-mode .pill:hover .highlight {
   }
 
   .component-description {
-    padding: 1rem 4rem 0 4rem;
+    padding: 1.5rem 0rem 0rem 4rem;
   }
 
   .descriptionText-1.hidden-init {
@@ -2101,7 +2233,6 @@ body.dark-mode .pill:hover .highlight {
 
   .descriptionText-1 {
     max-width: 700px;
-    padding-top: .5rem;
     pointer-events: none;
   }
 
@@ -2233,9 +2364,8 @@ body.dark-mode .pill:hover .highlight {
 
   /* Project Pages */
   .project-page .component-header {
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 1088px;
+    margin: 0 auto;
   }
 
   .projectPepsico-page .bannerImage {
