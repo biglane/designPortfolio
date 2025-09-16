@@ -797,11 +797,13 @@ body.dark-mode .animatable-theme-icon:not(.is-moon) .icon-main-disc {
 
 .bottom-line {
   display: inline;
-  white-space: nowrap; /* Prevents line break between & and rotating text */
+  white-space: nowrap;
+  /* Prevents line break between & and rotating text */
 }
 
 .bottom-line .strong:first-child {
-  margin-right: 0.5rem; /* Space between & and rotating text */
+  margin-right: 0.5rem;
+  /* Space between & and rotating text */
 }
 
 .navMenu-icon:focus {
@@ -915,7 +917,7 @@ body.mobile-menu-active {
   font-size: 3rem;
   line-height: 3.4rem;
   font-weight: 200;
-  max-width: 380px;
+  max-width: 400px;
   z-index: 10;
   display: inline-block;
   caret-color: transparent;
@@ -924,6 +926,7 @@ body.mobile-menu-active {
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
 
 .sub-header-text {
   font-size: 1.75rem;
@@ -2058,10 +2061,9 @@ body.dark-mode .pill:hover .highlight {
 
 /* Rotating words (hero) */
 .rotating-words {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-  line-height: inherit;
+  display: inline !important;
+  vertical-align: baseline;
+  min-width: 450px;
 }
 
 .rotating-words-inner {
@@ -2076,7 +2078,19 @@ body.dark-mode .pill:hover .highlight {
 .rotating-word {
   display: block;
   white-space: nowrap;
-  line-height: inherit;
+  line-height: 3.6rem;
+  /* Match container */
+  letter-spacing: normal;
+  /* Ensure consistent spacing */
+}
+
+/* Pre-set the height to prevent jumping */
+.introText>.strong:last-child {
+  display: block;
+  height: 3.4rem;
+  /* Match line-height */
+  overflow: hidden;
+  min-width: 100%;
 }
 
 #rotating-slot,
