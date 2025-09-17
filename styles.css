@@ -2146,6 +2146,10 @@ body.dark-mode .pill:hover .highlight {
   overflow: visible;
 }
 
+.rotating-word .thin {
+  font-weight: 200; /* Match the weight of "Alex" */
+}
+
 .rotating-words-inner {
   display: flex;
   flex-direction: column;
@@ -2158,6 +2162,7 @@ body.dark-mode .pill:hover .highlight {
   height: 3.4rem;
   line-height: 3.4rem;
   white-space: nowrap;
+  font-weight: 600;
 }
 
 .rotating-words-inner {

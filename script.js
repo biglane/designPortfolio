@@ -778,7 +778,11 @@ const RotatingWordsManager = (function () {
   const START_DELAY_MS = 3200;
   const STEP_EVERY_MS = 2400;
   const TRANSITION_MS = 1600;
-  const PHRASES = ['problem solver.', 'systems builder.', 'curious creative.'];
+  const PHRASES = [
+    '<span class="thin">problem</span> solver.',
+    '<span class="thin">systems</span> builder.',
+    '<span class="thin">curious</span> creative.'
+  ];
 
   let currentWordIndex = 0;
   let intervalId = null;
@@ -804,7 +808,7 @@ const RotatingWordsManager = (function () {
       PHRASES.forEach(text => {
         const item = document.createElement('span');
         item.className = 'rotating-word';
-        item.textContent = text;
+        item.innerHTML = text; // Changed from textContent to innerHTML
         inner.appendChild(item);
       });
 
