@@ -370,6 +370,9 @@ body:not(.preloading) .siteCard {
   position: relative;
   margin: 0 auto;
 
+  
+  
+
   /* Animation states */
   opacity: 0;
   transform: translateY(16px);
@@ -1089,13 +1092,9 @@ body.mobile-menu-active {
   }
 }
 
-.greeting-text {
-  font-family: 'Albra Book', sans-serif;
-  font-size: 1.8rem;
+.greeting-inline {
+  font-family: inherit;
   font-weight: 700;
-  line-height: 2.2rem;
-  display: block;
-  letter-spacing: 1px;
 }
 
 .descriptionText-1 {
