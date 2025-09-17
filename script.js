@@ -313,6 +313,24 @@ const TextAnimator = (function () {
       });
     });
 
+    const mobileSeparator = document.querySelector('.mobile-only-separator');
+    if (mobileSeparator) {
+      mobileSeparator.style.opacity = '0'; // Start hidden
+      const sepAnim = mobileSeparator.animate(
+        [
+          { opacity: 0, transform: 'translateY(20px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 600,
+          delay: 400,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        }
+      );
+      allAnims.push(sepAnim);
+    }
+
     // Optional sub-header animation — include in the "finished" gate if present
     const subHeader = document.querySelector('.sub-header-text');
     if (subHeader) {
@@ -1919,7 +1937,8 @@ window.addEventListener('load', () => {
   const SPIN_PERIOD_MS = 16000;
   const MAX_SPEED = 360 / SPIN_PERIOD_MS;
   const RAMP_MS = 600;
-  const SCALE_ON = 1.10;
+  const isMobile = window.innerWidth <= 768;
+  const SCALE_ON = isMobile ? 1.20 : 1.10; // 1.20 for mobile, 1.10 for desktop
   const SCALE_OFF = 1.00;
 
   let rafId = null;
