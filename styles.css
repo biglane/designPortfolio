@@ -324,7 +324,7 @@ body:not(.preloading) .siteCard {
 
 .lineSeparator {
   width: 100%;
-  height: 1px;
+  height: 2px;
   background-color: #4adad14f;
   margin-bottom: .5rem;
   border: none;
@@ -347,10 +347,6 @@ body:not(.preloading) .siteCard {
   /* mobile default (override in media queries below) */
 }
 
-/* Touch: remove 300ms delay and make taps snappy */
-.header-image-container {
-  touch-action: manipulation;
-}
 
 /* Color while pressed (works for touch + keyboard focus too) */
 .header-image-container.is-pressed .header-profile-image {
@@ -368,21 +364,26 @@ body:not(.preloading) .siteCard {
   width: 100%;
 }
 
-/* Avatar container owns the size */
 .header-image-container {
+  /* Size and positioning */
   width: var(--avatar-size);
   height: var(--avatar-size);
   position: relative;
   margin: 0 auto;
-  /* center on mobile */
-}
 
-/* Start hidden under preloader */
-.header-image-container {
+  /* Animation states */
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .6s ease, transform .6s ease;
   will-change: opacity, transform;
+
+  /* Touch handling */
+  touch-action: manipulation;
+
+  /* Prevent selection and dragging */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 
@@ -405,6 +406,10 @@ body:not(.preloading) .siteCard {
   /* Let JS handle rotation/scale smoothly */
   transform: translateZ(0);
   will-change: transform;
+
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
 
 /* The actual photo (counter-rotated by JS to appear still) */
@@ -413,10 +418,20 @@ body:not(.preloading) .siteCard {
   height: 100%;
   display: block;
   object-fit: cover;
-
-  /* JS drives transform for rotation/scale; keep CSS out of the way */
   transform: translateZ(0);
   will-change: transform, filter;
+
+  /* Prevent drag and selection */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
 }
 
 /* Grayscale-on-desktop behavior (color on hover) */
@@ -2059,44 +2074,69 @@ body.dark-mode .pill:hover .highlight {
   outline: none;
 }
 
-/* Rotating words (hero) */
-.rotating-words {
-  display: inline !important;
+
+
+/* rotating words styles */
+
+.introText {
+  font-size: 3rem;
+  line-height: 3.4rem;
+  font-weight: 200;
+  max-width: 100%;
+  display: block;
+}
+
+.introText .line {
+  display: block;
+  white-space: normal;
+  /* Allow natural wrapping */
+}
+
+.introText .line-2 {
+  display: block;
+  min-height: 3.6rem;
+  /* Ensure space for rotating words */
+}
+
+/* Container for the & + rotating words */
+.introText .line-2>.strong:last-child {
+  display: inline-block;
+  height: 3.6rem;
+  line-height: 3.4rem;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  /* Prevent wrapping within this unit */
   vertical-align: baseline;
-  min-width: 450px;
+  /* Ensure baseline alignment */
+}
+
+.rotating-words {
+  display: inline-block !important;
+  vertical-align: baseline;
+  position: relative;
+  overflow: visible;
 }
 
 .rotating-words-inner {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   transform: translateY(0);
-  transition: transform 0.6s ease;
-  /* animation duration */
-  will-change: transform;
+  transition: transform 1600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .rotating-word {
   display: block;
-  white-space: nowrap;
-  line-height: 3.6rem;
-  /* Match container */
-  letter-spacing: normal;
-  /* Ensure consistent spacing */
-}
-
-/* Pre-set the height to prevent jumping */
-.introText>.strong:last-child {
-  display: block;
   height: 3.4rem;
-  /* Match line-height */
-  overflow: hidden;
-  min-width: 100%;
+  line-height: 3.4rem;
+  white-space: nowrap;
 }
 
-#rotating-slot,
-.rotating-words {
-  display: inline-block;
-  vertical-align: baseline;
+.rotating-words-inner {
+  will-change: transform;
+  /* Prevent layout shift during resize */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 /* ==========================================================================
@@ -2237,9 +2277,6 @@ body.app-ready .animation-container {
   .navMobile .navRight {
     padding: 0;
   }
-}
-
-@media only screen and (min-width: 481px) {
 
   .darkMode-icon,
   .navMenu-icon {
@@ -2250,37 +2287,94 @@ body.app-ready .animation-container {
   .navMenu-icon:hover {
     transform: translateY(-2px);
   }
+
+  .introText {
+    font-size: 3.5rem;
+    line-height: 4rem;
+  }
+
+  .introText .line-2 {
+    min-height: 4rem;
+  }
+
+  .introText .line-2>.strong:last-child {
+    height: 4rem;
+    line-height: 4rem;
+  }
+
+  .rotating-word {
+    height: 4rem;
+    line-height: 4rem;
+  }
+
 }
 
-/* --- Desktop (769px+) --- */
-@media only screen and (min-width: 768px) {
 
-  /* Hide carat on tablet and up */
+/* --- Desktop (768px+) --- */
+@media only screen and (min-width: 769px) {
+
+
+  .introText {
+    font-size: 2rem;
+    line-height: 2.5rem;
+    max-width: 880px;
+  }
+
+  .introText .line-2 {
+    min-height: 2.5rem;
+    display: block;
+    line-height: 2.5rem;
+    /* Ensure consistent line height */
+  }
+
+  /* All spans in line-2 should align properly */
+  .introText .line-2>span {
+    vertical-align: baseline;
+    line-height: 2.5rem;
+  }
+
+  .introText .line-2>.strong:last-child {
+    display: inline-block;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    overflow: hidden;
+    vertical-align: text-bottom;
+    /* Change from baseline to text-bottom */
+    position: relative;
+    top: 0;
+  }
+
+  .rotating-words {
+    display: inline-block !important;
+    height: 2.5rem;
+    line-height: 2.5rem;
+    vertical-align: top;
+    /* Align to top of container */
+    position: relative;
+    overflow: hidden;
+  }
+
+  .rotating-word {
+    display: block;
+    /* Keep as block, not flex */
+    height: 2.5rem;
+    line-height: 2.5rem;
+    white-space: nowrap;
+    /* Remove the flex and align-items properties */
+  }
+
+  .animation-container {
+    flex: 1;
+  }
+
   .component-banner .carat {
     display: none;
   }
 
-  @media only screen and (min-width: 769px) {
-    .header-content {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      gap: 3rem;
-    }
-
-    .animation-container {
-      flex: 1;
-    }
-  }
-}
-
-@media only screen and (min-width: 769px) {
-
-  /* Layout */
   .header-content {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     gap: 3rem;
   }
 
@@ -2288,6 +2382,16 @@ body.app-ready .animation-container {
     flex: 1;
   }
 
+
+  .introText>.strong:last-child {
+    height: 2.5rem;
+    line-height: 2.5rem;
+  }
+
+  .rotating-word {
+    height: 2.5rem;
+    line-height: 2.5rem;
+  }
 
   .maxWidthContainer {
     max-width: 1088px;
@@ -2379,7 +2483,7 @@ body.app-ready .animation-container {
   }
 
   .component-description {
-    padding: 1.5rem 0rem 0rem 4rem;
+    padding: 1.5rem 4rem 0rem 4rem;
   }
 
   .descriptionText-1.hidden-init {
@@ -2589,6 +2693,9 @@ body.app-ready .animation-container {
   }
 }
 
+
+
+
 /* --- Special Cases & Edge Cases --- */
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 550px) {
   /* #site-frame {
@@ -2641,6 +2748,13 @@ body.app-ready .animation-container {
   body.projectPepsico-page .bannerImage {
     transition: none;
     transform: none;
+  }
+}
+
+/* Ensure container maintains aspect during transition between breakpoints */
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  .introText .line-2>.strong:last-child {
+    transition: height 0.3s ease, line-height 0.3s ease;
   }
 }
 

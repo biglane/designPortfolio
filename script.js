@@ -477,7 +477,7 @@ const ProjectThumbnails = (function () {
     STATE.animations.thumbnails = Array.from(document.querySelectorAll('.projectThumbnail'));
     if (STATE.animations.thumbnails.length === 0) return;
 
-    // ⭐ Mark the first thumbnail as the hero (preloader-controlled)
+    // Mark the first thumbnail as the hero (preloader-controlled)
     const hero = STATE.animations.thumbnails[0];
     if (hero) hero.classList.add('is-hero');
 
@@ -632,7 +632,7 @@ const SectionAnimator = (function () {
   }
 
   function animateGenericSection(section) {
-    // ⛑️ Guard: if this section was already revealed earlier, do nothing.
+    // Guard: if this section was already revealed earlier, do nothing.
     if (!section.classList.contains('hidden-init')) return;
     section.animate(
       [
@@ -649,7 +649,7 @@ const SectionAnimator = (function () {
   }
 
   function animateDescriptionSection(section) {
-    // ⛑️ If the preloader sequence already revealed this, skip.
+    // If the preloader sequence already revealed this, skip.
     if (!section.classList.contains('hidden-init') || section.dataset.revealed === '1') return;
     // If revealDescriptionFirst already ran, this is a no-op visually, but safe.
     animateGenericSection(section);
@@ -772,7 +772,7 @@ const SectionAnimator = (function () {
 })();
 
 // -----------------------------------------------------------------------------
-// 4.6 Rotating Words Manager
+// 4.6 Rotating Words Manager - UPDATED TO PREVENT JUMP
 // -----------------------------------------------------------------------------
 const RotatingWordsManager = (function () {
   const START_DELAY_MS = 3200;
@@ -780,12 +780,13 @@ const RotatingWordsManager = (function () {
   const TRANSITION_MS = 1600;
   const PHRASES = ['problem solver.', 'systems builder.', 'curious creative.'];
 
-  let index = 0;
+  let currentWordIndex = 0;
   let intervalId = null;
   let container, inner;
-  let LINE_H = 0;
+  let LINE_HEIGHT = 54;
   let COUNT = 0;
-  let debouncedResize = null;
+  let isAnimating = false;
+  let lastViewportWidth = 0;
 
   function initialize() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -793,97 +794,104 @@ const RotatingWordsManager = (function () {
     const slot = document.getElementById('rotating-slot');
     if (!slot) return;
 
-    // Build markup
-    container = document.createElement('span');
-    container.className = 'strong rotating-words';
-    container.setAttribute('data-no-split', 'true');
-
-    inner = document.createElement('span');
-    inner.className = 'rotating-words-inner';
-
-    PHRASES.forEach(text => {
-      const item = document.createElement('span');
-      item.className = 'rotating-word';
-      item.textContent = text;
-      inner.appendChild(item);
-    });
-
-    // Clone first item for seamless loop
-    inner.appendChild(inner.children[0].cloneNode(true));
-    container.appendChild(inner);
-
-    // Wait for intro animation, then start
     setTimeout(() => {
+      container = document.createElement('span');
+      container.className = 'rotating-words';
+
+      inner = document.createElement('span');
+      inner.className = 'rotating-words-inner';
+
+      PHRASES.forEach(text => {
+        const item = document.createElement('span');
+        item.className = 'rotating-word';
+        item.textContent = text;
+        inner.appendChild(item);
+      });
+
+      inner.appendChild(inner.children[0].cloneNode(true));
+      container.appendChild(inner);
+
       slot.replaceWith(container);
       COUNT = PHRASES.length;
-      measureAndLockHeight();
+
+      updateLineHeight();
+      lastViewportWidth = window.innerWidth;
       startLoop();
 
-      debouncedResize = debounce(onResizeStable, 180);
-      window.addEventListener('resize', debouncedResize, { passive: true });
+      // Immediate response to resize
+      window.addEventListener('resize', () => {
+        const newWidth = window.innerWidth;
+        const oldBreakpoint = getBreakpoint(lastViewportWidth);
+        const newBreakpoint = getBreakpoint(newWidth);
+
+        // Only act if we crossed a breakpoint
+        if (oldBreakpoint !== newBreakpoint) {
+          // Immediately update line height
+          updateLineHeight();
+
+          // Instantly reposition without animation
+          inner.style.transition = 'none';
+          inner.style.transform = `translateY(-${currentWordIndex * LINE_HEIGHT}px)`;
+
+          // Force the browser to apply the change
+          inner.offsetHeight;
+
+          // Re-enable transitions after a frame
+          requestAnimationFrame(() => {
+            inner.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(0.645, 0.045, 0.355, 1)`;
+          });
+        }
+
+        lastViewportWidth = newWidth;
+      });
+
     }, START_DELAY_MS);
   }
 
-  function measureAndLockHeight() {
-    const first = inner.children[0];
-    LINE_H = Math.ceil(first.getBoundingClientRect().height);
-    container.style.height = LINE_H + 'px';
-    inner.style.transition = `transform ${TRANSITION_MS}ms ease`;
+  function getBreakpoint(width) {
+    if (width >= 769) return 'desktop';
+    if (width >= 481) return 'tablet';
+    return 'mobile';
   }
 
-  function getTranslateYPx(el) {
-    const style = window.getComputedStyle(el);
-    const transform = style.transform || style.webkitTransform || 'none';
-    if (transform === 'none') return 0;
+  function updateLineHeight() {
+    const viewportWidth = window.innerWidth;
 
-    const match2d = transform.match(/^matrix\(([-0-9., e]+)\)$/);
-    if (match2d) {
-      const parts = match2d[1].split(',').map(Number);
-      return parts[5] || 0;
+    if (viewportWidth >= 769) {
+      LINE_HEIGHT = 40;
+    } else if (viewportWidth >= 481) {
+      LINE_HEIGHT = 64;
+    } else {
+      LINE_HEIGHT = 54;
     }
-
-    const match3d = transform.match(/^matrix3d\(([-0-9., e]+)\)$/);
-    if (match3d) {
-      const parts = match3d[1].split(',').map(Number);
-      return parts[13] || 0;
-    }
-    return 0;
-  }
-
-  function onResizeStable() {
-    const ty = getTranslateYPx(inner);
-    const progressPx = Math.abs(ty);
-    const indexFloat = progressPx / LINE_H;
-
-    measureAndLockHeight();
-
-    index = Math.floor(indexFloat);
-    const mapped = -indexFloat * LINE_H;
-
-    const prevTransition = inner.style.transition;
-    inner.style.transition = 'none';
-    inner.style.transform = `translateY(${mapped}px)`;
-    void inner.offsetHeight;
-    inner.style.transition = prevTransition;
   }
 
   function step() {
-    index += 1;
-    inner.style.transform = `translateY(-${index * LINE_H}px)`;
+    if (isAnimating) return; // Skip if already animating
 
-    if (index === COUNT) {
+    isAnimating = true;
+    currentWordIndex++;
+
+    inner.style.transform = `translateY(-${currentWordIndex * LINE_HEIGHT}px)`;
+
+    if (currentWordIndex === COUNT) {
       setTimeout(() => {
-        const prevTransition = inner.style.transition;
         inner.style.transition = 'none';
-        inner.style.transform = 'translateY(0px)';
-        index = 0;
+        inner.style.transform = 'translateY(0)';
+        currentWordIndex = 0;
         void inner.offsetHeight;
-        inner.style.transition = prevTransition;
+        inner.style.transition = `transform ${TRANSITION_MS}ms cubic-bezier(0.645, 0.045, 0.355, 1)`;
+        isAnimating = false;
+      }, TRANSITION_MS);
+    } else {
+      setTimeout(() => {
+        isAnimating = false;
       }, TRANSITION_MS);
     }
   }
 
   function startLoop() {
+    if (intervalId) clearInterval(intervalId);
     intervalId = setInterval(step, STEP_EVERY_MS + TRANSITION_MS);
   }
 
@@ -891,7 +899,7 @@ const RotatingWordsManager = (function () {
 })();
 
 // =============================================================================
-// 5. UI COMPONENTS
+// 5. UI COMPONENTS (Rest of the file remains the same)
 // =============================================================================
 
 // -----------------------------------------------------------------------------
@@ -1122,7 +1130,7 @@ const FooterLinkManager = (function () {
 })();
 
 // =============================================================================
-// 6. NAVIGATION & MENU
+// 6. NAVIGATION & MENU (Rest remains the same)
 // =============================================================================
 
 // -----------------------------------------------------------------------------
@@ -1334,8 +1342,11 @@ const LayoutManager = (function () {
 })();
 
 // =============================================================================
-// 7. INTERACTIVE FEATURES
+// 7. INTERACTIVE FEATURES (Rest remains the same)
 // =============================================================================
+
+// [Rest of the CustomCursorManager, WordHoverManager, CaretSuppressor, and other code remains exactly the same]
+// ... (continuing with the rest of your original code from section 7 onwards)
 
 // -----------------------------------------------------------------------------
 // 7.1 Custom Cursor
@@ -1642,23 +1653,19 @@ function handleInitialHashScroll() {
 }
 
 // =============================================================================
-// 8. PAGE INITIALIZATION
+// 8. PAGE INITIALIZATION (Rest remains the same)
 // =============================================================================
 
 /**
  * Smoothly reveal the avatar container (image on the right).
- * Relies on your CSS having the container initially at opacity:0, translateY(16px)
- * with a transition of ~0.6s.
  */
 function revealHeaderAvatar() {
   return new Promise((resolve) => {
     const el = document.querySelector('.header-image-container');
     if (!el) return resolve();
-    // Let CSS transitions do the work
     requestAnimationFrame(() => {
       el.style.opacity = '1';
       el.style.transform = 'translateY(0)';
-      // resolve when the transition ends (fallback timer just in case)
       const done = () => { el.removeEventListener('transitionend', done); resolve(); };
       el.addEventListener('transitionend', done);
       setTimeout(resolve, 400);
@@ -1668,20 +1675,17 @@ function revealHeaderAvatar() {
 
 /**
  * Animate the Overview block (component-description) BEFORE the grid.
- * Mirrors SectionAnimator timings so it looks identical.
  */
 function revealDescriptionFirst() {
   const section = document.querySelector('.component-description');
   if (!section) return Promise.resolve();
 
-  // If it's already visible, bail out
   if (!section.classList.contains('hidden-init')) return Promise.resolve();
 
   const EASE = 'cubic-bezier(0.645, 0.045, 0.355, 1)';
-  const D_GENERIC = 400; // matches SectionAnimator.animateGenericSection
+  const D_GENERIC = 400;
   const anims = [];
 
-  // 1) Reveal the section container (fade + slide up)
   const a1 = section.animate(
     [{ opacity: 0, transform: 'translateY(80px)' }, { opacity: 1, transform: 'translateY(0)' }],
     { duration: D_GENERIC, fill: 'forwards', easing: EASE }
@@ -1689,7 +1693,6 @@ function revealDescriptionFirst() {
   anims.push(a1);
   section.classList.remove('hidden-init');
 
-  // 2) Inner bits: line + paragraphs (same delays as your SectionAnimator)
   const lineSeparator = section.querySelector('.lineSeparator');
   if (lineSeparator) {
     anims.push(
@@ -1701,7 +1704,7 @@ function revealDescriptionFirst() {
   }
 
   const paragraphs = section.querySelectorAll('.paragraph-section');
-  let maxDelay = 200; // Track the maximum delay for proper timing
+  let maxDelay = 200;
   paragraphs.forEach((p, idx) => {
     const delay = 200 + idx * 150;
     maxDelay = Math.max(maxDelay, delay);
@@ -1713,15 +1716,10 @@ function revealDescriptionFirst() {
     );
   });
 
-  // Calculate total animation time needed
-  const totalAnimationTime = maxDelay + 700; // max delay + duration
+  const totalAnimationTime = maxDelay + 700;
 
-  // Return a promise that resolves after all animations complete
   return new Promise(resolve => {
-    // Use a timer based on the calculated total time
-    setTimeout(resolve, totalAnimationTime + 100); // Add small buffer
-
-    // Also try to use the finished promises as backup
+    setTimeout(resolve, totalAnimationTime + 100);
     Promise.all(anims.map(a => a.finished?.catch(() => { }) ?? Promise.resolve()))
       .then(() => resolve());
   });
@@ -1731,35 +1729,28 @@ function revealDescriptionFirst() {
  * Initialize all modules after preloader
  */
 function onPreloaderFinishedAndModulesReady() {
-  // Stage 0: app can start
   document.body.classList.add('app-ready');
   document.body.classList.remove('preloading');
 
-  // Hide preloader node entirely
   const preloader = document.getElementById('preloader');
   if (preloader) preloader.style.display = 'none';
 
-  // --- Build a promise that resolves when the header intro finishes ---
-  // Preferred: a custom event from TextAnimator; Fallback: a timer.
-  const HEADER_FALLBACK_MS = 2400; // keep >= your header movement max time
+  const HEADER_FALLBACK_MS = 2400;
 
   const waitForHeaderIntro = new Promise((resolve) => {
     let settled = false;
 
-    // Event path (fired by TextAnimator when the last span finishes)
     const onEvent = () => {
       if (!settled) { settled = true; resolve(); }
       document.removeEventListener('headerIntroDone', onEvent);
     };
     document.addEventListener('headerIntroDone', onEvent, { once: true });
 
-    // Fallback timer (just in case)
     setTimeout(() => {
       if (!settled) { settled = true; resolve(); }
     }, HEADER_FALLBACK_MS);
   });
 
-  // --- Initialize “early” modules (don’t animate grid/sections yet) ---
   ThemeManager.setupEventListeners();
   LayoutManager.initialize();
   BannerManager.initialize({ delayed: true });
@@ -1770,13 +1761,9 @@ function onPreloaderFinishedAndModulesReady() {
   ChatIconAnimator.initialize();
   FooterLinkManager.initialize();
 
-  // Start the header text animation now (we’re waiting on it above)
   TextAnimator.initialize();
-
-  // Optional extras that don’t affect ordering
   RotatingWordsManager.initialize();
 
-  // Show page chrome immediately
   const pageContent = document.querySelector('.pageContent');
   if (pageContent) {
     pageContent.style.opacity = '1';
@@ -1790,7 +1777,6 @@ function onPreloaderFinishedAndModulesReady() {
 
   handleInitialHashScroll();
 
-  // Stage 1½: bring in the banner carat a bit later
   setTimeout(() => {
     const carat = document.querySelector('.component-banner .carat');
     if (!carat) return;
@@ -1808,33 +1794,22 @@ function onPreloaderFinishedAndModulesReady() {
     });
   }, 3000);
 
-  // --- Stage 2: AFTER header intro, reveal avatar, then description,
-  //              THEN unlock and initialize thumbnails/sections.
   waitForHeaderIntro
-    .then(() => revealHeaderAvatar())     // (2) image on the right
-    .then(() => revealDescriptionFirst()) // (3) overview/secondary description - properly waits for completion
-    // This is the preceding block that reveals the banner.
-    // Make sure you are AFTER this part.
+    .then(() => revealHeaderAvatar())
+    .then(() => revealDescriptionFirst())
     .then(() => {
-      // (4) Reveal banner after description
       BannerManager.reveal();
-      // Wait for banner animation to complete (now ~500ms per CSS)
       return new Promise(resolve => setTimeout(resolve, 400));
     })
-    // This is the final block you need to modify.
     .then(() => {
-      // (5) Now reveal projects after banner is done
       document.body.classList.add('app-stage-content');
-
       document.body.classList.remove('projects-locked');
       document.body.classList.add('projects-unlocked');
 
-      // Ensure the hero is considered revealed for post-unlock micro-effects
       const hero = document.querySelector('.projectThumbnail.is-hero');
       if (hero) {
         setTimeout(() => {
           if (!hero.classList.contains('fadeIn-visible')) hero.classList.add('fadeIn-visible');
-          // Refresh positions so the scale/opacity-on-scroll logic kicks in for the hero too
           try {
             ProjectThumbnails.refreshThumbnails();
             ProjectThumbnails.updateThumbnailsOnScroll();
@@ -1842,14 +1817,12 @@ function onPreloaderFinishedAndModulesReady() {
         }, 60);
       }
 
-      // The setTimeout goes INSIDE this final .then() block.
-      // It wraps only the initializers for the lower content.
       setTimeout(() => {
         PillAnimator.initialize();
         ProjectThumbnails.initialize();
         SectionAnimator.initialize();
         ExperienceManager.initialize();
-      }, 250); // Change this back to 600ms
+      }, 600);
     });
 }
 
@@ -1876,7 +1849,6 @@ function hidePreloader() {
 
   preloader.addEventListener('transitionend', onEnd);
 
-  // Fallback timer
   setTimeout(() => {
     if (!ended) onPreloaderFinishedAndModulesReady();
   }, 750);
@@ -1899,11 +1871,9 @@ window.addEventListener('load', () => {
     pageContent.style.opacity = '0';
   }
 
-  // Setup scroll handlers
   attachSamePageSmoothScroll();
   attachCrossPageHashSaver();
 
-  // Initialize Lottie preloader or fallback
   if (preloader) {
     const lottieContainer = document.getElementById('lottie-container');
     if (lottieContainer && typeof lottie !== 'undefined') {
@@ -1921,18 +1891,15 @@ window.addEventListener('load', () => {
 
       lottieAnimation.addEventListener('complete', hidePreloader);
     } else {
-      // Fallback if Lottie isn't available
       setTimeout(hidePreloader, 500);
     }
   } else {
-    // No preloader, initialize immediately
     onPreloaderFinishedAndModulesReady();
   }
 });
 
-
 // =============================================================================
-// IMAGE SPINNER ASSIST (mouse hover + touch press) — no snap-back on stop
+// IMAGE SPINNER ASSIST (mouse hover + touch press)
 // =============================================================================
 (function () {
   const container = document.querySelector('.header-image-container');
@@ -1942,30 +1909,28 @@ window.addEventListener('load', () => {
   const img = container.querySelector('.header-profile-image');
   if (!mask || !img) return;
 
-  // ---- Tuning knobs ----
-  const SPIN_PERIOD_MS = 16000;                 // one full revolution at max speed (16s)
-  const MAX_SPEED = 360 / SPIN_PERIOD_MS;       // degrees per ms at full speed
-  const RAMP_MS = 600;                        // ease-in/out duration to/from full speed (ms)
-  const SCALE_ON = 1.10;                       // scale while spinning
+  const SPIN_PERIOD_MS = 16000;
+  const MAX_SPEED = 360 / SPIN_PERIOD_MS;
+  const RAMP_MS = 600;
+  const SCALE_ON = 1.10;
   const SCALE_OFF = 1.00;
 
-  // ---- state ----
   let rafId = null;
   let lastT = 0;
-  let angle = 0;            // current angle in degrees
-  let currentSpeed = 0;     // deg/ms
-  let targetSpeed = 0;     // deg/ms
+  let angle = 0;
+  let currentSpeed = 0;
+  let targetSpeed = 0;
   let currentScale = SCALE_OFF;
   let targetScale = SCALE_OFF;
 
   function stepToward(current, target, dt, rampMs) {
-    const k = Math.min(1, dt / rampMs); // fraction of the way each frame
+    const k = Math.min(1, dt / rampMs);
     return current + (target - current) * k;
   }
 
   function tick(t) {
     if (!lastT) lastT = t;
-    const dt = t - lastT;    // ms
+    const dt = t - lastT;
     lastT = t;
 
     currentSpeed = stepToward(currentSpeed, targetSpeed, dt, RAMP_MS);
@@ -1984,10 +1949,10 @@ window.addEventListener('load', () => {
   }
 
   function startSpin() {
-    container.classList.add('is-pressed');  // also triggers color via CSS
+    container.classList.add('is-pressed');
     targetSpeed = MAX_SPEED;
     targetScale = SCALE_ON;
-    lastT = 0;                               // avoid a big first dt after idle
+    lastT = 0;
     ensureRAF();
   }
 
@@ -1996,15 +1961,12 @@ window.addEventListener('load', () => {
     targetSpeed = 0;
     targetScale = SCALE_OFF;
 
-    // Let the ramp-down finish; then stop the RAF loop without snapping transforms.
     const check = () => {
       const nearZeroSpeed = Math.abs(currentSpeed) < 0.00001;
       const nearUnitScale = Math.abs(currentScale - SCALE_OFF) < 0.001;
       if (nearZeroSpeed && nearUnitScale) {
         if (rafId != null) cancelAnimationFrame(rafId);
         rafId = null;
-        // IMPORTANT: do NOT reset angle or transforms here
-        // We keep the final angle so there’s no visual jump.
       } else {
         requestAnimationFrame(check);
       }
@@ -2012,11 +1974,9 @@ window.addEventListener('load', () => {
     requestAnimationFrame(check);
   }
 
-  // ----- Desktop hover -----
   container.addEventListener('mouseenter', startSpin);
   container.addEventListener('mouseleave', stopSpin);
 
-  // ----- Pointer (touch/stylus/pen) -----
   container.addEventListener('pointerdown', (e) => {
     if (e.pointerType !== 'mouse') startSpin();
   });
@@ -2028,15 +1988,10 @@ window.addEventListener('load', () => {
     if (e.pointerType !== 'mouse') stopSpin();
   });
 
-  // ----- Touch fallback (older Safari) -----
   container.addEventListener('touchstart', startSpin, { passive: true });
   container.addEventListener('touchend', stopSpin);
   container.addEventListener('touchcancel', stopSpin);
 })();
-
-
-
-
 
 // =============================================================================
 // FINAL LOG
