@@ -1964,6 +1964,10 @@ window.addEventListener('load', () => {
 
     angle += currentSpeed * dt;
 
+    // Calculate different scales
+    const maskScale = currentScale; // Full scale for mask
+    const imageScale = 1 + (currentScale - 1) * 0.6; // 60% of the scale increase for image
+
     mask.style.transform = `rotate(${angle}deg) scale(${currentScale})`;
     img.style.transform = `rotate(${-angle}deg) scale(${currentScale})`;
 
