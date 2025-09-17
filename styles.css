@@ -343,7 +343,7 @@ body:not(.preloading) .siteCard {
 
 :root {
   /* Single knob for size */
-  --avatar-size: 120px;
+  --avatar-size: 160px;
   /* mobile default (override in media queries below) */
 }
 
@@ -464,6 +464,10 @@ body:not(.preloading) .siteCard {
   -moz-user-drag: none;
   -o-user-drag: none;
   user-drag: none;
+
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+  transition: -webkit-filter 0.4s ease, filter 0.4s ease;
 }
 
 /* Grayscale-on-desktop behavior (color on hover) */
@@ -963,6 +967,7 @@ body.mobile-menu-active {
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
 
 .introText {
   font-size: 2.6rem;
@@ -2147,7 +2152,8 @@ body.dark-mode .pill:hover .highlight {
 }
 
 .rotating-word .thin {
-  font-weight: 200; /* Match the weight of "Alex" */
+  font-weight: 200;
+  /* Match the weight of "Alex" */
 }
 
 .rotating-words-inner {
@@ -2170,6 +2176,15 @@ body.dark-mode .pill:hover .highlight {
   /* Prevent layout shift during resize */
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+}
+
+.mobile-only-separator {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background-color: #4adad14f;
+  border: none;
+  margin: 2rem 0;
 }
 
 /* ==========================================================================
@@ -2210,6 +2225,8 @@ body.app-ready .animation-container {
   transition: opacity 500ms cubic-bezier(0.645, 0.045, 0.355, 1),
     transform 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
 }
+
+
 
 
 /* ==========================================================================
@@ -2289,6 +2306,10 @@ body.app-ready .animation-container {
     padding: 3rem 1rem 0 1rem;
   }
 
+  .mobile-only-separator {
+    display: none;
+  }
+
   header-image-container {
     width: 160px;
     height: 160px;
@@ -2346,6 +2367,9 @@ body.app-ready .animation-container {
 /* --- Desktop (768px+) --- */
 @media only screen and (min-width: 769px) {
 
+  .mobile-only-separator {
+    display: none;
+  }
 
   .introText {
     font-size: 2rem;
@@ -2725,6 +2749,7 @@ body.app-ready .animation-container {
     margin-bottom: 0;
   }
 }
+
 
 
 
