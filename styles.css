@@ -2195,7 +2195,6 @@ body.dark-mode .pill:hover .highlight {
   display: block;
   width: 100%;
   height: 2px;
-  margin-top: .5rem;
   margin-bottom: 2rem;
   background-color: #4adad14f;
   border: none;

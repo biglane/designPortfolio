@@ -323,7 +323,7 @@ const TextAnimator = (function () {
         ],
         {
           duration: 600,
-          delay: 400,
+          delay: 1300,
           fill: 'forwards',
           easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
         }
