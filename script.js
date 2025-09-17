@@ -1934,7 +1934,7 @@ window.addEventListener('load', () => {
   // Get the border element
   const border = container.querySelector('.avatar-border');
 
-  const SPIN_PERIOD_MS = 16000;
+  const SPIN_PERIOD_MS = 20000;
   const MAX_SPEED = 360 / SPIN_PERIOD_MS;
   const RAMP_MS = 600;
   const isMobile = window.innerWidth <= 768;
@@ -1964,16 +1964,18 @@ window.addEventListener('load', () => {
 
     angle += currentSpeed * dt;
 
-    // Calculate different scales
+    // Calculate different scales - image gets much less scaling
     const maskScale = currentScale; // Full scale for mask
-    const imageScale = 1 + (currentScale - 1) * 0.2; // 60% of the scale increase for image
+    const imageScaleAmount = (currentScale - 1) * 0.3; // Only 30% of the scale increase
+    const imageScale = 1 + imageScaleAmount; // So if mask is 1.10, image is only 1.03
 
-    mask.style.transform = `rotate(${angle}deg) scale(${currentScale})`;
-    img.style.transform = `rotate(${-angle}deg) scale(${currentScale})`;
+    // Apply different scales
+    mask.style.transform = `rotate(${angle}deg) scale(${maskScale})`;
+    img.style.transform = `rotate(${-angle}deg) scale(${imageScale})`;
 
-    // Also transform the border if it exists
+    // Border gets full scale like the mask
     if (border) {
-      border.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${currentScale})`;
+      border.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
     }
 
     rafId = requestAnimationFrame(tick);
