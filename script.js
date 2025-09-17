@@ -1909,6 +1909,9 @@ window.addEventListener('load', () => {
   const img = container.querySelector('.header-profile-image');
   if (!mask || !img) return;
 
+  // Get the border element
+  const border = container.querySelector('.avatar-border');
+
   const SPIN_PERIOD_MS = 16000;
   const MAX_SPEED = 360 / SPIN_PERIOD_MS;
   const RAMP_MS = 600;
@@ -1940,6 +1943,11 @@ window.addEventListener('load', () => {
 
     mask.style.transform = `rotate(${angle}deg) scale(${currentScale})`;
     img.style.transform = `rotate(${-angle}deg) scale(${currentScale})`;
+
+    // Also transform the border if it exists
+    if (border) {
+      border.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(${currentScale})`;
+    }
 
     rafId = requestAnimationFrame(tick);
   }

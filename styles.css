@@ -410,6 +410,38 @@ body:not(.preloading) .siteCard {
   user-select: none;
   -webkit-user-select: none;
   pointer-events: none;
+
+  position: relative;
+  z-index: 1;
+}
+
+.avatar-border {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 12px);
+  /* Increased from 8px to 16px */
+  height: calc(100% + 12px);
+  /* Increased from 8px to 16px */
+  background: linear-gradient(110deg,
+      #4ad4a7 0%,
+      #4ac0b7 25%,
+      #4ad4c7 75%,
+      #4aded7 100%);
+  background-size: 200% auto;
+  animation: highlightGradient 9s ease infinite;
+  -webkit-mask-image: url('assets/images/stamp-oval-16.png');
+  mask-image: url('assets/images/stamp-oval-16.png');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .2;
 }
 
 /* The actual photo (counter-rotated by JS to appear still) */
@@ -626,6 +658,10 @@ body,
     color 0.3s ease-out,
     border-color 0.3s ease-out,
     fill 0.3s ease-out;
+}
+
+body.dark-mode .header-image-container .avatar-border {
+  opacity: .08;
 }
 
 /* ==========================================================================
@@ -929,12 +965,12 @@ body.mobile-menu-active {
 }
 
 .introText {
-  font-size: 3rem;
+  font-size: 2.4rem;
   line-height: 3.4rem;
   font-weight: 200;
-  max-width: 400px;
+  max-width: 100%;
   z-index: 10;
-  display: inline-block;
+  display: block;
   caret-color: transparent;
   user-select: none;
   -webkit-user-select: none;
@@ -2077,14 +2113,6 @@ body.dark-mode .pill:hover .highlight {
 
 
 /* rotating words styles */
-
-.introText {
-  font-size: 3rem;
-  line-height: 3.4rem;
-  font-weight: 200;
-  max-width: 100%;
-  display: block;
-}
 
 .introText .line {
   display: block;
