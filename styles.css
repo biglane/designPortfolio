@@ -1072,7 +1072,7 @@ body.mobile-menu-active {
 /* --- Component: Description --- */
 .component-description {
   width: 100%;
-  padding: 4rem 1rem 0rem 1rem;
+  padding: 1rem 1rem 0rem 1rem;
 }
 
 .component-description.hidden-init {
