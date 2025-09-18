@@ -2540,6 +2540,11 @@ body.app-ready .animation-container {
     margin-bottom: 1.2rem;
   }
 
+  .component-description .social-icons-container {
+    margin-top: 1.5rem;
+  }
+
+
   .introText {
     font-size: 2rem;
     line-height: 2.5rem;
