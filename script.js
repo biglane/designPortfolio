@@ -228,8 +228,8 @@ const ThemeManager = (function () {
 // 4.1 Text Animations  (UPDATED: dispatch 'headerIntroDone' when finished)
 // -----------------------------------------------------------------------------
 const TextAnimator = (function () {
-  function initialize() {
-    animateIntroText();
+  function initialize(mobileSeparatorDelay = 1300) {  // Add parameter
+    animateIntroText(mobileSeparatorDelay);
   }
 
   function animateIntroText() {
@@ -277,9 +277,9 @@ const TextAnimator = (function () {
     rows.sort((a, b) => a.top - b.top);
 
     // Animation timings (same as your existing logic)
-    const movementDuration = 1600;
+    const movementDuration = 1200;
     const opacityDuration = 600;
-    const rowStagger = 200;
+    const rowStagger = 80;
     const intraStagger = 120; // extra stagger per word for row 2
 
     // Animate each span and collect the Animation objects
@@ -316,6 +316,7 @@ const TextAnimator = (function () {
     const mobileSeparator = document.querySelector('.mobile-only-separator');
     if (mobileSeparator) {
       mobileSeparator.style.opacity = '0'; // Start hidden
+      mobileSeparator.style.transform = 'translateY(20px)';
       const sepAnim = mobileSeparator.animate(
         [
           { opacity: 0, transform: 'translateY(20px)' },
@@ -323,7 +324,7 @@ const TextAnimator = (function () {
         ],
         {
           duration: 600,
-          delay: 1300,
+          delay: mobileSeparatorDelay,
           fill: 'forwards',
           easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
         }
@@ -517,12 +518,12 @@ const ProjectThumbnails = (function () {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('fadeIn-visible');
-            setTimeout(() => storePosition(entry.target), 500);
+            setTimeout(() => storePosition(entry.target), 100);
             obs.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0.05 }
     );
 
     observer.observe(thumbnail);
@@ -1675,7 +1676,7 @@ function handleInitialHashScroll() {
 }
 
 // =============================================================================
-// 8. PAGE INITIALIZATION (Rest remains the same)
+// 8. PAGE INITIALIZATION
 // =============================================================================
 
 /**
@@ -1757,22 +1758,30 @@ function onPreloaderFinishedAndModulesReady() {
   const preloader = document.getElementById('preloader');
   if (preloader) preloader.style.display = 'none';
 
-  const HEADER_FALLBACK_MS = 2400;
+  // ============================================
+  // ANIMATION TIMING CONFIGURATION
+  // Adjust these values to control when each element fades in
+  // All values are in milliseconds from when preloader finishes
+  // ============================================
+  const ANIMATION_DELAYS = {
+    headerText: 0,           // Main intro text (Alex Biglane, etc.)
+    avatar: 1100,             // Profile image
+    mobileSeparator: 1250,   // Mobile horizontal line
+    description: 1500,        // Overview section
+    descriptionStagger: 150, // Delay between description paragraphs
+    socialIcons: 1000,        // Social media icons (base delay)
+    socialIconStagger: 50,  // Delay between each social icon
+    banner: 1000,            // Banner image (if present)
+    thumbnails: 1600,        // Project grid
+    rotatingWords: 3200,     // Rotating text animation
+    caratIndicator: 3000,    // Scroll down arrow
+  };
 
-  const waitForHeaderIntro = new Promise((resolve) => {
-    let settled = false;
+  // ============================================
+  // INITIALIZATION (Don't modify below unless changing functionality)
+  // ============================================
 
-    const onEvent = () => {
-      if (!settled) { settled = true; resolve(); }
-      document.removeEventListener('headerIntroDone', onEvent);
-    };
-    document.addEventListener('headerIntroDone', onEvent, { once: true });
-
-    setTimeout(() => {
-      if (!settled) { settled = true; resolve(); }
-    }, HEADER_FALLBACK_MS);
-  });
-
+  // Initialize core modules immediately
   ThemeManager.setupEventListeners();
   LayoutManager.initialize();
   BannerManager.initialize({ delayed: true });
@@ -1783,9 +1792,7 @@ function onPreloaderFinishedAndModulesReady() {
   ChatIconAnimator.initialize();
   FooterLinkManager.initialize();
 
-  TextAnimator.initialize();
-  RotatingWordsManager.initialize();
-
+  // Make page visible
   const pageContent = document.querySelector('.pageContent');
   if (pageContent) {
     pageContent.style.opacity = '1';
@@ -1799,6 +1806,124 @@ function onPreloaderFinishedAndModulesReady() {
 
   handleInitialHashScroll();
 
+  // ============================================
+  // EXECUTE ANIMATIONS BASED ON CONFIG
+  // ============================================
+
+  // Header text
+  setTimeout(() => {
+    TextAnimator.initialize(ANIMATION_DELAYS.mobileSeparator);  // Pass the delay
+  }, ANIMATION_DELAYS.headerText);
+
+  // Rotating words
+  setTimeout(() => {
+    RotatingWordsManager.initialize();
+  }, ANIMATION_DELAYS.rotatingWords);
+
+  // Avatar
+  setTimeout(() => {
+    const avatar = document.querySelector('.header-image-container');
+    if (avatar) {
+      avatar.style.opacity = '1';
+      avatar.style.transform = 'translateY(0)';
+    }
+  }, ANIMATION_DELAYS.avatar);
+
+  // Social icons
+  setTimeout(() => {
+    const socialIcons = document.querySelectorAll('.social-icon');
+    socialIcons.forEach((icon, index) => {
+      setTimeout(() => {
+        icon.style.opacity = '1';
+        icon.style.transform = 'translateY(0)';  // Changed from translateX(0) to translateY(0)
+      }, index * ANIMATION_DELAYS.socialIconStagger);
+    });
+  }, ANIMATION_DELAYS.socialIcons);
+
+  // Mobile separator
+  setTimeout(() => {
+    const separator = document.querySelector('.mobile-only-separator');
+    if (separator) {
+      // First, ensure transition is set while element is still hidden
+      separator.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+      // Force a reflow to ensure the transition is applied
+      separator.offsetHeight;
+
+      // Then change the values to trigger the animation
+      separator.style.opacity = '1';
+      separator.style.transform = 'translateY(0)';
+    }
+  }, ANIMATION_DELAYS.mobileSeparator);
+
+  // Description section
+  setTimeout(() => {
+    const section = document.querySelector('.component-description');
+    if (section) {
+      // Remove hidden-init if it exists
+      if (section.classList.contains('hidden-init')) {
+        section.classList.remove('hidden-init');
+      }
+      section.style.opacity = '1';
+      section.style.transform = 'translateY(0)';
+
+      // CRITICAL: Animate the descriptionText-1 container
+      const descText = section.querySelector('.descriptionText-1');
+      if (descText) {
+        descText.style.opacity = '1';
+        descText.style.transform = 'translateY(0)';
+        descText.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      }
+
+      // Animate the line separator within description
+      const lineSeparator = section.querySelector('.lineSeparator');
+      if (lineSeparator) {
+        lineSeparator.style.opacity = '0';
+        lineSeparator.style.transform = 'translateY(40px)';
+        setTimeout(() => {
+          lineSeparator.style.opacity = '1';
+          lineSeparator.style.transform = 'translateY(0)';
+          lineSeparator.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        }, 60);
+      }
+
+      const paragraphs = section.querySelectorAll('.paragraph-section');
+      paragraphs.forEach((p, idx) => {
+        setTimeout(() => {
+          p.style.opacity = '1';
+          p.style.transform = 'translateY(0)';
+        }, idx * ANIMATION_DELAYS.descriptionStagger);
+      });
+    }
+  }, ANIMATION_DELAYS.description);
+
+  // Banner
+  setTimeout(() => {
+    BannerManager.reveal();
+  }, ANIMATION_DELAYS.banner);
+
+  // Project thumbnails and other sections
+  setTimeout(() => {
+    document.body.classList.add('app-stage-content');
+    document.body.classList.remove('projects-locked');
+    document.body.classList.add('projects-unlocked');
+
+    const hero = document.querySelector('.projectThumbnail.is-hero');
+    if (hero) {
+      if (!hero.classList.contains('fadeIn-visible')) hero.classList.add('fadeIn-visible');
+      try {
+        ProjectThumbnails.refreshThumbnails();
+        ProjectThumbnails.updateThumbnailsOnScroll();
+      } catch (e) { }
+    }
+
+    PillAnimator.initialize();
+    ProjectThumbnails.initialize();
+    SectionAnimator.initialize();
+    ExperienceManager.initialize();
+  }, ANIMATION_DELAYS.thumbnails);
+
+  // Carat indicator
   setTimeout(() => {
     const carat = document.querySelector('.component-banner .carat');
     if (!carat) return;
@@ -1814,38 +1939,7 @@ function onPreloaderFinishedAndModulesReady() {
       const targetY = desc.getBoundingClientRect().top + window.pageYOffset - (navHeight + 2.5 * rootFontSize);
       window.scrollTo({ top: targetY, behavior: 'smooth' });
     });
-  }, 3000);
-
-  waitForHeaderIntro
-    .then(() => revealHeaderAvatar())
-    .then(() => revealDescriptionFirst())
-    .then(() => {
-      BannerManager.reveal();
-      return new Promise(resolve => setTimeout(resolve, 400));
-    })
-    .then(() => {
-      document.body.classList.add('app-stage-content');
-      document.body.classList.remove('projects-locked');
-      document.body.classList.add('projects-unlocked');
-
-      const hero = document.querySelector('.projectThumbnail.is-hero');
-      if (hero) {
-        setTimeout(() => {
-          if (!hero.classList.contains('fadeIn-visible')) hero.classList.add('fadeIn-visible');
-          try {
-            ProjectThumbnails.refreshThumbnails();
-            ProjectThumbnails.updateThumbnailsOnScroll();
-          } catch (e) { }
-        }, 60);
-      }
-
-      setTimeout(() => {
-        PillAnimator.initialize();
-        ProjectThumbnails.initialize();
-        SectionAnimator.initialize();
-        ExperienceManager.initialize();
-      }, 600);
-    });
+  }, ANIMATION_DELAYS.caratIndicator);
 }
 
 /**
@@ -1873,7 +1967,7 @@ function hidePreloader() {
 
   setTimeout(() => {
     if (!ended) onPreloaderFinishedAndModulesReady();
-  }, 750);
+  }, 350);
 }
 
 // =============================================================================
@@ -1910,6 +2004,8 @@ window.addEventListener('load', () => {
         autoplay: true,
         path: isDarkMode ? darkModePath : lightModePath
       });
+
+      lottieAnimation.setSpeed(1.3);  // Set speed after loading
 
       lottieAnimation.addEventListener('complete', hidePreloader);
     } else {

@@ -354,42 +354,98 @@ body:not(.preloading) .siteCard {
   filter: grayscale(0%);
 }
 
-/* Header Layout (mobile-first) */
 .header-content {
   display: flex;
   flex-direction: column;
-  /* space between name block and avatar on mobile */
-  align-items: flex-start;
+  align-items: center;
+  /* Center everything */
   width: 100%;
+  text-align: left;
+  /* Center text on mobile */
+}
+
+.animation-container {
+  width: 100%;
+  align-self: flex-start;
+  /* This makes the text container align left */
+}
+
+.component-description .social-icons-container {
+  display: flex;
+  flex-direction: row;
+  /* Horizontal layout */
+  gap: 0.75rem;
+  margin-top: 2rem;
+  justify-content: flex-start;
+  /* Align to left */
+}
+
+.component-description .descriptionText-1 {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
 .header-image-container {
-  /* Size and positioning */
   width: var(--avatar-size);
   height: var(--avatar-size);
   position: relative;
   margin: 0 auto;
-
-  
-  
-
-  /* Animation states */
+  /* Centers the avatar */
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .6s ease, transform .6s ease;
   will-change: opacity, transform;
-
-  /* Touch handling */
   touch-action: manipulation;
-
-  /* Prevent selection and dragging */
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
+  align-self: center;
+  margin-top: .5rem;
+  margin-bottom: 0rem;
 }
 
+.social-icons-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-left: auto;
+  margin-right: 1rem;
+}
 
-/* Mask wrapper: applies the PNG scallop;
+.social-icon {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  /* Initial hidden state */
+  opacity: 0;
+  transform: translateX(20px);
+  /* Transition for both hover effects and initial animation */
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.social-cube {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.social-icon:hover {
+  transform: scale(1.1);
+}
+
+.social-icon:active {
+  transform: scale(0.95);
+}
+
+/*
+ Mask wrapper: applies the PNG scallop;
    JS will rotate/scale this element, so do NOT animate transform in CSS. */
 .avatar-mask {
   width: 100%;
@@ -542,6 +598,22 @@ body:not(.preloading) .siteCard {
   }
 }
 
+body.app-ready .social-icon {
+  /* Still hidden, JS will reveal them */
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+body.app-ready .social-icon:nth-child(1) {
+  transition-delay: 0.8s;
+  /* 👈 First icon delay */
+}
+
+body.app-ready .social-icon:nth-child(2) {
+  transition-delay: 1s;
+  /* 👈 Second icon delay */
+}
+
 
 
 /* ==========================================================================
@@ -670,6 +742,17 @@ body.dark-mode .header-image-container .avatar-border {
   opacity: .08;
 }
 
+body:not(.app-ready) .social-icon,
+body:not(.app-ready) .header-image-container,
+body:not(.app-ready) .mobile-only-separator,
+body:not(.app-ready) .component-description,
+body:not(.app-ready) .component-description .lineSeparator,
+body:not(.app-ready) .component-description .paragraph-section {
+  opacity: 0 !important;
+  transform: translateY(20px) !important;
+  transition: none !important;
+}
+
 /* ==========================================================================
    5. COMPONENTS (MOBILE-FIRST)
    ========================================================================== */
@@ -686,7 +769,7 @@ body.dark-mode .header-image-container .avatar-border {
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  transition: opacity 0.7s ease-out;
+  transition: opacity 0.3s ease-out;
 }
 
 #preloader .loader {
@@ -1072,18 +1155,34 @@ body.mobile-menu-active {
 /* --- Component: Description --- */
 .component-description {
   width: 100%;
-  padding: 1rem 1rem 0rem 1rem;
+  padding: 0rem 1rem 0rem 1rem;
 }
 
 .component-description.hidden-init {
   opacity: 0;
   transform: translateY(80px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.component-description .lineSeparator,
+.component-description .lineSeparator {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
 .component-description .paragraph-section {
   opacity: 0;
   will-change: opacity, transform;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+/* CRITICAL: Prevent any description animations before preloader finishes */
+body:not(.app-ready) .component-description,
+body:not(.app-ready) .component-description .lineSeparator,
+body:not(.app-ready) .component-description .paragraph-section {
+  opacity: 0 !important;
+  transform: translateY(80px) !important;
+  transition: none !important;
 }
 
 @media only screen and (max-width: 480px) {
@@ -1197,6 +1296,10 @@ body.dark-mode .pill:hover .highlight {
 
 .sectionTitle {
   padding-bottom: 1rem;
+}
+
+.sectionTitle--overview {
+  padding: 0;
 }
 
 .sectionTitleText {
@@ -2114,7 +2217,6 @@ body.dark-mode .pill:hover .highlight {
 .animation-container {
   display: inline-block;
   overflow: hidden;
-  padding-bottom: 0.2rem;
 }
 
 .word {
@@ -2195,9 +2297,15 @@ body.dark-mode .pill:hover .highlight {
   display: block;
   width: 100%;
   height: 2px;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
   background-color: #4adad14f;
   border: none;
+  opacity: 0;
+  /* Start hidden */
+  transform: translateY(20px);
+  /* Start offset */
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 /* ==========================================================================
@@ -2315,6 +2423,16 @@ body.app-ready .animation-container {
 
 /* --- Tablet (481px - 768px) --- */
 @media only screen and (min-width: 481px) and (max-width: 768px) {
+
+  .header-content {
+    text-align: left;
+    /* Left align text on larger screens */
+  }
+
+  .animation-container {
+    width: 100%;
+  }
+
   .component-header {
     padding: 3rem 1rem 0 1rem;
   }
@@ -2377,8 +2495,29 @@ body.app-ready .animation-container {
 }
 
 
-/* --- Desktop (768px+) --- */
+/* --- Desktop (769px) --- */
 @media only screen and (min-width: 769px) {
+
+
+  .header-right-section {
+    display: contents;
+    /* This makes the container disappear but keeps children */
+  }
+
+  /* Reset to your existing desktop layout */
+
+  .header-content {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .header-image-container {
+    margin-left: auto;
+    /* Push to right on desktop */
+    margin-right: 0;
+  }
 
   .mobile-only-separator {
     display: none;
@@ -2439,13 +2578,6 @@ body.app-ready .animation-container {
 
   .component-banner .carat {
     display: none;
-  }
-
-  .header-content {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 3rem;
   }
 
   .animation-container {
