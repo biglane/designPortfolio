@@ -2429,6 +2429,18 @@ body.app-ready .animation-container {
     /* Left align text on larger screens */
   }
 
+  .lineSeparator {
+    margin-bottom: 1rem;
+  }
+
+  .component-description .social-icons-container {
+    margin-top: 1rem;
+  }
+
+  .header-image-container {
+    margin-bottom: 2rem;
+  }
+
   .animation-container {
     width: 100%;
   }
@@ -2439,6 +2451,7 @@ body.app-ready .animation-container {
 
   .mobile-only-separator {
     display: none;
+
   }
 
   header-image-container {
@@ -2509,7 +2522,7 @@ body.app-ready .animation-container {
   .header-content {
     flex-direction: row;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-end;
     text-align: left;
   }
 
@@ -2521,6 +2534,10 @@ body.app-ready .animation-container {
 
   .mobile-only-separator {
     display: none;
+  }
+
+  .lineSeparator {
+    margin-bottom: 1.2rem;
   }
 
   .introText {
@@ -2572,16 +2589,14 @@ body.app-ready .animation-container {
     /* Remove the flex and align-items properties */
   }
 
-  .animation-container {
-    flex: 1;
-  }
-
   .component-banner .carat {
     display: none;
   }
 
   .animation-container {
     flex: 1;
+    align-self: flex-end;
+    padding-bottom: 0;
   }
 
 
