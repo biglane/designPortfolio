@@ -471,7 +471,7 @@ body:not(.preloading) .siteCard {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 
   width: var(--size);
   height: var(--size);
@@ -514,6 +514,14 @@ body:not(.preloading) .siteCard {
     filter .35s ease;
   z-index: 0;
   /* behind the SVG */
+  left: 0;
+  /* Anchor to left edge instead of covering full container */
+  right: auto;
+  width: var(--size);
+  /* Match the size */
+  height: var(--size);
+  transform: translateX(-20%);
+  /* Shift slightly left to center on icon */
 }
 
 /* The SVG (always visible by default) */
@@ -589,7 +597,7 @@ body.app-ready .social-icon:nth-child(2) {
 /* Dark mode overrides */
 body.dark-mode .social-icon {
   /* circle color (only visible on hover in your setup) */
-  --circle-color: #2626268b;
+  --circle-color: #44444474;
 
   /* icons white by default and on hover */
   --icon-color: #f2f2f2;
@@ -1242,10 +1250,10 @@ body.mobile-menu-active {
 }
 
 
-
-
+/* Default/Mobile - with clamp sizing */
 .introText {
-  font-size: 2.6rem;
+  font-size: clamp(2rem, 7vw, 2.6rem);
+  /* Responsive across all sizes */
   line-height: 3rem;
   font-weight: 200;
   max-width: 100%;
@@ -1257,6 +1265,66 @@ body.mobile-menu-active {
   -moz-user-select: none;
   -ms-user-select: none;
 }
+
+/* Fix line spacing */
+.introText .line {
+  display: block;
+  line-height: 1.1;
+  margin-bottom: 0.2rem;
+}
+
+.introText .line:last-child {
+  margin-bottom: 0;
+}
+
+/* Fix the rotating text container */
+.introText .line-2 {
+  min-height: auto;
+  overflow: visible;
+}
+
+.introText .line-2>.strong:last-child {
+  height: auto;
+  line-height: inherit;
+  overflow: visible;
+}
+
+/* Extra small mobile screens */
+@media only screen and (max-width: 380px) {
+  .introText {
+    font-size: clamp(1.8rem, 6vw, 2.2rem);
+  }
+
+  /* Make line spacing consistent */
+  .introText .line {
+    line-height: 1.1;
+    margin-bottom: 0.1rem;
+    /* Reduced from 0.2rem */
+  }
+
+  /* Fix the rotating text line specifically */
+  .introText .line-2 {
+    margin-bottom: 0.1rem;
+    /* Same as other lines */
+    min-height: 1.8rem;
+    /* Match the minimum font size */
+  }
+
+  /* Adjust rotating word container */
+  .introText .line-2>.strong:last-child {
+    height: 1.8rem;
+    /* Match font size */
+    line-height: 1.8rem;
+  }
+
+  .rotating-word {
+    height: 1.8rem;
+    line-height: 1.8rem;
+  }
+}
+
+
+
 
 
 .sub-header-text {
@@ -2749,7 +2817,7 @@ body.app-ready .animation-container {
   }
 
   .introText {
-    font-size: 3.5rem;
+    font-size: 3.2rem;
     line-height: 4rem;
   }
 
