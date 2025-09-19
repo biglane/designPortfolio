@@ -1292,7 +1292,7 @@ body.mobile-menu-active {
 /* Extra small mobile screens */
 @media only screen and (max-width: 380px) {
   .introText {
-    font-size: clamp(2.3rem, 7vw, 3rem);
+    font-size: clamp(2rem, 7vw, 3rem);
   }
 
   /* Make line spacing consistent */
@@ -1444,7 +1444,7 @@ body:not(.app-ready) .component-description .paragraph-section {
 }
 
 
-
+/* mobile only styles */
 @media only screen and (max-width: 480px) {
   .component-description .lineSeparator {
     display: none;
@@ -1456,7 +1456,10 @@ body:not(.app-ready) .component-description .paragraph-section {
 
   .project-page .sub-header-text {
     margin-bottom: 1rem;
-    /* This is missing - add this! */
+  }
+
+  .social-icon::before {
+    display: none;
   }
 }
 
@@ -1470,7 +1473,11 @@ body:not(.app-ready) .component-description .paragraph-section {
   font-size: 1.1rem;
   line-height: 1.8rem;
   font-weight: 300;
+}
+
+body:not(.project-page) .descriptionText-1 {
   text-align: justify;
+  text-align-last: left;
 }
 
 .paragraph-section.hidden-init {
