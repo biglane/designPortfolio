@@ -1292,7 +1292,7 @@ body.mobile-menu-active {
 /* Extra small mobile screens */
 @media only screen and (max-width: 380px) {
   .introText {
-    font-size: clamp(1.8rem, 6vw, 2.2rem);
+    font-size: clamp(2rem, 7vw, 2.4rem);
   }
 
   /* Make line spacing consistent */
