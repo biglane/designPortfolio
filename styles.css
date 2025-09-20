@@ -1273,7 +1273,7 @@ body.mobile-menu-active {
 
 /* Default/Mobile - with clamp sizing */
 .introText {
-  font-size: clamp(2.8rem, 7vw, 2.9rem);
+  font-size: clamp(2.4rem, 7vw, 2.9rem);
   /* Responsive across all sizes */
   line-height: 3rem;
   font-weight: 200;
