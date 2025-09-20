@@ -1287,6 +1287,22 @@ body.mobile-menu-active {
   -ms-user-select: none;
 }
 
+/* PROJECT PAGES ONLY - Different sizing for project pages */
+.project-page .introText {
+  font-size: 3rem;
+  /* Fixed size instead of clamp for project pages */
+  line-height: 3rem;
+  font-weight: 200;
+  max-width: 100%;
+  z-index: 10;
+  display: block;
+  caret-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 /* Fix line spacing */
 .introText .line {
   display: block;
@@ -1360,7 +1376,7 @@ body.mobile-menu-active {
 
 
 .sub-header-text {
-  font-size: 1.75rem;
+  font-size: 1.4rem;
   font-weight: 300;
   letter-spacing: -.1px;
   color: inherit;
@@ -1478,6 +1494,103 @@ body:not(.app-ready) .component-description .paragraph-section {
 .project-page .sub-header-text {
   opacity: 0;
   transform: translateY(20px);
+  text-align: center;
+}
+
+/* Center align all section headers on project pages */
+.project-page .component-sectionTitle {
+  text-align: center;
+}
+
+.project-page .component-sectionTitle .sectionTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.project-page .component-sectionTitle .sectionTitleText {
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Center the line separator above section titles */
+.project-page .component-sectionTitle .lineSeparator {
+  max-width: 720px;
+  margin: 0 auto 1rem auto;
+}
+
+/* Project Details - New Structure */
+.projectDetails {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  padding: 0;
+  width: 100%;
+}
+
+.projectDetail-item {
+  position: relative;
+}
+
+.projectDetail-text {
+  font-size: 1rem;
+  font-weight: 400;
+  color: inherit;
+  white-space: nowrap;
+}
+
+/* Add dividers between items */
+.projectDetail-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  right: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 16px;
+  background-color: #4adad14f;
+  opacity: 0.5;
+}
+
+/* Project Page Column Structure */
+.project-page .component-description .leftColumnContainer {
+  display: none;
+}
+
+.project-page .component-description .rightColumnContainer {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.project-page .component-description .columns {
+  display: flex;
+  justify-content: center;
+}
+
+/* Center align the header and subtext */
+.project-page .component-header {
+  text-align: center;
+  align-items: center;
+}
+
+.project-page .animation-container {
+  width: 100%;
+  text-align: center;
+  align-self: center;
+  overflow: visible;
+}
+
+.project-page .sub-header-text {
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* Center the line separator */
+.project-page .component-description .lineSeparator {
+  max-width: 720px;
+  margin: 0 auto 1.5rem auto;
 }
 
 /* mobile only styles */
@@ -1497,6 +1610,17 @@ body:not(.app-ready) .component-description .paragraph-section {
   .social-icon::before {
     display: none;
   }
+
+  .projectDetails {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .projectDetail-item:not(:last-child)::after {
+    display: none;
+  }
+
 }
 
 .greeting-inline {
@@ -1505,7 +1629,7 @@ body:not(.app-ready) .component-description .paragraph-section {
 }
 
 .descriptionText-1 {
-  max-width: 400px;
+  max-width: 800px;
   font-size: 1.1rem;
   line-height: 1.8rem;
   font-weight: 300;
@@ -1719,10 +1843,12 @@ body.dark-mode .pill:hover .highlight {
   margin-bottom: 0;
 }
 
-.component-textSection .rightColumnContainer>.sectionBody,
-.component-textSection .rightColumnContainer>.quoteSection {
+.component-textSection .sectionBody.hidden-init,
+.component-textSection .quoteSection.hidden-init {
   opacity: 0;
+  transform: translateY(40px);
 }
+
 
 .sectionBody {
   display: flex;
@@ -1730,15 +1856,28 @@ body.dark-mode .pill:hover .highlight {
   gap: 0;
 }
 
+.component-textSection .sectionBodyText {
+  text-align: justify;
+  text-align-last: left;
+}
+
 .sectionBody>*+* {
   margin-top: 2rem;
 }
 
 .sectionBodyText {
-  font-size: 1.5rem;
+  font-size: 1.1rem;
   line-height: 2rem;
   font-weight: 300;
   margin: 0;
+  max-width: 800px;
+}
+
+.project-page .component-projectGrid .sectionBodyText {
+  text-align: justify;
+  text-align-last: left;
+  margin-left: auto;
+  margin-right: auto;
   max-width: 400px;
 }
 
@@ -1754,8 +1893,8 @@ body.dark-mode .pill:hover .highlight {
   padding-block: 2rem;
   padding-inline: 0;
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   gap: 24px;
 }
 
@@ -1765,7 +1904,7 @@ body.dark-mode .pill:hover .highlight {
   line-height: 2rem;
   font-weight: 600;
   margin: 0;
-  text-align: left;
+  text-align: center;
   font-family: 'Albra Book', sans-serif;
 }
 
@@ -2536,10 +2675,15 @@ body.dark-mode .pill:hover .highlight {
 
 /* Animation Helpers */
 .word-container,
-.word-container-tall,
-.animation-container {
+.word-container-tall {
   display: inline-block;
   overflow: hidden;
+}
+
+.animation-container {
+  display: inline-block;
+  overflow: visible;
+  /* Changed to visible */
 }
 
 .word {
@@ -2551,6 +2695,15 @@ body.dark-mode .pill:hover .highlight {
 #about-section:focus,
 #selected-work-title:focus {
   outline: none;
+}
+
+/* Ensure the highlight span doesn't get clipped */
+.project-page .introText .highlight {
+  display: inline-block;
+  padding: 0 0.2em;
+  /* Add small horizontal padding */
+  margin: 0 0.1em;
+  /* Add small margin to prevent clipping */
 }
 
 
@@ -2785,26 +2938,63 @@ body.app-ready .animation-container {
   .project-page .component-header {
     display: flex;
     flex-direction: column;
-    align-items: flex-start !important;
+    align-items: center;
     /* Force left alignment */
     justify-content: flex-start !important;
-    text-align: left;
+    text-align: center;
+  }
+
+  .project-page .component-projectGrid .columns {
+    display: flex;
+    justify-content: center;
+  }
+
+  .project-page .component-projectGrid .leftColumnContainer {
+    display: none;
+    /* Hide left column on mobile */
+  }
+
+  .project-page .component-projectGrid .rightColumnContainer {
+    width: 100%;
+    max-width: 400px;
+    /* Adjust this to control text block width */
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  .project-page .component-projectGrid .sectionBodyText {
+    text-align: justify;
+    text-align-last: center;
+    /* or 'left' for last line */
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .project-page .component-projectGrid .quoteSection {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  /* Keep the quote centered as well */
+  .project-page .component-projectGrid .quoteText {
+    text-align: center;
   }
 
   .project-page .animation-container {
     width: 100%;
-    align-self: flex-start !important;
+    align-self: center;
     /* Anchor to left */
-    text-align: left;
+    text-align: center;
   }
 
   .project-page .introText {
-    font-size: 4rem;
-    line-height: 4.4rem;
-    text-align: left !important;
+    font-size: 4.5rem;
+    line-height: 5.5rem;
+    /* Increased to prevent clipping */
+    text-align: center !important;
     display: block;
-    width: auto;
-    /* Don't force full width */
+    width: 100%;
+    overflow: visible;
   }
 
   .project-page .sub-header-text {
@@ -2822,12 +3012,14 @@ body.app-ready .animation-container {
   .project-page .component-description .descriptionText-1 {
     max-width: 100%;
     /* Use full available width */
-    text-align: left;
+    text-align: justify;
+    text-align-last: left;
     /* Keep left alignment */
   }
 
   .project-page .component-description .paragraph-section {
-    text-align: left;
+    text-align: justify;
+    text-align-last: left;
   }
 
 
@@ -2894,6 +3086,22 @@ body.app-ready .animation-container {
 /* --- Desktop (769px) --- */
 @media only screen and (min-width: 769px) {
 
+  .project-page .component-projectGrid .sectionBodyText {
+    text-align: justify;
+    text-align-last: left;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    /* Let the container control the width */
+  }
+
+  .project-page .component-projectGrid .sectionBody {
+    width: 100%;
+    max-width: 100%;
+    /* Let the parent container control width */
+    margin: 0 auto;
+  }
+
 
   .header-right-section {
     display: contents;
@@ -2941,38 +3149,74 @@ body.app-ready .animation-container {
     /* Ensure consistent line height */
   }
 
+  /* Project page content centering */
+  .project-page .component-projectGrid .columns {
+    display: flex;
+    justify-content: center;
+  }
+
+  .project-page .component-projectGrid .leftColumnContainer {
+    display: none;
+  }
+
+  .project-page .component-projectGrid .rightColumnContainer {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .project-page .component-projectGrid .sectionBody {
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .project-page .component-projectGrid .quoteSection {
+    margin: 2rem auto;
+    text-align: center;
+  }
+
   .project-page .component-header {
     max-width: 1088px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: flex-start !important;
-    /* Force left alignment */
-    justify-content: flex-start !important;
-    text-align: left;
+    align-items: center !important;
+    /* Changed from flex-start */
+    justify-content: center !important;
+    /* Changed from flex-start */
+    text-align: center;
   }
 
   .project-page .animation-container {
     width: 100%;
-    align-self: flex-start !important;
-    /* Anchor to left */
-    flex: unset;
+    max-width: 100%;
+    flex: none;
     /* Remove any flex grow/shrink */
-    text-align: left;
+    align-self: center;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .project-page .introText {
     font-size: 4.5rem;
-    line-height: 5rem;
-    text-align: left !important;
+    line-height: 5.5rem;
+    text-align: center !important;
     display: block;
-    width: auto;
-    /* Don't force full width */
+    width: 100%;
+    margin: 0 auto;
+    /* Add auto margins */
+    padding: 0;
+    overflow: visible;
   }
 
   .project-page .sub-header-text {
-    align-self: flex-start !important;
+    align-self: center !important;
     text-align: left;
+    overflow: visible;
   }
 
   /* All spans in line-2 should align properly */
@@ -3027,6 +3271,46 @@ body.app-ready .animation-container {
     line-height: 2.5rem;
   }
 
+  /* Fix clipping on project page headers */
+  .project-page .introText {
+    line-height: 1.2;
+    /* More relaxed line-height */
+    overflow: visible;
+  }
+
+  .project-page .introText span {
+    display: inline;
+    text-align: center;
+  }
+
+  .project-page .introText .strong.highlight {
+    line-height: 1;
+    /* Reset line-height for the + symbol */
+    display: inline-block;
+    vertical-align: baseline;
+    padding: 0.1em 0.2em;
+    /* Add padding to prevent clipping */
+    margin: 0 0.1em;
+  }
+
+  .project-page .header-content {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Override the rotating word container constraints on project pages */
+  .project-page .introText>.strong:last-child,
+  .project-page .introText .line-2>.strong:last-child {
+    height: auto;
+    /* Remove fixed height */
+    line-height: inherit;
+    /* Inherit from parent */
+    overflow: visible;
+  }
+
   .rotating-word {
     height: 2.5rem;
     line-height: 2.5rem;
@@ -3070,15 +3354,16 @@ body.app-ready .animation-container {
   }
 
   .quoteText {
-    font-size: 2rem;
+    font-size: 1.8rem;
     line-height: 2.5rem;
   }
 
   .sectionBodyText {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     line-height: 2rem;
     font-weight: 300;
     margin: 0;
+    max-width: 800px;
   }
 
   /* Vertical Text */
@@ -3130,7 +3415,7 @@ body.app-ready .animation-container {
   }
 
   .descriptionText-1 {
-    max-width: 700px;
+    max-width: 800px;
     pointer-events: none;
   }
 
@@ -3262,8 +3547,17 @@ body.app-ready .animation-container {
 
   /* Project Pages */
   .project-page .component-header {
-    max-width: 1088px;
+    max-width: 500px;
+    /* Match the content width */
     margin: 0 auto;
+    padding: 2rem 0 0 0;
+    /* Remove horizontal padding */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
   }
 
   .projectPepsico-page .bannerImage {

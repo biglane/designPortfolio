@@ -138,6 +138,16 @@ const ThemeManager = (function () {
         : 'assets/images/lightmodeBanner.jpg';
     }
 
+    const themeAwareLogos = document.querySelectorAll('.theme-aware-logo');
+    themeAwareLogos.forEach(logo => {
+      const darkSrc = logo.getAttribute('data-dark-src');
+      const lightSrc = logo.getAttribute('data-light-src');
+
+      if (darkSrc && lightSrc) {
+        logo.src = STATE.darkMode.active ? darkSrc : lightSrc;
+      }
+    });
+
     // Icon state
     if (STATE.darkMode.active) {
       darkModeIconElement.classList.add('is-moon');
@@ -197,6 +207,17 @@ const ThemeManager = (function () {
         : 'assets/images/lightmodeBanner.jpg';
     }
 
+    // Swap theme-aware logos
+    const themeAwareLogos = document.querySelectorAll('.theme-aware-logo');
+    themeAwareLogos.forEach(logo => {
+      const darkSrc = logo.getAttribute('data-dark-src');
+      const lightSrc = logo.getAttribute('data-light-src');
+
+      if (darkSrc && lightSrc) {
+        logo.src = STATE.darkMode.active ? darkSrc : lightSrc;
+      }
+    });
+
     if (STATE.darkMode.active) {
       darkModeIconElement.classList.add('is-moon');
       darkModeIconElement.setAttribute('aria-label', 'Activate light mode');
@@ -232,7 +253,7 @@ const TextAnimator = (function () {
     animateIntroText(mobileSeparatorDelay);
   }
 
-  function animateIntroText() {
+  function animateIntroText(mobileSeparatorDelay = 1300) {
     const introText = document.querySelector('.introText');
 
     // If there is no header intro on this page, resolve immediately
@@ -723,14 +744,23 @@ const SectionAnimator = (function () {
       return;
     }
 
-    // Home page logic (keep existing behavior)
+    // Home page logic - UPDATED TO HANDLE TEXT SECTIONS
     sections.forEach((section) => {
-      if (section.classList.contains('component-description')) return;
+      // Special handling for text sections - add hidden-init to children
+      if (section.classList.contains('component-textSection')) {
+        const sectionBodies = section.querySelectorAll('.sectionBody');
+        const quoteSection = section.querySelector('.quoteSection');
 
-      if (
-        !section.classList.contains('component-pills') &&
-        !section.classList.contains('component-experience')
-      ) {
+        sectionBodies.forEach(body => body.classList.add('hidden-init'));
+        if (quoteSection) quoteSection.classList.add('hidden-init');
+
+        // Don't add hidden-init to the section container itself
+      } else if (section.classList.contains('component-description')) {
+        // Skip description (has its own logic)
+        return;
+      } else if (!section.classList.contains('component-pills') &&
+        !section.classList.contains('component-experience')) {
+        // For other sections, add hidden-init to the section itself
         section.classList.add('hidden-init');
       }
     });
@@ -955,8 +985,22 @@ const SectionAnimator = (function () {
     animateGenericSection(section);
     const container = section.querySelector('.rightColumnContainer');
     if (!container) return;
-    Array.from(container.children).forEach((el, index) => {
-      el.animate(
+
+    const elementsToAnimate = container.querySelectorAll('.sectionBody, .quoteSection');
+
+    console.log('About section animation triggered');
+    console.log('Found elements to animate:', elementsToAnimate.length);
+
+    elementsToAnimate.forEach((el, index) => {
+      console.log(`Element ${index}:`, el.className);
+      console.log(`Has hidden-init:`, el.classList.contains('hidden-init'));
+
+      if (!el.classList.contains('hidden-init')) {
+        console.log('PROBLEM: Skipping element without hidden-init');
+        return;
+      }
+
+      const anim = el.animate(
         [
           { opacity: 0, transform: 'translateY(40px)' },
           { opacity: 1, transform: 'translateY(0)' },
@@ -968,6 +1012,13 @@ const SectionAnimator = (function () {
           easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
         }
       );
+
+      anim.onfinish = () => {
+        el.classList.remove('hidden-init');
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+        console.log(`Animation finished for element ${index}`);
+      };
     });
   }
 
