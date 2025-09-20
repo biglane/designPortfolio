@@ -831,11 +831,6 @@ body.app-ready .social-icon:nth-child(2) {
   /* 👈 Second icon delay */
 }
 
-.hero-text {
-    min-width: 100%;
-    white-space: nowrap; /* Prevent wrapping during load */
-}
-
 
 
 /* ==========================================================================
@@ -1318,7 +1313,7 @@ body.mobile-menu-active {
 /* Extra small mobile screens */
 @media only screen and (max-width: 380px) {
   .introText {
-    font-size: clamp(2rem, 7vw, 3rem);
+    font-size: clamp(1.8rem, 7vw, 3rem);
   }
 
   /* Make line spacing consistent */
@@ -1346,6 +1341,17 @@ body.mobile-menu-active {
   .rotating-word {
     height: 1.8rem;
     line-height: 1.8rem;
+  }
+
+  .hero-text h1 {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
+    /* Slightly smaller minimum */
+  }
+
+  .hero-text h1 span.highlight {
+    display: block;
+    /* Force block to prevent inline wrapping */
+    width: 100%;
   }
 }
 
