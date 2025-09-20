@@ -228,7 +228,7 @@ const ThemeManager = (function () {
 // 4.1 Text Animations  (UPDATED: dispatch 'headerIntroDone' when finished)
 // -----------------------------------------------------------------------------
 const TextAnimator = (function () {
-  function initialize(mobileSeparatorDelay = 1300) {  // Add parameter
+  function initialize(mobileSeparatorDelay = 1300) {
     animateIntroText(mobileSeparatorDelay);
   }
 
@@ -243,23 +243,93 @@ const TextAnimator = (function () {
 
     const allAnims = []; // collect Animation objects
 
+    // Check if this is a project page - handle differently
+    if (document.body.classList.contains('project-page')) {
+      console.log('Animating project page header');
+
+      // Remove hidden-init from all spans inside introText
+      const spans = introText.querySelectorAll('span');
+      spans.forEach(span => {
+        span.classList.remove('hidden-init');
+      });
+
+      // Now animate the container
+      introText.style.opacity = '0';
+      introText.style.transform = 'translateY(40px)';
+
+      const headerAnim = introText.animate(
+        [
+          { opacity: 0, transform: 'translateY(40px)' },
+          { opacity: 1, transform: 'translateY(0)' }
+        ],
+        {
+          duration: 800,
+          delay: 0,
+          fill: 'forwards',
+          easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+        }
+      );
+
+      headerAnim.onfinish = () => {
+        introText.style.opacity = '1';
+        introText.style.transform = 'translateY(0)';
+        console.log('Header animation finished');
+      };
+
+      allAnims.push(headerAnim);
+
+      // Then animate sub-header text AFTER main header
+      const subHeader = document.querySelector('.sub-header-text');
+      if (subHeader) {
+        subHeader.style.opacity = '0';
+        subHeader.style.transform = 'translateY(20px)';
+
+        const subAnim = subHeader.animate(
+          [
+            { opacity: 0, transform: 'translateY(20px)' },
+            { opacity: 0.8, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 600,
+            delay: 400,
+            fill: 'forwards',
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+          }
+        );
+
+        subAnim.onfinish = () => {
+          subHeader.style.cssText = 'opacity: 0.8 !important; transform: translateY(0) !important;';
+          console.log('Subheader animation finished');
+        };
+
+        allAnims.push(subAnim);
+      }
+
+      // When everything finishes, announce completion
+      Promise.all(
+        allAnims.map((a) => (a && a.finished ? a.finished.catch(() => { }) : Promise.resolve()))
+      ).then(() => {
+        document.dispatchEvent(new CustomEvent('headerIntroDone'));
+      });
+
+      return; // Exit early for project pages
+    }
+
+    // Below is the original home page animation logic (keep as is)
     const spans = Array.from(introText.querySelectorAll('span'));
     if (spans.length === 0) {
-      // Nothing to animate — resolve immediately
       document.dispatchEvent(new CustomEvent('headerIntroDone'));
       return;
     }
 
-    // Prepare spans
+    // Rest of your home page animation code...
     spans.forEach((span) => {
       span.style.display = 'inline-block';
       span.classList.add('hidden-init');
     });
 
-    // Force reflow to ensure initial styles are applied
     introText.offsetHeight;
 
-    // Group spans by visual rows so we can stagger per row
     const rows = [];
     let currentTop = -Infinity;
     let currentRow = null;
@@ -276,18 +346,14 @@ const TextAnimator = (function () {
 
     rows.sort((a, b) => a.top - b.top);
 
-    // Animation timings (same as your existing logic)
     const movementDuration = 1200;
     const opacityDuration = 600;
     const rowStagger = 80;
-    const intraStagger = 120; // extra stagger per word for row 2
+    const intraStagger = 120;
 
-    // Animate each span and collect the Animation objects
     rows.forEach((row, rowIndex) => {
       row.spans.forEach((span, spanIndex) => {
-        const delay =
-          rowIndex * rowStagger +
-          (rowIndex === 1 ? spanIndex * intraStagger : 0);
+        const delay = rowIndex * rowStagger + (rowIndex === 1 ? spanIndex * intraStagger : 0);
 
         const aFade = span.animate(
           [{ opacity: 0 }, { opacity: 1 }],
@@ -315,7 +381,7 @@ const TextAnimator = (function () {
 
     const mobileSeparator = document.querySelector('.mobile-only-separator');
     if (mobileSeparator) {
-      mobileSeparator.style.opacity = '0'; // Start hidden
+      mobileSeparator.style.opacity = '0';
       mobileSeparator.style.transform = 'translateY(20px)';
       const sepAnim = mobileSeparator.animate(
         [
@@ -332,7 +398,6 @@ const TextAnimator = (function () {
       allAnims.push(sepAnim);
     }
 
-    // Optional sub-header animation — include in the "finished" gate if present
     const subHeader = document.querySelector('.sub-header-text');
     if (subHeader) {
       const aSub = subHeader.animate(
@@ -350,7 +415,6 @@ const TextAnimator = (function () {
       allAnims.push(aSub);
     }
 
-    // When everything finishes, announce completion
     Promise.all(
       allAnims.map((a) => (a && a.finished ? a.finished.catch(() => { }) : Promise.resolve()))
     ).then(() => {
@@ -591,17 +655,18 @@ const ProjectThumbnails = (function () {
 })();
 
 // -----------------------------------------------------------------------------
-// 4.5 Section Animator
+// 4.5 Section Animator - FIXED VERSION
 // -----------------------------------------------------------------------------
 const SectionAnimator = (function () {
   let observer;
   let sections;
-  const THRESHOLD = 0.3;
+  const THRESHOLD = 0.1;
 
   function initialize() {
     const selectors = [
       '.component-description',
       '.component-sectionTitle',
+      '.component-projectGrid',  // ADD THIS LINE
       '.component-textSection',
       '.component-experience',
       '.component-cta',
@@ -609,7 +674,56 @@ const SectionAnimator = (function () {
     ];
     sections = Array.from(document.querySelectorAll(selectors.join(', ')));
 
-    // IMPORTANT: do not re-hide the Overview — revealDescriptionFirst() already handled it
+    // For project pages, handle visible vs below-fold elements differently
+    if (document.body.classList.contains('project-page')) {
+      sections.forEach((section) => {
+        section.classList.add('hidden-init');
+      });
+
+      // Check which elements are already in viewport
+      const viewportHeight = window.innerHeight;
+      let visibleOnLoad = [];
+      let belowFold = [];
+
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top < viewportHeight) {
+          visibleOnLoad.push(section);
+        } else {
+          belowFold.push(section);
+        }
+      });
+
+      // DEBUG: Log what's visible on load
+      console.log('Visible on load:', visibleOnLoad.map(s => s.className));
+      console.log('Below fold:', belowFold.map(s => s.className));
+
+      // Animate visible elements with stagger
+      visibleOnLoad.forEach((section, index) => {
+        const delay = 200 + (index * 150);
+        console.log(`Animating ${section.className} with delay ${delay}ms`);
+
+        setTimeout(() => {
+          if (section.classList.contains('component-description')) {
+            projectPageDescriptionReveal(section);
+          } else {
+            simpleReveal(section);
+          }
+        }, delay);
+      });
+
+      // Observe only below-fold elements
+      if (belowFold.length > 0) {
+        observer = new IntersectionObserver(onIntersect, { threshold: THRESHOLD });
+        belowFold.forEach((section) => {
+          observer.observe(section);
+        });
+      }
+
+      return;
+    }
+
+    // Home page logic (keep existing behavior)
     sections.forEach((section) => {
       if (section.classList.contains('component-description')) return;
 
@@ -628,13 +742,138 @@ const SectionAnimator = (function () {
     });
   }
 
+  // Keep all the other functions exactly the same...
   function onIntersect(entries, obs) {
     if (isAutoScrolling) return;
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        triggerAnimation(entry.target);
+        console.log(`Intersecting: ${entry.target.className}`);
+        // For project pages, use appropriate animation based on section type
+        if (document.body.classList.contains('project-page')) {
+          if (entry.target.classList.contains('component-description')) {
+            projectPageDescriptionReveal(entry.target);
+          } else {
+            simpleReveal(entry.target);
+          }
+        } else {
+          triggerAnimation(entry.target);
+        }
         obs.unobserve(entry.target);
       }
+    });
+  }
+
+  function simpleReveal(element) {
+    if (!element.classList.contains('hidden-init')) return;
+
+    element.animate(
+      [
+        { opacity: 0, transform: 'translateY(40px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      {
+        duration: 600,
+        fill: 'forwards',
+        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+      }
+    ).onfinish = () => {
+      element.style.opacity = '1';
+      element.style.transform = 'translateY(0)';
+    };
+
+    element.classList.remove('hidden-init');
+  }
+
+  function projectPageDescriptionReveal(section) {
+    if (!section.classList.contains('hidden-init')) return;
+
+    // Animate the main section container
+    const sectionAnim = section.animate(
+      [
+        { opacity: 0, transform: 'translateY(40px)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ],
+      {
+        duration: 600,
+        fill: 'forwards',
+        easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+      }
+    );
+
+    sectionAnim.onfinish = () => {
+      section.style.opacity = '1';
+      section.style.transform = 'translateY(0)';
+    };
+
+    section.classList.remove('hidden-init');
+
+    // Animate the line separator with a slight delay
+    const lineSeparator = section.querySelector('.lineSeparator');
+    if (lineSeparator) {
+      lineSeparator.style.opacity = '0';
+      setTimeout(() => {
+        const sepAnim = lineSeparator.animate(
+          [
+            { opacity: 0, transform: 'translateY(20px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 500,
+            fill: 'forwards',
+            easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+          }
+        );
+        sepAnim.onfinish = () => {
+          lineSeparator.style.opacity = '1';
+          lineSeparator.style.transform = 'translateY(0)';
+        };
+      }, 50);
+    }
+
+    // Animate section title if present
+    const sectionTitle = section.querySelector('.sectionTitleText');
+    if (sectionTitle) {
+      sectionTitle.style.opacity = '0';
+      setTimeout(() => {
+        const titleAnim = sectionTitle.animate(
+          [
+            { opacity: 0, transform: 'translateY(20px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 500,
+            fill: 'forwards',
+            easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+          }
+        );
+        titleAnim.onfinish = () => {
+          sectionTitle.style.opacity = '1';
+          sectionTitle.style.transform = 'translateY(0)';
+        };
+      }, 100);
+    }
+
+    // Animate each paragraph with staggered delays
+    const paragraphs = section.querySelectorAll('.paragraph-section');
+    paragraphs.forEach((paragraph, index) => {
+      paragraph.style.opacity = '0';
+      setTimeout(() => {
+        const paraAnim = paragraph.animate(
+          [
+            { opacity: 0, transform: 'translateY(30px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          {
+            duration: 600,
+            fill: 'forwards',
+            easing: 'cubic-bezier(0.645, 0.045, 0.355, 1)',
+          }
+        );
+        paraAnim.onfinish = () => {
+          paragraph.style.opacity = '1';
+          paragraph.style.transform = 'translateY(0)';
+        };
+      }, 200 + index * 80);
     });
   }
 
@@ -651,7 +890,6 @@ const SectionAnimator = (function () {
   }
 
   function animateGenericSection(section) {
-    // Guard: if this section was already revealed earlier, do nothing.
     if (!section.classList.contains('hidden-init')) return;
     section.animate(
       [
@@ -668,9 +906,10 @@ const SectionAnimator = (function () {
   }
 
   function animateDescriptionSection(section) {
-    // If the preloader sequence already revealed this, skip.
+    // For home page, check if already revealed
     if (!section.classList.contains('hidden-init') || section.dataset.revealed === '1') return;
-    // If revealDescriptionFirst already ran, this is a no-op visually, but safe.
+
+    // Animate the section itself
     animateGenericSection(section);
 
     // Hide the chevron when the description enters
@@ -679,6 +918,7 @@ const SectionAnimator = (function () {
 
     const lineSeparator = section.querySelector('.lineSeparator');
     if (lineSeparator) {
+      lineSeparator.style.opacity = '0';
       lineSeparator.animate(
         [
           { opacity: 0, transform: 'translateY(40px)' },
@@ -695,6 +935,7 @@ const SectionAnimator = (function () {
 
     const paragraphs = section.querySelectorAll('.paragraph-section');
     paragraphs.forEach((paragraph, index) => {
+      paragraph.style.opacity = '0';
       paragraph.animate(
         [
           { opacity: 0, transform: 'translateY(40px)' },
@@ -736,7 +977,7 @@ const SectionAnimator = (function () {
     const experienceTitle = section.querySelector('.experienceTitleText');
     if (experienceTitle) {
       experienceTitle.style.transform = 'translateY(20px)';
-      experienceTitle.offsetHeight; // reflow
+      experienceTitle.offsetHeight;
       experienceTitle.animate(
         [
           { opacity: 0, transform: experienceTitle.style.transform },
@@ -754,7 +995,7 @@ const SectionAnimator = (function () {
     const experienceItems = section.querySelectorAll('.experienceItem');
     experienceItems.forEach((item, index) => {
       item.style.transform = 'translateY(80px)';
-      item.offsetHeight; // reflow
+      item.offsetHeight;
       item.animate(
         [
           { opacity: 0, transform: item.style.transform },
@@ -773,12 +1014,19 @@ const SectionAnimator = (function () {
   function refresh() {
     if (!sections) return;
     sections.forEach((section) => {
-      // Do not re-hide/re-animate Overview here either.
       if (!section.classList.contains('hidden-init')) return;
       const rect = section.getBoundingClientRect();
       const inViewport = rect.top < window.innerHeight && rect.bottom > 0;
       if (inViewport) {
-        triggerAnimation(section);
+        if (document.body.classList.contains('project-page')) {
+          if (section.classList.contains('component-description')) {
+            projectPageDescriptionReveal(section);
+          } else {
+            simpleReveal(section);
+          }
+        } else {
+          triggerAnimation(section);
+        }
         observer && observer.unobserve(section);
       }
     });
@@ -1813,6 +2061,7 @@ function onPreloaderFinishedAndModulesReady() {
   // Header text
   setTimeout(() => {
     TextAnimator.initialize(ANIMATION_DELAYS.mobileSeparator);  // Pass the delay
+    SectionAnimator.initialize();
   }, ANIMATION_DELAYS.headerText);
 
   // Rotating words
@@ -1858,42 +2107,45 @@ function onPreloaderFinishedAndModulesReady() {
 
   // Description section
   setTimeout(() => {
-    const section = document.querySelector('.component-description');
-    if (section) {
-      // Remove hidden-init if it exists
-      if (section.classList.contains('hidden-init')) {
-        section.classList.remove('hidden-init');
-      }
-      section.style.opacity = '1';
-      section.style.transform = 'translateY(0)';
+    // Only do immediate reveal on home page, not project pages
+    if (!document.body.classList.contains('project-page')) {
+      const section = document.querySelector('.component-description');
+      if (section) {
+        // Remove hidden-init if it exists
+        if (section.classList.contains('hidden-init')) {
+          section.classList.remove('hidden-init');
+        }
+        section.style.opacity = '1';
+        section.style.transform = 'translateY(0)';
 
-      // CRITICAL: Animate the descriptionText-1 container
-      const descText = section.querySelector('.descriptionText-1');
-      if (descText) {
-        descText.style.opacity = '1';
-        descText.style.transform = 'translateY(0)';
-        descText.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
-      }
+        // CRITICAL: Animate the descriptionText-1 container
+        const descText = section.querySelector('.descriptionText-1');
+        if (descText) {
+          descText.style.opacity = '1';
+          descText.style.transform = 'translateY(0)';
+          descText.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+        }
 
-      // Animate the line separator within description
-      const lineSeparator = section.querySelector('.lineSeparator');
-      if (lineSeparator) {
-        lineSeparator.style.opacity = '0';
-        lineSeparator.style.transform = 'translateY(40px)';
-        setTimeout(() => {
-          lineSeparator.style.opacity = '1';
-          lineSeparator.style.transform = 'translateY(0)';
-          lineSeparator.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-        }, 60);
-      }
+        // Animate the line separator within description
+        const lineSeparator = section.querySelector('.lineSeparator');
+        if (lineSeparator) {
+          lineSeparator.style.opacity = '0';
+          lineSeparator.style.transform = 'translateY(40px)';
+          setTimeout(() => {
+            lineSeparator.style.opacity = '1';
+            lineSeparator.style.transform = 'translateY(0)';
+            lineSeparator.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          }, 60);
+        }
 
-      const paragraphs = section.querySelectorAll('.paragraph-section');
-      paragraphs.forEach((p, idx) => {
-        setTimeout(() => {
-          p.style.opacity = '1';
-          p.style.transform = 'translateY(0)';
-        }, idx * ANIMATION_DELAYS.descriptionStagger);
-      });
+        const paragraphs = section.querySelectorAll('.paragraph-section');
+        paragraphs.forEach((p, idx) => {
+          setTimeout(() => {
+            p.style.opacity = '1';
+            p.style.transform = 'translateY(0)';
+          }, idx * ANIMATION_DELAYS.descriptionStagger);
+        });
+      }
     }
   }, ANIMATION_DELAYS.description);
 
@@ -1919,7 +2171,6 @@ function onPreloaderFinishedAndModulesReady() {
 
     PillAnimator.initialize();
     ProjectThumbnails.initialize();
-    SectionAnimator.initialize();
     ExperienceManager.initialize();
   }, ANIMATION_DELAYS.thumbnails);
 
