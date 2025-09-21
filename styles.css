@@ -2983,11 +2983,13 @@ body.app-ready .animation-container {
 
   .project-page .introText {
     font-size: 4.5rem;
-    line-height: 5.5rem;
-    /* Increased to prevent clipping */
     text-align: center !important;
     display: block;
     width: 100%;
+    margin-left: .6rem;
+    padding: 0;
+    overflow: visible;
+    line-height: 1.2;
     overflow: visible;
   }
 
@@ -3209,13 +3211,13 @@ body.app-ready .animation-container {
 
   .project-page .introText {
     font-size: 4.5rem;
-    line-height: 5.5rem;
     text-align: center !important;
     display: block;
     width: 100%;
     margin-left: .6rem;
-    /* Add auto margins */
     padding: 0;
+    overflow: visible;
+    line-height: 1;
     overflow: visible;
   }
 
@@ -3275,13 +3277,6 @@ body.app-ready .animation-container {
   .introText>.strong:last-child {
     height: 2.5rem;
     line-height: 2.5rem;
-  }
-
-  /* Fix clipping on project page headers */
-  .project-page .introText {
-    line-height: 1.2;
-    /* More relaxed line-height */
-    overflow: visible;
   }
 
   .project-page .introText span {
