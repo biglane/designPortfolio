@@ -1651,8 +1651,6 @@ body:not(.app-ready) .component-description .paragraph-section {
   font-size: 1rem;
   line-height: 1.8rem;
   font-weight: 300;
-  padding-top: 4rem;
-  padding-bottom: 4rem;
 }
 
 body:not(.project-page) .descriptionText-1 {
