@@ -1911,11 +1911,16 @@ body.dark-mode .pill:hover .highlight {
 }
 
 .sectionBodyText {
-  font-size: 1.1rem;
-  line-height: 2rem;
+  font-size: 1.2rem;
+  line-height: 1.8rem;
   font-weight: 300;
   margin: 0;
-  max-width: 800px;
+  max-width: 600px;
+}
+
+.project-page .sectionBody {
+  margin-top: 4rem;
+  margin-bottom: 4rem;
 }
 
 .project-page .component-projectGrid .sectionBodyText {
@@ -3092,15 +3097,16 @@ body.app-ready .animation-container {
     margin-right: auto;
     max-width: 100%;
     line-height: 1.8rem;
-    font-weight: 400;
+    font-weight: 300;
     font-size: 1rem;
     /* Let the container control the width */
   }
 
   .project-page .component-description .descriptionText-1 {
-    font-size: 1rem;
+    font-size: 1.1rem;
     padding-top: 4rem;
     padding-bottom: 4rem;
+    font-weight: 300;
   }
 
   .project-page .component-projectGrid .sectionBody {
@@ -3180,6 +3186,8 @@ body.app-ready .animation-container {
   .project-page .component-projectGrid .sectionBody {
     width: 100%;
     margin: 0 auto;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
   }
 
   .project-page .component-projectGrid .quoteSection {
@@ -3445,7 +3453,7 @@ body.app-ready .animation-container {
   }
 
   .component-projectGrid {
-    padding: 0 4rem 4rem 4rem;
+    padding: 0 4rem 0rem 4rem;
   }
 
   .component-projectGrid>.projectThumbnail:first-of-type .projectThumbnail-inner {
@@ -3483,10 +3491,6 @@ body.app-ready .animation-container {
     max-width: none;
     width: 100%;
     height: 325px;
-  }
-
-  .projectThumbnail+.columns {
-    padding-top: 2rem;
   }
 
   .component-textSection {
