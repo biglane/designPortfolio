@@ -1658,7 +1658,7 @@ body:not(.app-ready) .component-description .paragraph-section {
   padding-bottom: 4rem;
 }
 
-body:not(.project-page) .descriptionText-1 {
+.project-page body:not(.project-page) .descriptionText-1 {
   text-align: justify;
   text-align-last: left;
 }
