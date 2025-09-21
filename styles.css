@@ -1648,9 +1648,14 @@ body:not(.app-ready) .component-description .paragraph-section {
 
 .descriptionText-1 {
   max-width: 100%;
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 1.8rem;
   font-weight: 300;
+}
+
+.project-page .descriptionText-1 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
 body:not(.project-page) .descriptionText-1 {
