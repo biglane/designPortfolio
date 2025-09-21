@@ -392,6 +392,9 @@ body:not(.preloading) .siteCard {
   font-size: inherit;
   line-height: inherit;
   margin-bottom: 1.5rem;
+  width: 100%;
+  text-align: justify;
+  text-align-last: left;
 }
 
 .project-page .component-description .paragraph-section:last-child {
@@ -1500,6 +1503,7 @@ body:not(.app-ready) .component-description .paragraph-section {
 /* Center align all section headers on project pages */
 .project-page .component-sectionTitle {
   text-align: center;
+  padding: 0;
 }
 
 .project-page .component-sectionTitle .sectionTitle {
@@ -1523,7 +1527,6 @@ body:not(.app-ready) .component-description .paragraph-section {
   display: flex;
   justify-content: center;
   gap: 2rem;
-  margin-bottom: 2.5rem;
   padding: 0;
   width: 100%;
 }
@@ -1545,12 +1548,13 @@ body:not(.app-ready) .component-description .paragraph-section {
   position: absolute;
   right: -1rem;
   top: 50%;
-  transform: translateY(-50%);
-  width: 1px;
-  height: 16px;
-  background-color: #4adad14f;
-  opacity: 0.5;
+  width: 3px;
+  height: 3px;
+  background-color: #4adad0;
+  opacity: 1;
+  border-radius: 8px;
 }
+
 
 /* Project Page Column Structure */
 .project-page .component-description .leftColumnContainer {
@@ -1562,6 +1566,7 @@ body:not(.app-ready) .component-description .paragraph-section {
   max-width: 500px;
   margin: 0 auto;
   padding: 0;
+
 }
 
 .project-page .component-description .columns {
@@ -1589,7 +1594,7 @@ body:not(.app-ready) .component-description .paragraph-section {
 
 /* Center the line separator */
 .project-page .component-description .lineSeparator {
-  max-width: 720px;
+  max-width: 500px;
   margin: 0 auto 1.5rem auto;
 }
 
@@ -1612,13 +1617,26 @@ body:not(.app-ready) .component-description .paragraph-section {
   }
 
   .projectDetails {
-    flex-direction: column;
-    gap: 0.5rem;
     align-items: center;
   }
 
-  .projectDetail-item:not(:last-child)::after {
-    display: none;
+
+  /* Prevent line-height animations on project pages */
+  .project-page .introText,
+  .project-page .introText * {
+    line-height: 1.2 !important;
+    transition: none !important;
+  }
+
+  .project-page * {
+    animation-play-state: paused !important;
+  }
+
+  /* Override any dynamic height updates */
+  .project-page .rotating-words,
+  .project-page .rotating-words-inner,
+  .project-page .rotating-word {
+    display: none !important;
   }
 
 }
@@ -1629,10 +1647,12 @@ body:not(.app-ready) .component-description .paragraph-section {
 }
 
 .descriptionText-1 {
-  max-width: 800px;
-  font-size: 1.1rem;
+  max-width: 100%;
+  font-size: 1rem;
   line-height: 1.8rem;
   font-weight: 300;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
 }
 
 body:not(.project-page) .descriptionText-1 {
@@ -1745,6 +1765,24 @@ body.dark-mode .pill:hover .highlight {
   margin: 0;
 }
 
+/* Left align section titles on project pages */
+.project-page .sectionTitleText {
+  margin: 0;
+  width: 100%;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* Also ensure the container is left-aligned */
+.project-page .sectionTitle {
+  text-align: left;
+  width: 100%;
+}
+
+.project-page .imageDescription {
+  margin: 0;
+}
+
 /* --- Component: Project Grid --- */
 .component-projectGrid {
   width: 100%;
@@ -1761,6 +1799,10 @@ body.dark-mode .pill:hover .highlight {
   transform: translateY(80px);
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
   will-change: transform, opacity;
+}
+
+.project-page .projectThumbnail {
+  padding: 0;
 }
 
 .projectThumbnail.fadeIn-visible {
@@ -2279,114 +2321,66 @@ body.dark-mode .pill:hover .highlight {
   object-fit: contain;
 }
 
-/* --- Image Carousel --- */
+
+/* Simple project images with proper constraints */
 .project-image-container {
   position: relative;
   width: 100%;
+  max-width: 720px;
+  /* Add max-width constraint */
+  margin: 0 auto 1rem auto;
+  /* Center the container */
   aspect-ratio: 16 / 9;
-  max-height: 600px;
-  overflow: visible;
+  max-height: 400px;
+  /* Reduced from 600px to match original */
+  overflow: hidden;
   border-radius: 12px;
   background-color: #F0F0F0;
 }
 
-.carousel-slide {
-  position: absolute;
-  top: 0;
-  left: 0;
+.project-image-container .thumbnailImage {
   width: 100%;
   height: 100%;
-  opacity: 0;
-  transition: opacity 0.8s ease-in-out;
-}
-
-.carousel-slide.active {
-  opacity: 1;
-}
-
-.carousel-slide.slide-fit-contain {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.image-carousel .thumbnailImage {
-  width: 100%;
-  height: 100%;
+  display: block;
   object-fit: cover;
+  border-radius: inherit;
 }
 
-.carousel-nav-container {
-  position: absolute;
-  bottom: -6rem;
-  left: 0;
-  right: 0;
+/* For images that should be contained rather than cover */
+.project-image-container.slide-fit-contain {
   display: flex;
   justify-content: center;
-  gap: 0;
-  z-index: 1000;
-}
-
-.carousel-nav {
-  position: static;
-  transform: none;
-  background-color: rgba(128, 128, 128, 0.15);
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  border: none;
-  transition: background-color 0.2s ease;
-  flex-shrink: 0;
+  background-color: #F0F0F0;
 }
 
-.carousel-nav:hover {
-  background-color: rgba(0, 0, 0, 0.6);
+.project-image-container.slide-fit-contain .thumbnailImage {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
 }
 
-.carousel-nav.prev {
-  left: 50%;
-  transform: translateX(-125%);
-}
-
-.carousel-nav.next {
-  right: 50%;
-  transform: translateX(125%);
-}
-
-.carousel-nav svg {
-  width: 12px;
-  height: 12px;
-  fill: currentColor;
-}
-
-.carousel-captions-container {
-  position: relative;
-  min-height: 40px;
-}
-
-.carousel-caption {
-  position: absolute;
-  top: 0;
-  left: 0;
+.imageDescription {
   width: 100%;
-  margin: 0;
+  max-width: 720px;
+  /* Match container width */
+  margin: 0 auto 2rem auto;
+  text-align: center;
+}
+
+.imageDescription p {
   font-size: 12px;
   line-height: 24px;
   font-weight: 400;
-  color: inherit;
-  opacity: 0;
-  transition: opacity 0.8s ease-in-out;
+  margin: 0;
+  opacity: 0.8;
 }
 
-.carousel-caption.active {
-  position: relative;
-  opacity: 0.8;
+/* Dark mode support */
+body.dark-mode .project-image-container {
+  background-color: #1C1C1C;
 }
 
 /* ==========================================================================
@@ -3092,7 +3086,16 @@ body.app-ready .animation-container {
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
+    line-height: 1.8rem;
+    font-weight: 400;
+    font-size: 1rem;
     /* Let the container control the width */
+  }
+
+  .project-page .component-description .descriptionText-1 {
+    font-size: 1rem;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
   }
 
   .project-page .component-projectGrid .sectionBody {
@@ -3100,6 +3103,10 @@ body.app-ready .animation-container {
     max-width: 100%;
     /* Let the parent container control width */
     margin: 0 auto;
+  }
+
+  .projectThumbnail {
+    padding: 0;
   }
 
 
@@ -3161,7 +3168,7 @@ body.app-ready .animation-container {
 
   .project-page .component-projectGrid .rightColumnContainer {
     width: 100%;
-    max-width: 600px;
+    max-width: 500px;
     margin: 0 auto;
   }
 
@@ -3171,7 +3178,6 @@ body.app-ready .animation-container {
   }
 
   .project-page .component-projectGrid .quoteSection {
-    margin: 2rem auto;
     text-align: center;
   }
 
@@ -3207,7 +3213,7 @@ body.app-ready .animation-container {
     text-align: center !important;
     display: block;
     width: 100%;
-    margin: 0 auto;
+    margin-left: .6rem;
     /* Add auto margins */
     padding: 0;
     overflow: visible;
@@ -3415,7 +3421,7 @@ body.app-ready .animation-container {
   }
 
   .descriptionText-1 {
-    max-width: 800px;
+    max-width: 100%;
     pointer-events: none;
   }
 
@@ -3437,7 +3443,7 @@ body.app-ready .animation-container {
   }
 
   .component-sectionTitle {
-    padding: 2rem 4rem 0 4rem;
+    padding: 0rem 4rem 0 4rem;
   }
 
   .component-projectGrid {

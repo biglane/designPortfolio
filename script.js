@@ -485,6 +485,9 @@ const BannerManager = (function () {
   }
 
   function updateBannerOnScroll() {
+    // Don't run on project pages
+    if (document.body.classList.contains('project-page')) return;
+
     const bannerContainer = document.querySelector('.component-banner');
     if (!bannerContainer) return;
 
@@ -694,6 +697,23 @@ const SectionAnimator = (function () {
       '.component-featureImage',
     ];
     sections = Array.from(document.querySelectorAll(selectors.join(', ')));
+
+    // Handle project thumbnails that are visible on load
+    if (document.body.classList.contains('project-page')) {
+      const thumbnails = document.querySelectorAll('.projectThumbnail');
+      thumbnails.forEach((thumb, index) => {
+        const rect = thumb.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          // It's visible on load, animate it immediately
+          setTimeout(() => {
+            thumb.classList.remove('hidden-init');
+            thumb.classList.add('fadeIn-visible');
+            thumb.style.opacity = '1';
+            thumb.style.transform = 'translateY(0)';
+          }, 600 + (index * 150));
+        }
+      });
+    }
 
     // For project pages, handle visible vs below-fold elements differently
     if (document.body.classList.contains('project-page')) {
@@ -1113,6 +1133,9 @@ const RotatingWordsManager = (function () {
   function initialize() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    // Don't initialize on project pages
+    if (document.body.classList.contains('project-page')) return;
+
     const slot = document.getElementById('rotating-slot');
     if (!slot) return;
 
@@ -1142,6 +1165,10 @@ const RotatingWordsManager = (function () {
 
       // Immediate response to resize
       window.addEventListener('resize', () => {
+        // Don't run on project pages
+        if (document.body.classList.contains('project-page')) return;
+        if (!container || !inner) return;
+
         const newWidth = window.innerWidth;
         const oldBreakpoint = getBreakpoint(lastViewportWidth);
         const newBreakpoint = getBreakpoint(newWidth);
@@ -1272,72 +1299,6 @@ const ExperienceManager = (function () {
         bodyText.style.maxHeight = `${bodyText.scrollHeight + paddingBuffer}px`;
       });
     }
-  }
-
-  return { initialize };
-})();
-
-// -----------------------------------------------------------------------------
-// 5.2 Image Carousel
-// -----------------------------------------------------------------------------
-const ImageCarouselManager = (function () {
-  function initializeCarousel(carouselElement) {
-    const projectThumbnail = carouselElement.closest('.projectThumbnail');
-    const slides = carouselElement.querySelectorAll('.carousel-slide');
-    const captionsContainer = projectThumbnail?.querySelector('.carousel-captions-container');
-    const captions = captionsContainer ? captionsContainer.querySelectorAll('.carousel-caption') : [];
-    const navPrev = projectThumbnail?.querySelector('.carousel-nav.prev');
-    const navNext = projectThumbnail?.querySelector('.carousel-nav.next');
-
-    let currentIndex = 0;
-    let intervalId = null;
-    const slideDuration = 6000;
-
-    if (slides.length <= 1) {
-      if (navPrev) navPrev.style.display = 'none';
-      if (navNext) navNext.style.display = 'none';
-      return;
-    }
-
-    function showSlide(index) {
-      if (index >= slides.length) currentIndex = 0;
-      else if (index < 0) currentIndex = slides.length - 1;
-      else currentIndex = index;
-
-      slides.forEach((slide) => slide.classList.remove('active'));
-      slides[currentIndex].classList.add('active');
-
-      if (captions.length === slides.length) {
-        captions.forEach((c) => c.classList.remove('active'));
-        captions[currentIndex].classList.add('active');
-      }
-    }
-
-    function startInterval() {
-      intervalId = setInterval(() => showSlide(currentIndex + 1), slideDuration);
-    }
-
-    function resetInterval() {
-      clearInterval(intervalId);
-      startInterval();
-    }
-
-    navPrev && navPrev.addEventListener('click', () => {
-      showSlide(currentIndex - 1);
-      resetInterval();
-    });
-
-    navNext && navNext.addEventListener('click', () => {
-      showSlide(currentIndex + 1);
-      resetInterval();
-    });
-
-    startInterval();
-  }
-
-  function initialize() {
-    const allCarousels = document.querySelectorAll('.image-carousel');
-    allCarousels.forEach(initializeCarousel);
   }
 
   return { initialize };
@@ -2086,7 +2047,6 @@ function onPreloaderFinishedAndModulesReady() {
   BannerManager.initialize({ delayed: true });
   MobileMenuManager.initialize();
   LottieLogoManager.initialize();
-  ImageCarouselManager.initialize();
   CaretSuppressor.initialize();
   ChatIconAnimator.initialize();
   FooterLinkManager.initialize();
@@ -2432,3 +2392,48 @@ window.addEventListener('load', () => {
 // FINAL LOG
 // =============================================================================
 console.log('script.js loaded - Alexander Biglane Portfolio');
+
+// =============================================================================
+// DEBUG CODE - ADD BELOW HERE
+// =============================================================================
+
+// DEBUG: Monitor DOM changes
+if (document.body.classList.contains('project-page')) {
+  console.log('Debug: Monitoring project page for changes...');
+
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes') {
+        console.log('Attribute changed:', mutation.target, mutation.attributeName, mutation.target.getAttribute(mutation.attributeName));
+      }
+      if (mutation.type === 'childList') {
+        console.log('DOM changed:', mutation.target);
+      }
+    });
+  });
+
+  // Observe everything
+  observer.observe(document.body, {
+    attributes: true,
+    childList: true,
+    subtree: true,
+    attributeOldValue: true
+  });
+
+  // Also monitor size changes
+  setInterval(() => {
+    const problemSection = document.querySelector('.component-projectGrid');
+    if (problemSection) {
+      const rect = problemSection.getBoundingClientRect();
+      console.log('ProjectGrid dimensions:', rect.width, 'x', rect.height);
+    }
+  }, 500);
+}
+
+// DEBUG: Override setInterval to log all intervals
+const originalSetInterval = window.setInterval;
+window.setInterval = function (fn, delay, ...args) {
+  console.log('Interval created with delay:', delay, 'ms');
+  console.trace(); // This will show you where it's being called from
+  return originalSetInterval(fn, delay, ...args);
+};
