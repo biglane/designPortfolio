@@ -1855,7 +1855,7 @@ body.dark-mode .pill:hover .highlight {
 .projectThumbnail-inner {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   gap: 0.6rem;
 }
 
@@ -3147,6 +3147,12 @@ body.app-ready .animation-container {
   .project-page .component-sectionTitle {
     padding-bottom: 1rem;
     padding-top: 0rem;
+  }
+
+   .projectThumbnail-inner.thumbnailRsr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   }
 
   .project-page .component-projectGrid .sectionBodyText {
