@@ -1827,6 +1827,10 @@ body.dark-mode .pill:hover .highlight {
   gap: 0.6rem;
 }
 
+.projectThumbnail-inner.thumbnailRsr {
+  padding-bottom: 1rem;
+}
+
 .projectThumbnail-Title {
   display: flex;
   flex-direction: column;
@@ -2348,7 +2352,6 @@ body.dark-mode .pill:hover .highlight {
   width: 100%;
   max-width: 720px;
   /* Add max-width constraint */
-  margin: 0 auto 1rem auto;
   /* Center the container */
   aspect-ratio: 16 / 9;
   max-height: 400px;
