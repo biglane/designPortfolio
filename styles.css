@@ -3144,6 +3144,11 @@ body.app-ready .animation-container {
 /* --- Desktop (769px) --- */
 @media only screen and (min-width: 769px) {
 
+  .project-page .component-sectionTitle {
+    padding-bottom: 1rem;
+    padding-top: 0rem;
+  }
+
   .project-page .component-projectGrid .sectionBodyText {
     text-align: justify;
     text-align-last: left;
@@ -3532,7 +3537,7 @@ body.app-ready .animation-container {
   }
 
   .component-projectGrid.challengeColumn {
-    padding: 0 4rem 4rem 4rem;
+    padding: 0 4rem 0rem 4rem;
   }
 
   .component-projectGrid>.projectThumbnail:first-of-type .projectThumbnail-inner {
