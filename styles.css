@@ -1511,6 +1511,7 @@ body:not(.app-ready) .component-description .paragraph-section {
 .project-page .component-sectionTitle {
   text-align: center;
   padding: 0;
+  padding-top: 3rem;
 }
 
 .project-page .component-sectionTitle .sectionTitle {
@@ -1662,7 +1663,7 @@ body:not(.app-ready) .component-description .paragraph-section {
 
 .project-page .descriptionText-1 {
   padding-top: 4rem;
-  padding-bottom: 4rem;
+  padding-bottom: 1rem;
 }
 
 .project-page body:not(.project-page) .descriptionText-1 {
@@ -1762,7 +1763,7 @@ body.dark-mode .pill:hover .highlight {
 }
 
 .sectionTitle {
-  padding-bottom: 1rem;
+  padding-bottom: 0rem;
 }
 
 .sectionTitle--overview {
@@ -1796,7 +1797,7 @@ body.dark-mode .pill:hover .highlight {
 /* --- Component: Project Grid --- */
 .component-projectGrid {
   width: 100%;
-  padding: 0 1rem;
+  padding: 1rem 1rem;
 }
 
 /* Mobile only: Full-width thumbnail images */
@@ -1836,6 +1837,14 @@ body.dark-mode .pill:hover .highlight {
 
 .project-page .projectThumbnail {
   padding: 0;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.project-page .projectThumbnail.firstThumbnail {
+  padding: 0;
+  padding-top: 0rem;
+  padding-bottom: 1rem;
 }
 
 .projectThumbnail.fadeIn-visible {
@@ -1954,7 +1963,7 @@ body.dark-mode .pill:hover .highlight {
 
 .project-page .sectionBody {
   margin-top: 0rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .project-page .component-projectGrid .sectionBodyText {
