@@ -1761,44 +1761,6 @@ body.dark-mode .pill:hover .highlight {
   padding: 2rem 1rem 0 1rem;
 }
 
-/* Full-width images for challenge section - mobile default */
-.component-projectGrid.challengeColumn {
-  margin-left: -1.5rem;
-  margin-right: -1.5rem;
-  padding: 0;
-  overflow: hidden;
-  /* Prevent horizontal scroll */
-}
-
-.component-projectGrid.challengeColumn .projectThumbnail,
-.component-projectGrid.challengeColumn .projectThumbnail-inner {
-  padding: 0;
-  margin: 0;
-}
-
-.component-projectGrid.challengeColumn .project-image-container,
-.component-projectGrid.challengeColumn .project-image-container.wide-image {
-  width: calc(100% + 3rem);
-  /* Account for the negative margins */
-  max-width: none;
-  margin-left: 0;
-  margin-right: 0;
-  padding: 0;
-  border-radius: 0;
-  transform: none;
-}
-
-.component-projectGrid.challengeColumn img.thumbnailImage {
-  width: 100%;
-  border-radius: 0;
-}
-
-.component-projectGrid.challengeColumn .imageDescription {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-bottom: 1rem;
-}
-
 .sectionTitle {
   padding-bottom: 1rem;
 }
@@ -1835,6 +1797,29 @@ body.dark-mode .pill:hover .highlight {
 .component-projectGrid {
   width: 100%;
   padding: 0 1rem;
+}
+
+/* Mobile only: Full-width thumbnail images */
+@media only screen and (max-width: 480px) {
+  .component-projectGrid .projectThumbnail {
+    margin-left: -1.5rem;
+    /* Compensate for siteCard padding */
+    margin-right: -1.5rem;
+    width: calc(100% + 3rem);
+  }
+
+  .component-projectGrid .thumbnailImage-container-for-zoom {
+    border-radius: 0;
+    /* Remove border radius for edge-to-edge */
+    max-width: none;
+    width: 100%;
+  }
+
+  /* Keep the text/title within normal bounds */
+  .component-projectGrid .projectThumbnail-Title {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
 }
 
 .projectThumbnail {
@@ -2917,31 +2902,6 @@ body.app-ready .animation-container {
     padding-right: 0;
   }
 
-
-  /* Full-width images for challenge section - mobile default */
-  .component-projectGrid.challengeColumn {
-    margin-left: calc(-1 * var(--mobile-padding, 1.5rem));
-    margin-right: calc(-1 * var(--mobile-padding, 1.5rem));
-    width: calc(100% + (2 * var(--mobile-padding, 1.5rem)));
-    padding: 0;
-  }
-
-  .component-projectGrid.challengeColumn .projectThumbnail,
-  .component-projectGrid.challengeColumn .projectThumbnail-inner,
-  .component-projectGrid.challengeColumn .project-image-container {
-    width: 100%;
-    max-width: none;
-    border-radius: 0;
-    margin: 0;
-    padding: 0;
-  }
-
-  .component-projectGrid.challengeColumn img.thumbnailImage {
-    width: 100%;
-    border-radius: 0;
-  }
-
-
   .component-projectGrid .leftColumnContainer,
   .component-projectGrid .rightColumnContainer {
     padding-left: 1rem;
@@ -2949,9 +2909,6 @@ body.app-ready .animation-container {
     margin-left: 0;
     margin-right: 0;
   }
-
-
-
 
   /* .component-description {
     padding-top: 2rem;
