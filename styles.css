@@ -216,6 +216,13 @@ textarea:focus,
   animation: highlightGradient 9s ease infinite;
 }
 
+.highlight-charcoal {
+  display: inline-block;
+  position: relative;
+  color: #282828ea;
+  font-weight: 600;
+}
+
 .highlight.interactive-word {
   -webkit-text-fill-color: transparent;
   transition: none;
@@ -1816,7 +1823,7 @@ body.dark-mode .pill:hover .highlight {
 .projectThumbnail-inner {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.6rem;
 }
 
@@ -1919,8 +1926,8 @@ body.dark-mode .pill:hover .highlight {
 }
 
 .project-page .sectionBody {
-  margin-top: 4rem;
-  margin-bottom: 4rem;
+  margin-top: 0rem;
+  margin-bottom: 2rem;
 }
 
 .project-page .component-projectGrid .sectionBodyText {
@@ -1946,6 +1953,11 @@ body.dark-mode .pill:hover .highlight {
   justify-content: center;
   align-items: center;
   gap: 24px;
+}
+
+.quoteSectionEmpty {
+  margin: 0 auto;
+  padding-block: 1rem;
 }
 
 .quoteText {
@@ -2342,8 +2354,15 @@ body.dark-mode .pill:hover .highlight {
   max-height: 400px;
   /* Reduced from 600px to match original */
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 8px;
   background-color: #F0F0F0;
+}
+
+.project-image-container.wide-image {
+  max-width: 1080px;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 2rem;
 }
 
 .project-image-container .thumbnailImage {
@@ -3102,6 +3121,20 @@ body.app-ready .animation-container {
     /* Let the container control the width */
   }
 
+  .project-page .projectThumbnail.thumbnailSecond {
+    padding-top: 3rem;
+    padding-bottom: 4rem;
+  }
+
+  .project-page .projectThumbnail.thumbnailThird {
+    padding-top: 4rem;
+  }
+
+  .project-page .sectionBody.paragraphFirst {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
   .project-page .component-description .descriptionText-1 {
     font-size: 1.1rem;
     padding-top: 4rem;
@@ -3117,7 +3150,7 @@ body.app-ready .animation-container {
   }
 
   .projectThumbnail {
-    padding: 0;
+    padding: 2rem 0 0 0;
   }
 
 
@@ -3188,6 +3221,13 @@ body.app-ready .animation-container {
     margin: 0 auto;
     margin-top: 4rem;
     margin-bottom: 4rem;
+  }
+
+   .project-page .component-projectGrid .sectionBody.paragraphFirst {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 0rem;
+    margin-bottom: 1rem;
   }
 
   .project-page .component-projectGrid .quoteSection {
@@ -3454,6 +3494,10 @@ body.app-ready .animation-container {
 
   .component-projectGrid {
     padding: 0 4rem 0rem 4rem;
+  }
+
+  .component-projectGrid.challengeColumn {
+    padding: 0 4rem 4rem 4rem;
   }
 
   .component-projectGrid>.projectThumbnail:first-of-type .projectThumbnail-inner {
