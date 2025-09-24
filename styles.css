@@ -198,6 +198,12 @@ textarea:focus,
   padding-top: 0;
 }
 
+.quoteSection--no-top {
+  padding-top: 0 !important;
+}
+
+
+
 /* Highlight Gradient Text */
 .highlight {
   display: inline-block;
@@ -1949,8 +1955,24 @@ body.dark-mode .pill:hover .highlight {
   gap: 0;
 }
 
+.project-page .component-projectGrid .sectionBody--reduced-margin-top {
+  margin-top: 3rem !important;
+}
+
+
 .sectionBody--reduced-top {
-  padding-top: 2rem !important; /* Or whatever padding you want instead of 4rem */
+  padding-top: 2rem !important;
+  /* Or whatever padding you want instead of 4rem */
+}
+
+.sectionBody--really-reduced-top {
+  padding-top: 0rem !important;
+  /* Or whatever padding you want instead of 4rem */
+}
+
+.sectionBody--really-reduced-top--4rem-bottom {
+  padding-bottom: 4rem !important;
+  /* Or whatever padding you want instead of 4rem */
 }
 
 .component-textSection .sectionBodyText {
@@ -3162,6 +3184,10 @@ body.app-ready .animation-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .project-page .component-projectGrid .sectionBody--reduced-margin-top {
+    margin-top: 3rem !important;
   }
 
   .project-page .component-projectGrid .sectionBodyText {
