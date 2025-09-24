@@ -202,6 +202,11 @@ textarea:focus,
   padding-top: 0 !important;
 }
 
+.quoteSection--no-bottom {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
 
 
 /* Highlight Gradient Text */
@@ -1979,6 +1984,10 @@ body.dark-mode .pill:hover .highlight {
   /* Or whatever padding you want instead of 4rem */
 }
 
+.component-description--really-reduced-top {
+  padding-top: 0rem !important;
+}
+
 .component-textSection .sectionBodyText {
   text-align: justify;
   text-align-last: left;
@@ -3547,6 +3556,10 @@ body.app-ready .animation-container {
     padding: 1.5rem 4rem 0rem 4rem;
   }
 
+  .component-description--no-top-padding {
+    padding-top: 0 !important;
+  }
+
   .descriptionText-1.hidden-init {
     padding-top: 4rem;
   }
@@ -3766,6 +3779,11 @@ body.app-ready .animation-container {
     padding-top: 0rem !important;
     margin-top: 0rem !important;
     /* Or whatever padding you want instead of 4rem */
+  }
+
+  .sectionBody--1rem-reduced-top {
+    padding-top: 1rem !important;
+    margin-top: 1rem !important;
   }
 }
 
