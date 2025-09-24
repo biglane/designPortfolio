@@ -1959,6 +1959,10 @@ body.dark-mode .pill:hover .highlight {
   margin-top: 3rem !important;
 }
 
+.project-page .component-projectGrid .sectionBody--bottom-padding-3 {
+  padding-bottom: 3rem !important;
+}
+
 
 .sectionBody--reduced-top {
   padding-top: 2rem !important;
@@ -3756,6 +3760,12 @@ body.app-ready .animation-container {
   .project-image-container {
     overflow: hidden;
     margin-bottom: 0;
+  }
+
+  .sectionBody--really-reduced-top {
+    padding-top: 0rem !important;
+    margin-top: 0rem !important;
+    /* Or whatever padding you want instead of 4rem */
   }
 }
 
