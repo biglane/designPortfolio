@@ -1968,7 +1968,6 @@ body.dark-mode .pill:hover .highlight {
   padding-bottom: 3rem !important;
 }
 
-
 .sectionBody--reduced-top {
   padding-top: 2rem !important;
   /* Or whatever padding you want instead of 4rem */
@@ -3187,6 +3186,11 @@ body.app-ready .animation-container {
 
 /* --- Desktop (769px) --- */
 @media only screen and (min-width: 769px) {
+
+  .project-page .component-projectGrid .sectionBody--no-top-3-bottom {
+    margin-top: 0 !important;
+    margin-bottom: 3rem !important;
+  }
 
   .project-page .component-sectionTitle {
     padding-bottom: 1rem;
